@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Running</string>
+    <string name="map_api_key">AIzaSyDVhWAYKm9SyqGJ2DRNR6Ja5RaF9vOWEps</string>
+    <string name="permission_rationale" />
+    <string name="permission_denied_explanation" />
+    <string name="settings" />
+</resources>
