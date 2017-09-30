@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.example.minhtri.running.MainActivity"
+    tools:context="com.example.minhtri.running.com.example.minhtri.tracker.MainActivity"
     android:weightSum="1">
     <fragment
         android:id="@+id/myMap"

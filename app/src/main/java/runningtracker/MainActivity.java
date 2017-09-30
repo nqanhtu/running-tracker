@@ -1,16 +1,17 @@
-package com.example.minhtri.running;
+package runningtracker;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -18,6 +19,11 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import runningtracker.Model.ModelRunning.DatabaseHandler;
+import runningtracker.Model.ModelRunning.LocationObject;
+import runningtracker.Presenter.PresenterRunning.PreLogicRunning;
+import runningtracker.R;
+import runningtracker.View.ViewRunning;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResolvableApiException;
@@ -30,28 +36,31 @@ import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResponse;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.android.gms.location.SettingsClient;
+import com.google.android.gms.maps.CameraUpdate;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 
 import java.text.DateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 
-public class MainActivity extends AppCompatActivity  implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks{
+public class MainActivity extends AppCompatActivity  implements ViewRunning, OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks{
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final int REQUEST_FINE_LOCATION = 0;
 
     private GoogleMap mMap;
     private GoogleApiClient mGoogleApiClient;
-    /**
-     * Code used in requesting runtime permissions.
-     */
-    private static final int REQUEST_PERMISSIONS_REQUEST_CODE = 34;
 
     /**
      * Constant used in the location settings dialog.
@@ -78,7 +87,6 @@ public class MainActivity extends AppCompatActivity  implements OnMapReadyCallba
      * Provides access to the Fused Location Provider API.
      */
     private FusedLocationProviderClient mFusedLocationClient;
-
     /**
      * Provides access to the Location Settings API.
      */
@@ -99,6 +107,10 @@ public class MainActivity extends AppCompatActivity  implements OnMapReadyCallba
      * Callback for Location events.
      */
     private LocationCallback mLocationCallback;
+   // public DatabaseHandler mQuery;
+    private ArrayList<LocationObject> startToPresentLocations;
+    private Polyline polyline;
+    public Location loca;
 
     /**
      * Represents a geographical location.
@@ -108,6 +120,7 @@ public class MainActivity extends AppCompatActivity  implements OnMapReadyCallba
     // UI Widgets.
     private Button mStartUpdatesButton;
     private Button mStopUpdatesButton;
+    //private LocationObject locationObject;
     /**
      * Tracks the status of the location updates request. Value changes when the user presses the
      * Start Updates and Stop Updates buttons.
@@ -118,7 +131,7 @@ public class MainActivity extends AppCompatActivity  implements OnMapReadyCallba
      */
     private String mLastUpdateTime;
 
-
+    PreLogicRunning preLogicRunning;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -137,6 +150,7 @@ public class MainActivity extends AppCompatActivity  implements OnMapReadyCallba
         MapFragment mapFragment = (MapFragment)getFragmentManager()
                 .findFragmentById(R.id.myMap);
         mapFragment.getMapAsync(this);
+       // moveCamera(loca);
 
         mRequestingLocationUpdates = false;
         mLastUpdateTime = "";
@@ -152,16 +166,22 @@ public class MainActivity extends AppCompatActivity  implements OnMapReadyCallba
         createLocationCallback();
         createLocationRequest();
         buildLocationSettingsRequest();
-        //startUpdatesButtonHandler();
-        //startLocationUpdates();
+
+        preLogicRunning = new PreLogicRunning(this);
+        final DatabaseHandler mQuery = new DatabaseHandler(this);
         mStartUpdatesButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+                mQuery.deleteAll();
+                preLogicRunning.getData();
+                refreshMap(mMap);
                 startUpdatesButtonHandler(v);
             }
         });
         mStopUpdatesButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 stopUpdatesButtonHandler(v);
+                startPolyline();
+                //preLogicRunning.saveRunnig();
             }
         });
     }
@@ -178,6 +198,13 @@ public class MainActivity extends AppCompatActivity  implements OnMapReadyCallba
      * These settings are appropriate for mapping applications that show real-time location
      * updates.
      */
+    //move camera to my location
+    private void moveCamera(Location location){
+        LatLng latLng;
+        latLng = new LatLng(location.getLatitude(), location.getLongitude());
+        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 18);
+        mMap.animateCamera(cameraUpdate);
+    }
     private void createLocationRequest() {
         mLocationRequest = new LocationRequest();
         // Sets the desired interval for active location updates. This interval is
@@ -205,7 +232,6 @@ public class MainActivity extends AppCompatActivity  implements OnMapReadyCallba
                 mCurrentLocation = locationResult.getLastLocation();
                 mLastUpdateTime = DateFormat.getTimeInstance().format(new Date());
                 onLocationChanged(locationResult.getLastLocation());
-                // updateLocationUI();
             }
         };
     }
@@ -369,25 +395,23 @@ public class MainActivity extends AppCompatActivity  implements OnMapReadyCallba
     }
     public void onLocationChanged(Location location) {
         // New location has now been determined
-        String msg = "Updated Location: " +
-                Double.toString(location.getLatitude()) + "," +
-                Double.toString(location.getLongitude());
-        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
         // You can now create a LatLng Object for use with maps
-        LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-/*      LocationObject iLocation = new LocationObject();
+        DatabaseHandler mQuery = new DatabaseHandler(this);
+        LocationObject iLocation = new LocationObject();
         iLocation.setLatitudeValue(location.getLatitude());
         iLocation.setLongitudeValue(location.getLongitude());
+        moveCamera(location);
         mQuery.addLocation(iLocation);
-        startPolyline(mMap, latLng);*/
-
-
+        String mg = "Updated Location: " +
+                Double.toString(iLocation.getLatitudeValue()) + "," +
+                Double.toString(iLocation.getLongitudeValue());
+        //Toast.makeText(this, mg, Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-
         if(checkPermissions()) {
+            mMap = googleMap;
             googleMap.setMyLocationEnabled(true);
         }
     }
@@ -402,8 +426,42 @@ public class MainActivity extends AppCompatActivity  implements OnMapReadyCallba
     }
 
 
+    //get all points
+    private ArrayList<LatLng> getPoints(ArrayList<LocationObject> mLocations){
+        ArrayList<LatLng> points = new ArrayList<LatLng>();
+        for(LocationObject mLocation : mLocations){
+            points.add(new LatLng(mLocation.getLatitudeValue(), mLocation.getLongitudeValue()));
+        }
+        return points;
+    }
+    //start polyline
+    private void startPolyline(){
+        DatabaseHandler mQuery = new DatabaseHandler(this);
+        startToPresentLocations = mQuery.getAllLocation();
+        LatLng myLocation = null;
+        ArrayList<LatLng> points; // list of latlng
+        try {
+           points = getPoints(startToPresentLocations);
+            for (int z = 0; z < points.size() - 1; z++) {  //add Arraylist points on Polyline
+              LatLng src = points.get(z);
+              LatLng dest = points.get(z + 1);
+                    myLocation = new LatLng(src.latitude, src.longitude);
+              polyline = mMap.addPolyline(new PolylineOptions()
+                      .add(new LatLng(src.latitude, src.longitude),
+                              new LatLng(dest.latitude, dest.longitude)).color(Color.BLUE).width(10));
+          }
+            mMap.addMarker(new MarkerOptions().position(myLocation).title("My Location"));
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(myLocation, 18));
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
 
+    }
+    private void refreshMap(GoogleMap mapInstance){
+        mapInstance.clear();
+    }
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
@@ -421,6 +479,8 @@ public class MainActivity extends AppCompatActivity  implements OnMapReadyCallba
     @Override
     protected void onStart() {
         // mGoogleApiClient.connect();
+
+
         super.onStart();
 
 
@@ -444,14 +504,6 @@ public class MainActivity extends AppCompatActivity  implements OnMapReadyCallba
 
     }
 
-    private void showSnackbar(final int mainTextStringId, final int actionStringId,
-                              View.OnClickListener listener) {
-        Snackbar.make(
-                findViewById(android.R.id.content),
-                getString(mainTextStringId),
-                Snackbar.LENGTH_INDEFINITE)
-                .setAction(getString(actionStringId), listener).show();
-    }
 
     @Override
     protected void onStop() {
@@ -460,4 +512,14 @@ public class MainActivity extends AppCompatActivity  implements OnMapReadyCallba
 
     }
 
+    @Override
+    public HashMap<String, String> getValueRunning() {
+
+        return null;
+    }
+
+    @Override
+    public Context getMainActivity() {
+        return MainActivity.this;
+    }
 }

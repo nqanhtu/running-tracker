@@ -1,7 +1,7 @@
-package com.example.minhtri.running;
+package runningtracker.Model.ModelRunning;
 
 
-class LocationObject {
+public class LocationObject {
     public double latitudeValue;
     public double longitudeValue;
 

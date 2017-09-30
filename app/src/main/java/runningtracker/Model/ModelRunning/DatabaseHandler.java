@@ -1,4 +1,4 @@
-package com.example.minhtri.running;
+package runningtracker.Model.ModelRunning;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -7,7 +7,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import java.util.ArrayList;
-import java.util.List;
 
 
 public class DatabaseHandler extends SQLiteOpenHelper {
@@ -45,10 +44,11 @@ public class DatabaseHandler extends SQLiteOpenHelper {
      */
 
     // Adding new location
-    void addLocation(LocationObject location) {
+    public void addLocation(LocationObject location) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
+        //values.put();
         values.put(KEY_Latitude, location.getLatitudeValue()); // Contact Name
         values.put(KEY_Longitude, location.getLongitudeValue()); // Contact Phone
 
@@ -57,8 +57,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.close(); // Closing database connection
     }
     // Getting All Location
-    public List<LocationObject> getAllLocation() {
-        List<LocationObject> contactList = new ArrayList<LocationObject>();
+    public ArrayList<LocationObject> getAllLocation() {
+        ArrayList<LocationObject> contactList = new ArrayList<LocationObject>();
         // Select All Query
         String selectQuery = "SELECT  * FROM " + TABLE_LOCATION;
 
@@ -78,5 +78,10 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
         // return contact list
         return contactList;
+    }
+    //Delete all location
+    public  void deleteAll(){
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL("delete from "+ TABLE_LOCATION);
     }
 }
