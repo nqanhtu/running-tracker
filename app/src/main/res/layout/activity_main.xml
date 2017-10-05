@@ -1,43 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout  xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context="com.example.minhtri.running.com.example.minhtri.tracker.MainActivity"
-    android:weightSum="1">
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                                             xmlns:app="http://schemas.android.com/apk/res-auto"
+                                             xmlns:tools="http://schemas.android.com/tools"
+                                             android:layout_width="match_parent"
+                                             android:layout_height="match_parent"
+                                             android:orientation="vertical"
+                                             tools:context="runningtracker.MainActivity"
+                                             android:weightSum="1">
     <fragment
         android:id="@+id/myMap"
         android:name="com.google.android.gms.maps.MapFragment"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="1.03" />
+        android:layout_height="450dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+    />
 
     <Button
         android:id="@+id/btnStart_Activity"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:layout_marginBottom="40dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:background="@color/colorPrimaryDark"
+        android:enabled="false"
+        android:text="Start Activity"
+        android:textSize="15sp"
         android:gravity="center"
-        android:padding="16dp"
-        android:text="Start Activity" />
+        android:background="@color/colorPrimary"
+        android:layout_width="150dp"
+        android:layout_height="40dp"
+
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginBottom="50dp"
+    />
 
     <Button
         android:id="@+id/btnStop_Activity"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:layout_marginBottom="40dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:background="@color/colorPrimaryDark"
+        android:enabled="false"
+        android:text="Stop"
+        android:textSize="15sp"
         android:gravity="center"
-        android:padding="16dp"
-        android:text="Stop" />
+        android:background="@color/colorPrimaryDark"
+        android:layout_width="150dp"
+        android:layout_height="40dp"
 
-</FrameLayout >
+        app:layout_constraintBottom_toBottomOf="@+id/btnStart_Activity"
+        app:layout_constraintLeft_toLeftOf="@+id/btnStart_Activity"
+        app:layout_constraintRight_toRightOf="@+id/btnStart_Activity"
+        android:layout_marginBottom="0dp"
+        android:layout_marginLeft="0dp"
+        android:layout_marginRight="0dp"
+    />
+
+</android.support.constraint.ConstraintLayout>
