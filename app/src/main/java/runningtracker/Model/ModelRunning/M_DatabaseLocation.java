@@ -9,7 +9,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import java.util.ArrayList;
 
 
-public class DatabaseHandler extends SQLiteOpenHelper {
+public class M_DatabaseLocation extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "dbLocation";
     private static final int DATABASE_VERSION = 1;
 
@@ -19,7 +19,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     private static final String KEY_Longitude = "Longitude";
     private static final String TABLE_LOCATION ="Location" ;
 
-    public DatabaseHandler(Context context) {
+    public M_DatabaseLocation(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
@@ -44,21 +44,21 @@ public class DatabaseHandler extends SQLiteOpenHelper {
      */
 
     // Adding new location
-    public void addLocation(LocationObject location) {
+    public void addLocation(M_LocationObject location) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
         //values.put();
-        values.put(KEY_Latitude, location.getLatitudeValue()); // Contact Name
-        values.put(KEY_Longitude, location.getLongitudeValue()); // Contact Phone
+        values.put(KEY_Latitude, location.getLatitudeValue());
+        values.put(KEY_Longitude, location.getLongitudeValue());
 
         // Inserting Row
         db.insert(TABLE_LOCATION, null, values);
         db.close(); // Closing database connection
     }
     // Getting All Location
-    public ArrayList<LocationObject> getAllLocation() {
-        ArrayList<LocationObject> contactList = new ArrayList<LocationObject>();
+    public ArrayList<M_LocationObject> getAllLocation() {
+        ArrayList<M_LocationObject> locationList = new ArrayList<M_LocationObject>();
         // Select All Query
         String selectQuery = "SELECT  * FROM " + TABLE_LOCATION;
 
@@ -68,16 +68,16 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         // looping through all rows and adding to list
         if (cursor.moveToFirst()) {
             do {
-                LocationObject location = new LocationObject();
+                M_LocationObject location = new M_LocationObject();
                 location.setLatitudeValue(cursor.getDouble(1));
                 location.setLongitudeValue(cursor.getDouble(2));
                 // Adding contact to list
-                contactList.add(location);
+                locationList.add(location);
             } while (cursor.moveToNext());
         }
 
-        // return contact list
-        return contactList;
+        // return
+        return locationList;
     }
     //Delete all location
     public  void deleteAll(){

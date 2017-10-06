@@ -19,10 +19,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
-import runningtracker.Model.ModelRunning.DatabaseHandler;
-import runningtracker.Model.ModelRunning.LocationObject;
+import runningtracker.Model.ModelRunning.M_DatabaseLocation;
+import runningtracker.Model.ModelRunning.M_LocationObject;
 import runningtracker.Presenter.PresenterRunning.PreLogicRunning;
-import runningtracker.R;
 import runningtracker.View.ViewRunning;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -50,10 +49,12 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity  implements ViewRunning, OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks{
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -107,10 +108,10 @@ public class MainActivity extends AppCompatActivity  implements ViewRunning, OnM
      * Callback for Location events.
      */
     private LocationCallback mLocationCallback;
-   // public DatabaseHandler mQuery;
-    private ArrayList<LocationObject> startToPresentLocations;
+   // public M_DatabaseLocation mQuery;
+    private ArrayList<M_LocationObject> startToPresentLocations;
     private Polyline polyline;
-    public Location loca;
+
 
     /**
      * Represents a geographical location.
@@ -120,7 +121,7 @@ public class MainActivity extends AppCompatActivity  implements ViewRunning, OnM
     // UI Widgets.
     private Button mStartUpdatesButton;
     private Button mStopUpdatesButton;
-    //private LocationObject locationObject;
+    //private M_LocationObject locationObject;
     /**
      * Tracks the status of the location updates request. Value changes when the user presses the
      * Start Updates and Stop Updates buttons.
@@ -168,11 +169,14 @@ public class MainActivity extends AppCompatActivity  implements ViewRunning, OnM
         buildLocationSettingsRequest();
 
         preLogicRunning = new PreLogicRunning(this);
-        final DatabaseHandler mQuery = new DatabaseHandler(this);
+
+
+
+        final M_DatabaseLocation mQuery = new M_DatabaseLocation(this);
         mStartUpdatesButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 mQuery.deleteAll();
-                preLogicRunning.getData();
+               // preLogicRunning.getData();
                 refreshMap(mMap);
                 startUpdatesButtonHandler(v);
             }
@@ -181,7 +185,11 @@ public class MainActivity extends AppCompatActivity  implements ViewRunning, OnM
             public void onClick(View v) {
                 stopUpdatesButtonHandler(v);
                 startPolyline();
-                //preLogicRunning.saveRunnig();
+                try {
+                    preLogicRunning.saveRunnig();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
         });
     }
@@ -396,8 +404,8 @@ public class MainActivity extends AppCompatActivity  implements ViewRunning, OnM
     public void onLocationChanged(Location location) {
         // New location has now been determined
         // You can now create a LatLng Object for use with maps
-        DatabaseHandler mQuery = new DatabaseHandler(this);
-        LocationObject iLocation = new LocationObject();
+        M_DatabaseLocation mQuery = new M_DatabaseLocation(this);
+        M_LocationObject iLocation = new M_LocationObject();
         iLocation.setLatitudeValue(location.getLatitude());
         iLocation.setLongitudeValue(location.getLongitude());
         moveCamera(location);
@@ -427,16 +435,16 @@ public class MainActivity extends AppCompatActivity  implements ViewRunning, OnM
 
 
     //get all points
-    private ArrayList<LatLng> getPoints(ArrayList<LocationObject> mLocations){
+    private ArrayList<LatLng> getPoints(ArrayList<M_LocationObject> mLocations){
         ArrayList<LatLng> points = new ArrayList<LatLng>();
-        for(LocationObject mLocation : mLocations){
+        for(M_LocationObject mLocation : mLocations){
             points.add(new LatLng(mLocation.getLatitudeValue(), mLocation.getLongitudeValue()));
         }
         return points;
     }
     //start polyline
     private void startPolyline(){
-        DatabaseHandler mQuery = new DatabaseHandler(this);
+        M_DatabaseLocation mQuery = new M_DatabaseLocation(this);
         startToPresentLocations = mQuery.getAllLocation();
         LatLng myLocation = null;
         ArrayList<LatLng> points; // list of latlng
@@ -513,9 +521,24 @@ public class MainActivity extends AppCompatActivity  implements ViewRunning, OnM
     }
 
     @Override
-    public HashMap<String, String> getValueRunning() {
+    public JSONObject getValueRunning(){
+        JSONObject jsonObject = new JSONObject();
+        try{
+            //jsonObject.put("RunningSessionID",1);
+            jsonObject.put("Userid", 1);
+            jsonObject.put("Runontreadmill", 0);
+            jsonObject.put("Roadgradient", 23);
+            jsonObject.put("Grosscalorieburned", 100);
+            jsonObject.put("Netcalorieburned", 100);
+            jsonObject.put("Distanceinkm", 50);
+            jsonObject.put("Starttimestamp", "2017-2-1");
+            jsonObject.put("Finishtimestamp", "2017-1-1");
 
-        return null;
+            return jsonObject;
+        }catch (JSONException e){
+            throw new RuntimeException(e);
+        }
+
     }
 
     @Override

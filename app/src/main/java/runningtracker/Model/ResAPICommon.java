@@ -3,6 +3,7 @@ package runningtracker.Model;
 
 import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -26,49 +27,24 @@ import java.util.Map;
 
 public class ResAPICommon extends AppCompatActivity {
     //post data to server
-    public void  RestPostClient(final Context context, String url, final HashMap<String, String> para){
+    public void  RestPostClient(final Context context, String url, final JSONObject  para) throws JSONException {
+
         RequestQueue requestQueue = Volley.newRequestQueue(context);
-        /*StringRequest stringRequest =  new StringRequest(Request.Method.POST, url,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        if(response.trim().equals("success")){
-                            Toast.makeText(context, "Succes", Toast.LENGTH_SHORT).show();
-                        }
-                        else{
-                            Toast.makeText(context, "Error", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(context, "Server is error", Toast.LENGTH_SHORT).show();
-                    }
-                }
-        ){
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                Map<String, String> params = new HashMap<>();
-                //get values with params
-                if (para != null) {
-                    for (Map.Entry<String, String> entry : para.entrySet()) {
-                        params.put(entry.getKey(), entry.getValue());
-                    }
-                }
-                return params;
-            }
-        };
-        requestQueue.add(stringRequest);*/
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, new JSONObject(para),
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, para,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
                         try {
-                            Toast.makeText(context, ""+response, Toast.LENGTH_SHORT).show();
+                            String str = (String) response.get("result");
+                           if(Integer.parseInt(str) == 1){
+                               Toast.makeText(context, "Save success" , Toast.LENGTH_SHORT).show();
+                           }
+                           else{
+                               Toast.makeText(context, "Save False" , Toast.LENGTH_SHORT).show();
+                           }
                         }
                         catch (Exception e) {
-                            e.printStackTrace();
+                           e.printStackTrace();
                         }
                     }
                 },
@@ -76,6 +52,8 @@ public class ResAPICommon extends AppCompatActivity {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         Toast.makeText(context, "Error:" +error , Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, ""+para, Toast.LENGTH_SHORT).show();
+                        //Log.d("ERROR","error => "+para.toString());
                     }
                 }
         );
@@ -89,32 +67,31 @@ public class ResAPICommon extends AppCompatActivity {
                     @Override
                     public void onResponse(JSONArray response) {
                         Toast.makeText(context, response.toString(), Toast.LENGTH_SHORT).show();
-                        //System.out.println(response);
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                        Toast.makeText(context, "Error" +error, Toast.LENGTH_SHORT).show();
-                        //System.out.println(error);
                     }
                 }
         );
-        /*JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, (String) null,
-                new Response.Listener<JSONObject>() {
+/*        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                new Response.Listener<String>() {
                     @Override
-                    public void onResponse(JSONObject response) {
+                    public void onResponse(String response) {
                         Toast.makeText(context, response.toString(), Toast.LENGTH_SHORT).show();
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(context, "Error", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, "Error" +error, Toast.LENGTH_SHORT).show();
                     }
                 }
         );*/
-        requestQueue.add(jsonArrayRequest);
+
+       requestQueue.add(jsonArrayRequest);
     }
 
 }

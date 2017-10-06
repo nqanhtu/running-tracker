@@ -1,14 +1,14 @@
 package runningtracker.Model.ModelRunning;
 
 
-public class LocationObject {
+public class M_LocationObject {
     public double latitudeValue;
     public double longitudeValue;
 
-    public LocationObject(){
+    public M_LocationObject(){
 
     }
-    public LocationObject(double latitudeValue, double longitudeValue) {
+    public M_LocationObject(double latitudeValue, double longitudeValue) {
         this.latitudeValue = latitudeValue;
         this.longitudeValue = longitudeValue;
     }

@@ -2,6 +2,9 @@ package runningtracker.View;
 
 import android.content.Context;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.HashMap;
 
 /**
@@ -10,7 +13,7 @@ import java.util.HashMap;
 
 public interface ViewRunning {
     //get value running
-    HashMap<String, String> getValueRunning();
+    JSONObject getValueRunning() throws JSONException;
     Context getMainActivity();
 
 }
