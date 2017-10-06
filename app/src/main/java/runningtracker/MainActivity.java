@@ -13,10 +13,15 @@ import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import runningtracker.Model.ModelRunning.DatabaseHandler;
@@ -118,8 +123,8 @@ public class MainActivity extends AppCompatActivity  implements ViewRunning, OnM
     private Location mCurrentLocation;
 
     // UI Widgets.
-    private Button mStartUpdatesButton;
-    private Button mStopUpdatesButton;
+    private ImageButton mStartUpdatesButton;
+    private ImageButton mStopUpdatesButton;
     //private LocationObject locationObject;
     /**
      * Tracks the status of the location updates request. Value changes when the user presses the
@@ -136,9 +141,16 @@ public class MainActivity extends AppCompatActivity  implements ViewRunning, OnM
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // Set application toolbar for activity
+        Toolbar actionBar = (Toolbar) findViewById(R.id.actionbar);
+        actionBar.setTitle(R.string.RunningTitle);
+        setSupportActionBar(actionBar);
+//        configActionBar();
+
         // Locate the UI widgets.
-        mStartUpdatesButton = (Button) findViewById(R.id.btnStart_Activity);
-        mStopUpdatesButton = (Button) findViewById(R.id.btnStop_Activity);
+        mStartUpdatesButton = (ImageButton) findViewById(R.id.imgBtnStart);
+        mStopUpdatesButton = (ImageButton) findViewById(R.id.imgBtnStop);
 
         if (mGoogleApiClient == null) {
             mGoogleApiClient = new GoogleApiClient.Builder(this)
@@ -301,10 +313,14 @@ public class MainActivity extends AppCompatActivity  implements ViewRunning, OnM
     private void setButtonsEnabledState() {
         if (mRequestingLocationUpdates) {
             mStartUpdatesButton.setEnabled(false);
+            mStartUpdatesButton.setVisibility(Button.INVISIBLE);
             mStopUpdatesButton.setEnabled(true);
+            mStopUpdatesButton.setVisibility(Button.VISIBLE);
         } else {
             mStartUpdatesButton.setEnabled(true);
+            mStartUpdatesButton.setVisibility(Button.VISIBLE);
             mStopUpdatesButton.setEnabled(false);
+            mStopUpdatesButton.setVisibility(Button.INVISIBLE);
         }
     }
     /**
@@ -521,5 +537,31 @@ public class MainActivity extends AppCompatActivity  implements ViewRunning, OnM
     @Override
     public Context getMainActivity() {
         return MainActivity.this;
+    }
+
+    private void configActionBar() {
+        ActionBar actionBar = getSupportActionBar();
+        if(actionBar == null)
+            return;
+        actionBar.setTitle(R.string.RunningTitle);
+//        actionBar.setLogo(R.drawable.ic_menu_white_24dp);
+//        actionBar.setCustomView(R.id.actionbar);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate navigation menu from the resources by using the menu inflater.
+        getMenuInflater().inflate(R.menu.navigation_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()) {
+            case R.id.setting:
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 }
