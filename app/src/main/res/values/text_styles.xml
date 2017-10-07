@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="textLargeValue" parent="@style/Widget.AppCompat.TextView.SpinnerItem">
+        <item name="android:textColor">@color/colorTextValue</item>
+        <item name="android:textSize">60sp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+    <style name="textMediumValue" parent="@style/Widget.AppCompat.TextView.SpinnerItem">
+        <item name="android:textColor">@color/colorTextValue</item>
+        <item name="android:textSize">40sp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+    <style name="textDescription" parent="@style/Widget.AppCompat.TextView.SpinnerItem">
+        <item name="android:textColor">@color/colorTextDescription</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+    <style name="textUnit" parent="@style/Widget.AppCompat.TextView.SpinnerItem">
+        <item name="android:textColor">@color/colorTextDescription</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:gravity">left</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+</resources>

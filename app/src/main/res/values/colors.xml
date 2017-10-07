@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#212121</color>
-    <color name="colorSecondary">#d50000</color>
-    <color name="colorStartBtn">#2962ff</color>
-    <color name="colorPauseBtn">#00c853</color>
-    <color name="colorResumeBtn">#2962ff</color>
-    <color name="colorStopBtn">#ff3d00</color>
+    <color name="colorPrimary">#009688</color>
+    <color name="colorSecondary">#FFFFFF</color>
+    <color name="colorStartBtn">#536DFE</color>
+    <color name="colorPauseBtn">#E57373</color>
+    <color name="colorResumeBtn">#536DFE</color>
+    <color name="colorStopBtn">#EF5350</color>
+    <color name="colorTextValue">#424242</color>
+    <color name="colorTextDescription">#9E9E9E</color>
 </resources>

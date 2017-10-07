@@ -13,6 +13,7 @@ import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -123,11 +124,14 @@ public class MainActivity extends AppCompatActivity  implements ViewRunning, OnM
      */
     private Location mCurrentLocation;
 
-    // UI Widgets.
+
 
  /*   private Button mStartUpdatesButton;
     private Button mStopUpdatesButton;*/ //van tri
     //private M_LocationObject locationObject;
+
+
+    private Toolbar actionBar;
 
     private ImageButton mStartUpdatesButton;
     private ImageButton mStopUpdatesButton;
@@ -150,14 +154,13 @@ public class MainActivity extends AppCompatActivity  implements ViewRunning, OnM
         setContentView(R.layout.activity_main);
 
         // Set application toolbar for activity
-        Toolbar actionBar = (Toolbar) findViewById(R.id.actionbar);
-        actionBar.setTitle(R.string.RunningTitle);
+        actionBar = (Toolbar) findViewById(R.id.actionbar);
+        configActionBar();
         setSupportActionBar(actionBar);
-//        configActionBar();
 
         // Locate the UI widgets.
-        mStartUpdatesButton = (ImageButton) findViewById(R.id.imgBtnStart);
-        mStopUpdatesButton = (ImageButton) findViewById(R.id.imgBtnStop);
+        mStartUpdatesButton = (ImageButton) findViewById(R.id.buttonStart);
+        mStopUpdatesButton = (ImageButton) findViewById(R.id.buttonStop);
 
         if (mGoogleApiClient == null) {
             mGoogleApiClient = new GoogleApiClient.Builder(this)
@@ -167,7 +170,7 @@ public class MainActivity extends AppCompatActivity  implements ViewRunning, OnM
         }
 
         MapFragment mapFragment = (MapFragment)getFragmentManager()
-                .findFragmentById(R.id.myMap);
+                .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
        // moveCamera(loca);
 
@@ -569,12 +572,8 @@ public class MainActivity extends AppCompatActivity  implements ViewRunning, OnM
     }
 
     private void configActionBar() {
-        ActionBar actionBar = getSupportActionBar();
-        if(actionBar == null)
-            return;
         actionBar.setTitle(R.string.RunningTitle);
-//        actionBar.setLogo(R.drawable.ic_menu_white_24dp);
-//        actionBar.setCustomView(R.id.actionbar);
+        actionBar.setTitleTextColor(ContextCompat.getColor(this, R.color.colorSecondary));
     }
 
     @Override

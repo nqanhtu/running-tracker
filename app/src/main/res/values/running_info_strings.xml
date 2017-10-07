@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--Calorie-->
+    <string name="netCalorie">NET CALORIE</string>
+    <string name="grossCalorie">GROSS CALORIE</string>
+    <!--Distance-->
+    <string name="distanceMetric">DISTANCE (KM)</string>
+    <string name="distanceImperial">DISTANCE (MI)</string>
+    <string name="distanceMetricUnit">KM</string>
+    <string name="distanceImperialUnit">MI</string>
+    <!--Duration-->
+    <string name="duration">DURATION</string>
+    <!--Footstep-->
+    <string name="footsteps">FOOTSTEPS</string>
+    <!--Pace-->
+    <string name="pace">AVG.PACE</string>
+    <!--Speed-->
+    <string name="speed">SPEED</string>
+
+</resources>
