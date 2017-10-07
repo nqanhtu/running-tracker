@@ -4,8 +4,5 @@
     <string name="permission_rationale" />
     <string name="permission_denied_explanation" />
     <string name="settings" />
-    <string name="Distance">Distance (km)</string>
-    <string name="Duration">Duration</string>
-    <string name="CB">CaloriesBurned (cal)</string>
     <string name="RunningTitle">Let\'s start running</string>
 </resources>
