@@ -7,9 +7,14 @@ import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.location.Criteria;
 import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Looper;
+import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -23,11 +28,14 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import runningtracker.Model.ModelRunning.M_BodilyCharacteristicObject;
 import runningtracker.Model.ModelRunning.M_DatabaseLocation;
 import runningtracker.Model.ModelRunning.M_LocationObject;
 import runningtracker.Presenter.PresenterRunning.PreLogicRunning;
+import runningtracker.Presenter.fitnessstatistic.Calculator;
 import runningtracker.View.ViewRunning;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -46,6 +54,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
@@ -61,6 +70,7 @@ import org.json.JSONObject;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity  implements ViewRunning, OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks{
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -77,7 +87,7 @@ public class MainActivity extends AppCompatActivity  implements ViewRunning, OnM
     /**
      * The desired interval for location updates. Inexact. Updates may be more or less frequent.
      */
-    private static final long UPDATE_INTERVAL_IN_MILLISECONDS = 10000;
+    private static final long UPDATE_INTERVAL_IN_MILLISECONDS = 3000;
 
     /**
      * The fastest rate for active location updates. Exact. Updates will never be more frequent
@@ -123,6 +133,7 @@ public class MainActivity extends AppCompatActivity  implements ViewRunning, OnM
      * Represents a geographical location.
      */
     private Location mCurrentLocation;
+    LocationManager rLocationManager;
 
 
 
@@ -146,8 +157,36 @@ public class MainActivity extends AppCompatActivity  implements ViewRunning, OnM
      * Time when the location was updated represented as a String.
      */
     private String mLastUpdateTime;
+    /*
+     * setup running global variable
+     */
+    private float rDisaTance;
+    Location rlocation;
+    double mLatitude, mLongitude;
+
+    /*
+     * Real timer running
+     */
+    TextView txtTimer;
+    long lStartTime, lPauseTime, lSystemTime = 0L;
+    Handler handler = new Handler();
+    boolean isRun;
+    public Runnable runnable = new Runnable() {
+        @Override
+        public void run() {
+            lSystemTime = SystemClock.uptimeMillis() - lStartTime;
+            long lUpdateTime = lPauseTime + lSystemTime;
+            long secs = (long) (lUpdateTime / 1000);
+            long mins = secs / 60;
+            long hour = mins /60;
+            secs = secs % 60;
+            txtTimer.setText("" + hour + ":" + String.format("%02d", mins) + ":" + String.format("%02d", secs));
+            handler.postDelayed(this, 0);
+        }
+    };
 
     PreLogicRunning preLogicRunning;
+    M_BodilyCharacteristicObject m_Bodily;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -161,6 +200,7 @@ public class MainActivity extends AppCompatActivity  implements ViewRunning, OnM
         // Locate the UI widgets.
         mStartUpdatesButton = (ImageButton) findViewById(R.id.buttonStart);
         mStopUpdatesButton = (ImageButton) findViewById(R.id.buttonStop);
+        txtTimer = (TextView) findViewById(R.id.textDurationValue);
 
         if (mGoogleApiClient == null) {
             mGoogleApiClient = new GoogleApiClient.Builder(this)
@@ -168,11 +208,9 @@ public class MainActivity extends AppCompatActivity  implements ViewRunning, OnM
                     .addApi(LocationServices.API)
                     .build();
         }
-
         MapFragment mapFragment = (MapFragment)getFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-       // moveCamera(loca);
 
         mRequestingLocationUpdates = false;
         mLastUpdateTime = "";
@@ -183,6 +221,7 @@ public class MainActivity extends AppCompatActivity  implements ViewRunning, OnM
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         mSettingsClient = LocationServices.getSettingsClient(this);
 
+        rlocation = new Location("A");
         // Kick off the process of building the LocationCallback, LocationRequest, and
         // LocationSettingsRequest objects.
         createLocationCallback();
@@ -191,12 +230,19 @@ public class MainActivity extends AppCompatActivity  implements ViewRunning, OnM
 
         preLogicRunning = new PreLogicRunning(this);
 
+        m_Bodily = new M_BodilyCharacteristicObject();
+        try {
+            preLogicRunning.getBodilyCharacter(m_Bodily);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 
 
         final M_DatabaseLocation mQuery = new M_DatabaseLocation(this);
         mStartUpdatesButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 mQuery.deleteAll();
+                //setupViewRunning();
                // preLogicRunning.getData();
                 refreshMap(mMap);
                 startUpdatesButtonHandler(v);
@@ -205,15 +251,17 @@ public class MainActivity extends AppCompatActivity  implements ViewRunning, OnM
         mStopUpdatesButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 stopUpdatesButtonHandler(v);
+                rStop();
                 startPolyline();
-                try {
+               /* try {
                     preLogicRunning.saveRunnig();
                 } catch (JSONException e) {
                     e.printStackTrace();
-                }
+                }*/
             }
         });
     }
+
     /**
      * Sets up the location request. Android has two location request settings:
      * {@code ACCESS_COARSE_LOCATION} and {@code ACCESS_FINE_LOCATION}. These settings control
@@ -227,11 +275,37 @@ public class MainActivity extends AppCompatActivity  implements ViewRunning, OnM
      * These settings are appropriate for mapping applications that show real-time location
      * updates.
      */
+
+    private Location getMyLocation() {
+/*        LocationManager lm = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
+        Location myLocation = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        if (myLocation == null) {
+            Criteria criteria = new Criteria();
+            criteria.setAccuracy(Criteria.ACCURACY_COARSE);
+            String provider = lm.getBestProvider(criteria, true);
+            myLocation = lm.getLastKnownLocation(provider);
+        }
+        return myLocation;*/
+        rLocationManager = (LocationManager)getApplicationContext().getSystemService(LOCATION_SERVICE);
+        List<String> providers = rLocationManager.getProviders(true);
+        Location bestLocation = null;
+        for (String provider : providers) {
+            Location l = rLocationManager.getLastKnownLocation(provider);
+            if (l == null) {
+                continue;
+            }
+            if (bestLocation == null || l.getAccuracy() < bestLocation.getAccuracy()) {
+                // Found best last known location: %s", l);
+                bestLocation = l;
+            }
+        }
+        return bestLocation;
+    }
     //move camera to my location
     private void moveCamera(Location location){
         LatLng latLng;
         latLng = new LatLng(location.getLatitude(), location.getLongitude());
-        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 18);
+        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 17);
         mMap.animateCamera(cameraUpdate);
     }
     private void createLocationRequest() {
@@ -257,13 +331,13 @@ public class MainActivity extends AppCompatActivity  implements ViewRunning, OnM
             @Override
             public void onLocationResult(LocationResult locationResult) {
                 super.onLocationResult(locationResult);
-
                 mCurrentLocation = locationResult.getLastLocation();
                 mLastUpdateTime = DateFormat.getTimeInstance().format(new Date());
                 onLocationChanged(locationResult.getLastLocation());
             }
         };
     }
+
     private void updateValuesFromBundle(Bundle savedInstanceState) {
         if (savedInstanceState != null) {
             // Update the value of mRequestingLocationUpdates from the Bundle, and make sure that
@@ -434,18 +508,41 @@ public class MainActivity extends AppCompatActivity  implements ViewRunning, OnM
         iLocation.setLatitudeValue(location.getLatitude());
         iLocation.setLongitudeValue(location.getLongitude());
         moveCamera(location);
+        rStart();
+        if(mLatitude != 0){
+            rlocation = new Location("A");
+            rlocation.setLatitude(mLatitude);
+            rlocation.setLongitude(mLongitude);
+            float mDisaTance = rDisaTance;
+            rDisaTance = rDisaTance +  preLogicRunning.DistanceLocation(rlocation,location);
+            float rPace = ((rDisaTance - mDisaTance) / ((float)UPDATE_INTERVAL_IN_MILLISECONDS / 3600000));
+            float rCalories = 0;
+            if(m_Bodily != null)
+                rCalories = (float) Calculator.netCalorieBurned(m_Bodily.getWeightInKg(), m_Bodily.getVO2max(), rDisaTance, 0, false);
+            setupViewRunning(preLogicRunning.RoundAvoid(rDisaTance,2), preLogicRunning.RoundAvoid(rPace,1), preLogicRunning.RoundAvoid(rCalories, 1));
+            polylineBetweenTwoPoint(rlocation, location);
+        }
+        else {
+            LatLng myLocation = null;
+            myLocation = new LatLng(location.getLatitude(), location.getLongitude());
+            mMap.addMarker(new MarkerOptions().position(myLocation).title("My Location"));
+        }
+        mLatitude = location.getLatitude();
+        mLongitude = location.getLongitude();
         mQuery.addLocation(iLocation);
-        String mg = "Updated Location: " +
-                Double.toString(iLocation.getLatitudeValue()) + "," +
-                Double.toString(iLocation.getLongitudeValue());
-        //Toast.makeText(this, mg, Toast.LENGTH_SHORT).show();
+
     }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
         if(checkPermissions()) {
             mMap = googleMap;
-            googleMap.setMyLocationEnabled(true);
+            mMap.setMyLocationEnabled(true);
+           mMap.getUiSettings().setMyLocationButtonEnabled(false);
+            Location L = getMyLocation();
+            if(L != null) {
+                moveCamera(L);
+            }
         }
     }
 
@@ -484,13 +581,18 @@ public class MainActivity extends AppCompatActivity  implements ViewRunning, OnM
                               new LatLng(dest.latitude, dest.longitude)).color(Color.BLUE).width(10));
           }
             mMap.addMarker(new MarkerOptions().position(myLocation).title("My Location"));
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(myLocation, 18));
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(myLocation, 14));
 
         } catch (Exception e) {
             e.printStackTrace();
         }
 
 
+    }
+    private void polylineBetweenTwoPoint(Location A, Location B){
+        polyline = mMap.addPolyline(new PolylineOptions()
+                .add(new LatLng(A.getLatitude(), A.getLongitude()),
+                        new LatLng(B.getLatitude(), B.getLongitude())).color(Color.BLUE).width(10).geodesic(true));
     }
     private void refreshMap(GoogleMap mapInstance){
         mapInstance.clear();
@@ -569,6 +671,32 @@ public class MainActivity extends AppCompatActivity  implements ViewRunning, OnM
     @Override
     public Context getMainActivity() {
         return MainActivity.this;
+    }
+
+    public void rStart(){
+        if(isRun)
+            return;
+        isRun = true;
+        lStartTime = SystemClock.uptimeMillis();
+        handler.postDelayed(runnable, 0);
+    }
+     public void rStop(){
+         if(!isRun)
+             return;
+         isRun = false;
+         lPauseTime = 0;
+         handler.removeCallbacks(runnable);
+     }
+
+    @Override
+    public void setupViewRunning(float mDistanceValue, float mPaceValue, float mCalorie) {
+
+        TextView txtDisaTance = (TextView) findViewById(R.id.textDistanceValue);
+        TextView txtNetCalorie = (TextView) findViewById(R.id.textCalorieValue);
+        TextView txtPace = (TextView) findViewById(R.id.textPaceValue);
+        txtDisaTance.setText(Float.toString(mDistanceValue));
+        txtNetCalorie.setText(Float.toString(mCalorie));
+        txtPace.setText(Float.toString(mPaceValue));
     }
 
     private void configActionBar() {
