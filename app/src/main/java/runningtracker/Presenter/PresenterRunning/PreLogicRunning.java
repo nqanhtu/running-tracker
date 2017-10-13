@@ -1,10 +1,10 @@
-package runningtracker.Presenter.PresenterRunning;
+package runningtracker.presenter.presenterrunning;
 
 
-import runningtracker.Model.ResAPICommon;
-import runningtracker.View.ViewRunning;
+import runningtracker.model.ResAPICommon;
+import runningtracker.view.ViewRunning;
 
-public class PreLogicRunning implements PreRunning{
+public class PreLogicRunning implements PreRunning {
     ViewRunning viewRunning;
     ResAPICommon resAPICommon;
     public PreLogicRunning(ViewRunning viewRunning){
@@ -13,7 +13,7 @@ public class PreLogicRunning implements PreRunning{
     }
 
     @Override
-    public void saveRunnig(){
+    public void saveRunning(){
         resAPICommon.RestPostClient(viewRunning.getMainActivity(),"", viewRunning.getValueRunning());
     }
 

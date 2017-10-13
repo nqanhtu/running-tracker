@@ -1,9 +1,9 @@
-package runningtracker.Presenter.PresenterRunning;
+package runningtracker.presenter.presenterrunning;
 
 
 
 public interface PreRunning {
-    void saveRunnig();
+    void saveRunning();
 
     void getData();
 
