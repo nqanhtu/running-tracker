@@ -68,7 +68,8 @@ public abstract class Calculator {
 	private static double restingMetabolicRateCalorieBurned(double runnerRestingMetabolicRate, double runningDurationInHour) {
 		// Resting Metabolic Rate is the amount of calorie burned in a day due to metabolism.
 		// So the below formula return the amount of metabolic calorie burned during running session.
-		return (runnerRestingMetabolicRate / 24) * runningDurationInHour / 3600;//change secs
+		//return (runnerRestingMetabolicRate / 24) * runningDurationInHour / 3600;//change secs
+		return (runnerRestingMetabolicRate / 24) * runningDurationInHour;
 	}
 
 	// The gross amount of calorie that the runner's body burns during the running session.
