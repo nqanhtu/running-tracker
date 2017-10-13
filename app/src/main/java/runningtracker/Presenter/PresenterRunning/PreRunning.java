@@ -1,19 +1,15 @@
-package runningtracker.Presenter.PresenterRunning;
+package runningtracker.presenter.presenterrunning;
 
 
-import android.content.Context;
 import android.location.Location;
-import android.os.Handler;
 
 import org.json.JSONException;
-import org.json.JSONObject;
 
-import runningtracker.Model.ModelRunning.M_BodilyCharacteristicObject;
-
+import runningtracker.model.modelrunning.M_BodilyCharacteristicObject;
 
 public interface PreRunning {
      //save data in server
-    void saveRunnig() throws JSONException;
+    void saveRunning() throws JSONException;
     //get data to server
     void getData();
     //diastance location

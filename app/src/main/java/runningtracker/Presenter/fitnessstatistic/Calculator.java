@@ -1,4 +1,4 @@
-package runningtracker.Presenter.fitnessstatistic;
+package runningtracker.presenter.fitnessstatistic;
 
 
 public abstract class Calculator {

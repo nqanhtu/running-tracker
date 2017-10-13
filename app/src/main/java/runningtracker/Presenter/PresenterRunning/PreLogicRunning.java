@@ -1,20 +1,21 @@
-package runningtracker.Presenter.PresenterRunning;
+package runningtracker.presenter.presenterrunning;
+
 
 
 import android.location.Location;
 import android.widget.Toast;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 
-import runningtracker.Model.DataCallback;
-import runningtracker.Model.ModelRunning.M_BodilyCharacteristicObject;
-import runningtracker.Model.ResAPICommon;
-import runningtracker.View.ViewRunning;
+import runningtracker.model.DataCallback;
+import runningtracker.model.modelrunning.M_BodilyCharacteristicObject;
+import runningtracker.model.ResAPICommon;
+import runningtracker.view.ViewRunning;
 
-public class PreLogicRunning implements PreRunning{
+
+public class PreLogicRunning implements PreRunning {
     ViewRunning viewRunning;
     ResAPICommon resAPICommon;
     public PreLogicRunning(ViewRunning viewRunning){
@@ -23,10 +24,10 @@ public class PreLogicRunning implements PreRunning{
     }
 
     @Override
-    public void saveRunnig() throws JSONException {
-        resAPICommon.RestPostClient(viewRunning.getMainActivity(),"http://192.168.43.188:8000/runningsession/new", viewRunning.getValueRunning());
+    public void saveRunning() throws JSONException {
+        resAPICommon.RestPostClient(viewRunning.getMainActivity(), "http://192.168.43.188:8000/runningsession/new", viewRunning.getValueRunning());
     }
-    //function get data using ResAPI
+        //function get data using ResAPI
     @Override
     public void getData() {
         //resAPICommon.RestGetClient("http://192.168.43.188:8000/runningsession/new", viewRunning.getMainActivity());

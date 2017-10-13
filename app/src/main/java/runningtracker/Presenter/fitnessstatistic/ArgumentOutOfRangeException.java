@@ -1,4 +1,4 @@
-package runningtracker.Presenter.fitnessstatistic;
+package runningtracker.presenter.fitnessstatistic;
 
 public class ArgumentOutOfRangeException extends IllegalArgumentException {
 	public final Number MIN;

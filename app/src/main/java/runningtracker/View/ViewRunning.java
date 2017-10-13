@@ -1,4 +1,4 @@
-package runningtracker.View;
+package runningtracker.view;
 
 import android.content.Context;
 

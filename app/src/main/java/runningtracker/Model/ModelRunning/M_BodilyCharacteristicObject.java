@@ -1,9 +1,5 @@
-package runningtracker.Model.ModelRunning;
+package runningtracker.model.modelrunning;
 
-
-
-import runningtracker.Model.ResAPICommon;
-import runningtracker.View.ViewRunning;
 
 /**
  * Created by Minh Tri on 2017-10-12.

@@ -1,7 +1,5 @@
-package runningtracker.Model.ModelRunning;
+package runningtracker.model.modelrunning;
 
-
-import java.sql.Timestamp;
 
 /**
  * Created by Minh Tri on 2017-10-04.

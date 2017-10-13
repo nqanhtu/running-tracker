@@ -7,9 +7,7 @@ import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
-import android.location.Criteria;
 import android.location.Location;
-import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
@@ -19,24 +17,29 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import runningtracker.Model.ModelRunning.M_BodilyCharacteristicObject;
-import runningtracker.Model.ModelRunning.M_DatabaseLocation;
-import runningtracker.Model.ModelRunning.M_LocationObject;
-import runningtracker.Presenter.PresenterRunning.PreLogicRunning;
-import runningtracker.Presenter.fitnessstatistic.Calculator;
-import runningtracker.View.ViewRunning;
+
+import runningtracker.model.modelrunning.M_BodilyCharacteristicObject;
+import runningtracker.model.modelrunning.M_DatabaseLocation;
+import runningtracker.model.modelrunning.M_LocationObject;
+import runningtracker.presenter.presenterrunning.PreLogicRunning;
+import runningtracker.presenter.fitnessstatistic.Calculator;
+import runningtracker.view.ViewRunning;
+
+import runningtracker.model.modelrunning.M_DatabaseLocation;
+import runningtracker.model.modelrunning.M_LocationObject;
+
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResolvableApiException;
@@ -54,7 +57,6 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
@@ -141,11 +143,6 @@ public class MainActivity extends AppCompatActivity  implements ViewRunning, OnM
     private Button mStopUpdatesButton;*/ //van tri
     //private M_LocationObject locationObject;
 
-
-    private Toolbar actionBar;
-
-    private ImageButton mStartUpdatesButton;
-    private ImageButton mStopUpdatesButton;
     //private LocationObject locationObject;
 
     /**
@@ -167,7 +164,7 @@ public class MainActivity extends AppCompatActivity  implements ViewRunning, OnM
     /*
      * Real timer running
      */
-    TextView txtTimer;
+    TextView txtTimer = (TextView) findViewById(R.id.textDurationValue);
     long lStartTime, lPauseTime, lSystemTime = 0L;
     Handler handler = new Handler();
     boolean isRun;
@@ -185,32 +182,18 @@ public class MainActivity extends AppCompatActivity  implements ViewRunning, OnM
         }
     };
 
-    PreLogicRunning preLogicRunning;
     M_BodilyCharacteristicObject m_Bodily;
+
+    private PreLogicRunning preLogicRunning;
+    private final M_DatabaseLocation mQuery = new M_DatabaseLocation(this);
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Set application toolbar for activity
-        actionBar = (Toolbar) findViewById(R.id.actionbar);
-        configActionBar();
-        setSupportActionBar(actionBar);
-
-        // Locate the UI widgets.
-        mStartUpdatesButton = (ImageButton) findViewById(R.id.buttonStart);
-        mStopUpdatesButton = (ImageButton) findViewById(R.id.buttonStop);
-        txtTimer = (TextView) findViewById(R.id.textDurationValue);
-
-        if (mGoogleApiClient == null) {
-            mGoogleApiClient = new GoogleApiClient.Builder(this)
-                    .addConnectionCallbacks(this)
-                    .addApi(LocationServices.API)
-                    .build();
-        }
-        MapFragment mapFragment = (MapFragment)getFragmentManager()
-                .findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);
+        initializeUI();
 
         mRequestingLocationUpdates = false;
         mLastUpdateTime = "";
@@ -239,27 +222,47 @@ public class MainActivity extends AppCompatActivity  implements ViewRunning, OnM
 
 
         final M_DatabaseLocation mQuery = new M_DatabaseLocation(this);
-        mStartUpdatesButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                mQuery.deleteAll();
-                //setupViewRunning();
-               // preLogicRunning.getData();
-                refreshMap(mMap);
-                startUpdatesButtonHandler(v);
-            }
-        });
-        mStopUpdatesButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                stopUpdatesButtonHandler(v);
-                rStop();
-                startPolyline();
-               /* try {
-                    preLogicRunning.saveRunnig();
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }*/
-            }
-        });
+//        mStartUpdatesButton.setOnClickListener(new View.OnClickListener() {
+//            public void onClick(View v) {
+//                mQuery.deleteAll();
+//                //setupViewRunning();
+//               // preLogicRunning.getData();
+//                refreshMap(mMap);
+//                startUpdatesButtonHandler(v);
+//            }
+//        });
+//        mStopUpdatesButton.setOnClickListener(new View.OnClickListener() {
+//            public void onClick(View v) {
+//                stopUpdatesButtonHandler(v);
+//                rStop();
+//                startPolyline();
+//                try {
+//                    preLogicRunning.saveRunning();
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        });
+//        startButton.setOnClickListener(new View.OnClickListener() {
+//            public void onClick(View v) {
+//                // Perform animation
+//                Animation separateButton = AnimationUtils.loadAnimation(MainActivity.this, R.anim.pause_button_separation);
+//                v.startAnimation(separateButton);
+//
+//                mQuery.deleteAll();
+//                preLogicRunning.getData();
+//                refreshMap(mMap);
+//                startUpdatesButtonHandler(v);
+//            }
+//        });
+//        stopButton.setOnClickListener(new View.OnClickListener() {
+//            public void onClick(View v) {
+//                stopUpdatesButtonHandler(v);
+//                startPolyline();
+//                //preLogicRunning.saveRunning();
+//            }
+//        });
+
     }
 
     /**
@@ -402,17 +405,17 @@ public class MainActivity extends AppCompatActivity  implements ViewRunning, OnM
      * if the user is requesting location updates.
      */
     private void setButtonsEnabledState() {
-        if (mRequestingLocationUpdates) {
-            mStartUpdatesButton.setEnabled(false);
-            mStartUpdatesButton.setVisibility(Button.INVISIBLE);
-            mStopUpdatesButton.setEnabled(true);
-            mStopUpdatesButton.setVisibility(Button.VISIBLE);
-        } else {
-            mStartUpdatesButton.setEnabled(true);
-            mStartUpdatesButton.setVisibility(Button.VISIBLE);
-            mStopUpdatesButton.setEnabled(false);
-            mStopUpdatesButton.setVisibility(Button.INVISIBLE);
-        }
+//        if (mRequestingLocationUpdates) {
+//            startButton.setEnabled(false);
+//            startButton.setVisibility(Button.INVISIBLE);
+//            stopButton.setEnabled(true);
+//            stopButton.setVisibility(Button.VISIBLE);
+//        } else {
+//            startButton.setEnabled(true);
+//            startButton.setVisibility(Button.VISIBLE);
+//            stopButton.setEnabled(false);
+//            stopButton.setVisibility(Button.INVISIBLE);
+//        }
     }
     /**
      * Handles the Start Updates button and requests start of location updates. Does nothing if
@@ -673,6 +676,7 @@ public class MainActivity extends AppCompatActivity  implements ViewRunning, OnM
         return MainActivity.this;
     }
 
+
     public void rStart(){
         if(isRun)
             return;
@@ -694,14 +698,9 @@ public class MainActivity extends AppCompatActivity  implements ViewRunning, OnM
         TextView txtDisaTance = (TextView) findViewById(R.id.textDistanceValue);
         TextView txtNetCalorie = (TextView) findViewById(R.id.textCalorieValue);
         TextView txtPace = (TextView) findViewById(R.id.textPaceValue);
-        txtDisaTance.setText(Float.toString(mDistanceValue));
+/*        txtDisaTance.setText(Float.toString(mDistanceValue));
         txtNetCalorie.setText(Float.toString(mCalorie));
-        txtPace.setText(Float.toString(mPaceValue));
-    }
-
-    private void configActionBar() {
-        actionBar.setTitle(R.string.RunningTitle);
-        actionBar.setTitleTextColor(ContextCompat.getColor(this, R.color.colorSecondary));
+        txtPace.setText(Float.toString(mPaceValue));*/
     }
 
     @Override
@@ -720,4 +719,96 @@ public class MainActivity extends AppCompatActivity  implements ViewRunning, OnM
                 return super.onOptionsItemSelected(item);
         }
     }
+
+    private void initializeUI() {
+        // Toolbar
+        Toolbar actionBar = (Toolbar) findViewById(R.id.actionbar);
+        actionBar.setTitle(R.string.RunningTitle);
+        actionBar.setTitleTextColor(ContextCompat.getColor(this, R.color.colorSecondary));
+        setSupportActionBar(actionBar);
+
+        // Map
+        if (mGoogleApiClient == null) {
+            mGoogleApiClient = new GoogleApiClient.Builder(this)
+                    .addConnectionCallbacks(this)
+                    .addApi(LocationServices.API)
+                    .build();
+        }
+
+        MapFragment mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.map);
+        mapFragment.getMapAsync(this);
+    }
+
+    public void onClickStartButton(View startButton) {
+        // Perform animation
+//        ViewGroup parentLayout = (ViewGroup) findViewById(R.id.belowSectionLayout);
+        ImageButton pauseButton = (ImageButton) findViewById(R.id.pauseButton);
+        ImageButton stopButton = (ImageButton) findViewById(R.id.stopButton);
+
+        /*Animation pauseButtonAnimation = AnimationUtils.loadAnimation(MainActivity.this, R.anim.pause_button_separation);
+        Animation stopButtonAnimation = AnimationUtils.loadAnimation(MainActivity.this, R.anim.stop_button_separation);*/
+        startButton.setEnabled(false);
+        pauseButton.setEnabled(true);
+        stopButton.setEnabled(true);
+//        TransitionManager.beginDelayedTransition(parentLayout);
+        startButton.setVisibility(View.INVISIBLE);
+        pauseButton.setVisibility(View.VISIBLE);
+        stopButton.setVisibility(View.VISIBLE);
+//        pauseButton.startAnimation(pauseButtonAnimation);
+//        stopButton.startAnimation(stopButtonAnimation);
+
+         mQuery.deleteAll();
+         preLogicRunning.getData();
+//         setupViewRunning();
+//         preLogicRunning.getData();
+         refreshMap(mMap);
+         startUpdatesButtonHandler(startButton);
+    }
+
+    public void onClickPauseButton(View pauseButton) {
+        // Perform animation
+        ImageButton resumeButton = (ImageButton) findViewById(R.id.resumeButton);
+        ImageButton stopButton = (ImageButton) findViewById(R.id.stopButton);
+        Animation resumeButtonAnimation = AnimationUtils.loadAnimation(MainActivity.this, R.anim.resume_button_fade_in);
+        Animation pauseButtonAnimation = AnimationUtils.loadAnimation(MainActivity.this, R.anim.pause_button_unification);
+        Animation stopButtonAnimation = AnimationUtils.loadAnimation(MainActivity.this, R.anim.stop_button_unification);
+        resumeButton.setEnabled(true);
+        pauseButton.setEnabled(false);
+        stopButton.setEnabled(false);
+        resumeButton.setVisibility(View.VISIBLE);
+        pauseButton.setVisibility(View.INVISIBLE);
+        stopButton.setVisibility(View.INVISIBLE);
+        resumeButton.startAnimation(resumeButtonAnimation);
+        pauseButton.startAnimation(pauseButtonAnimation);
+        stopButton.startAnimation(stopButtonAnimation);
+    }
+
+    public void onClickResumeButton(View resumeButton) {
+        // Perform animation
+        ImageButton pauseButton = (ImageButton) findViewById(R.id.pauseButton);
+        ImageButton stopButton = (ImageButton) findViewById(R.id.stopButton);
+        Animation pauseButtonAnimation = AnimationUtils.loadAnimation(MainActivity.this, R.anim.pause_button_separation);
+        Animation stopButtonAnimation = AnimationUtils.loadAnimation(MainActivity.this, R.anim.stop_button_separation);
+        resumeButton.setEnabled(false);
+        pauseButton.setEnabled(true);
+        stopButton.setEnabled(true);
+        resumeButton.setVisibility(View.INVISIBLE);
+        pauseButton.setVisibility(View.VISIBLE);
+        stopButton.setVisibility(View.VISIBLE);
+        pauseButton.startAnimation(pauseButtonAnimation);
+        stopButton.startAnimation(stopButtonAnimation);
+    }
+
+    public void onClickStopButton(View view) {
+        stopUpdatesButtonHandler(view);
+        rStop();
+//        startPolyline();
+        try {
+            preLogicRunning.saveRunning();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    
 }

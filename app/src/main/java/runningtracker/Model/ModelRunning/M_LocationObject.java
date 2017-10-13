@@ -1,4 +1,4 @@
-package runningtracker.Model.ModelRunning;
+package runningtracker.model.modelrunning;
 
 
 public class M_LocationObject {
