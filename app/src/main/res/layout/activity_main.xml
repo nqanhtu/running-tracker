@@ -4,9 +4,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android.support.v7.appcompat="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".view.MainActivity"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity"
 >
 
     <android.support.constraint.ConstraintLayout
@@ -22,7 +22,7 @@
     >
 
         <android.support.v7.widget.Toolbar
-            style="@style/DarkToolbar"
+            style="@style/Toolbar"
             android:id="@+id/actionbar"
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
             android.support.v7.appcompat:navigationIcon="@drawable/ic_menu_white_24dp"
@@ -245,18 +245,6 @@
                 app:layout_constraintRight_toRightOf="parent"
             />
         </FrameLayout>
-
-        <!--<fragment-->
-            <!--android:id="@+id/map"-->
-            <!--android:name="com.google.android.gms.maps.MapFragment"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="match_parent"-->
-
-            <!--app:layout_constraintTop_toBottomOf="parent"-->
-            <!--app:layout_constraintBottom_toBottomOf="parent"-->
-            <!--app:layout_constraintLeft_toLeftOf="parent"-->
-            <!--app:layout_constraintRight_toRightOf="parent"-->
-        <!--/>-->
 
         <ImageButton
             style="@style/ActionCircularImageButton"
