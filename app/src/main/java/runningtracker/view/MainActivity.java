@@ -1,4 +1,4 @@
-package runningtracker;
+package runningtracker.view;
 
 import android.Manifest;
 import android.app.Activity;
@@ -32,15 +32,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import runningtracker.R;
 import runningtracker.model.modelrunning.M_BodilyCharacteristicObject;
 import runningtracker.model.modelrunning.M_DatabaseLocation;
 import runningtracker.model.modelrunning.M_LocationObject;
 import runningtracker.presenter.presenterrunning.PreLogicRunning;
 import runningtracker.presenter.fitnessstatistic.Calculator;
-import runningtracker.view.ViewRunning;
-
-import runningtracker.model.modelrunning.M_DatabaseLocation;
-import runningtracker.model.modelrunning.M_LocationObject;
 
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.GoogleApiClient;
