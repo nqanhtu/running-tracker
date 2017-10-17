@@ -4,9 +4,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android.support.v7.appcompat="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".view.MainActivity"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity"
 >
 
     <android.support.constraint.ConstraintLayout
@@ -22,7 +22,7 @@
     >
 
         <android.support.v7.widget.Toolbar
-            style="@style/DarkToolbar"
+            style="@style/Toolbar"
             android:id="@+id/actionbar"
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
             android.support.v7.appcompat:navigationIcon="@drawable/ic_menu_white_24dp"
@@ -30,6 +30,9 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
+            android:layout_marginTop="0dp"
+            android:layout_marginLeft="0dp"
+            android:layout_marginRight="0dp"
         />
 
         <!--Duration-->
@@ -39,9 +42,11 @@
             android:text="00:00:00"
 
             app:layout_constraintTop_toBottomOf="@+id/actionbar"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="0dp"
+            android:layout_marginBottom="100dp"
             android:layout_marginLeft="0dp"
             android:layout_marginRight="0dp"
 
@@ -79,12 +84,13 @@
             style="@style/textMediumValue"
             android:id="@+id/textPaceValue"
             android:text="00:00"
-            android:contentDescription="Average Pace"
 
             app:layout_constraintTop_toBottomOf="@+id/textDurationValue"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="@+id/textDurationValue"
             app:layout_constraintRight_toRightOf="@+id/textDurationValue"
-            android:layout_marginTop="50dp"
+            android:layout_marginTop="40dp"
+            android:layout_marginBottom="8dp"
             android:layout_marginLeft="0dp"
             android:layout_marginRight="0dp"
         />
@@ -92,7 +98,7 @@
         <TextView
             style="@style/textDescription"
             android:id="@+id/textPace"
-            android:text="@string/pace"
+            android:text="@string/avgPace"
 
             app:layout_constraintTop_toTopOf="@+id/textPaceValue"
             app:layout_constraintLeft_toLeftOf="@+id/textPaceValue"
@@ -123,9 +129,11 @@
             android:id="@+id/textDistanceValue"
             android:text="0.0"
 
+            app:layout_constraintTop_toTopOf="@+id/textPaceValue"
             app:layout_constraintBottom_toBottomOf="@+id/textPaceValue"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toLeftOf="@+id/textPaceValue"
+            android:layout_marginTop="0dp"
             android:layout_marginBottom="0dp"
             android:layout_marginLeft="0dp"
             android:layout_marginRight="0dp"
@@ -166,8 +174,10 @@
             android:text="0000"
 
             app:layout_constraintBottom_toBottomOf="@+id/textPaceValue"
+            app:layout_constraintTop_toTopOf="@+id/textPaceValue"
             app:layout_constraintLeft_toRightOf="@+id/textPaceValue"
             app:layout_constraintRight_toRightOf="parent"
+            android:layout_marginTop="0dp"
             android:layout_marginBottom="0dp"
             android:layout_marginLeft="0dp"
             android:layout_marginRight="0dp"
@@ -245,18 +255,6 @@
                 app:layout_constraintRight_toRightOf="parent"
             />
         </FrameLayout>
-
-        <!--<fragment-->
-            <!--android:id="@+id/map"-->
-            <!--android:name="com.google.android.gms.maps.MapFragment"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="match_parent"-->
-
-            <!--app:layout_constraintTop_toBottomOf="parent"-->
-            <!--app:layout_constraintBottom_toBottomOf="parent"-->
-            <!--app:layout_constraintLeft_toLeftOf="parent"-->
-            <!--app:layout_constraintRight_toRightOf="parent"-->
-        <!--/>-->
 
         <ImageButton
             style="@style/ActionCircularImageButton"
