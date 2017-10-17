@@ -49,7 +49,7 @@ public class PreLogicRunning implements PreRunning {
     @Override
     public void getBodilyCharacter(M_BodilyCharacteristicObject m_Bodily) throws JSONException {
         final M_BodilyCharacteristicObject finalM_Bodily = m_Bodily;
-        ResAPICommon.RestGetClient("http://14.169.146.178/appuser/get/6", viewRunning.getMainActivity(),
+        ResAPICommon.RestGetClient("http://14.169.228.44/appuser/get/6", viewRunning.getMainActivity(),
                 new DataCallback() {
                     @Override
                     public void onSuccess(JSONObject result) {

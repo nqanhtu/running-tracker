@@ -15,6 +15,7 @@ import android.os.Looper;
 import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.transition.TransitionManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -23,6 +24,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
@@ -59,6 +61,8 @@ import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polygon;
+import com.google.android.gms.maps.model.PolygonOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -129,21 +133,14 @@ public class MainActivity extends AppCompatActivity  implements ViewRunning, OnM
    // public M_DatabaseLocation mQuery;
     private ArrayList<M_LocationObject> startToPresentLocations;
     private Polyline polyline;
-
+    private Polygon polygon;
+    private boolean checkTime;
 
     /**
      * Represents a geographical location.
      */
     private Location mCurrentLocation;
     LocationManager rLocationManager;
-
-
-
- /*   private Button mStartUpdatesButton;
-    private Button mStopUpdatesButton;*/ //van tri
-    //private M_LocationObject locationObject;
-
-    //private LocationObject locationObject;
 
     /**
      * Tracks the status of the location updates request. Value changes when the user presses the
@@ -164,7 +161,7 @@ public class MainActivity extends AppCompatActivity  implements ViewRunning, OnM
     /*
      * Real timer running
      */
-    TextView txtTimer = (TextView) findViewById(R.id.textDurationValue);
+    TextView txtTimer;
     long lStartTime, lPauseTime, lSystemTime = 0L;
     Handler handler = new Handler();
     boolean isRun;
@@ -210,6 +207,8 @@ public class MainActivity extends AppCompatActivity  implements ViewRunning, OnM
         createLocationCallback();
         createLocationRequest();
         buildLocationSettingsRequest();
+        txtTimer = (TextView) findViewById(R.id.textDurationValue);
+        checkTime = false;
 
         preLogicRunning = new PreLogicRunning(this);
 
@@ -222,47 +221,6 @@ public class MainActivity extends AppCompatActivity  implements ViewRunning, OnM
 
 
         final M_DatabaseLocation mQuery = new M_DatabaseLocation(this);
-//        mStartUpdatesButton.setOnClickListener(new View.OnClickListener() {
-//            public void onClick(View v) {
-//                mQuery.deleteAll();
-//                //setupViewRunning();
-//               // preLogicRunning.getData();
-//                refreshMap(mMap);
-//                startUpdatesButtonHandler(v);
-//            }
-//        });
-//        mStopUpdatesButton.setOnClickListener(new View.OnClickListener() {
-//            public void onClick(View v) {
-//                stopUpdatesButtonHandler(v);
-//                rStop();
-//                startPolyline();
-//                try {
-//                    preLogicRunning.saveRunning();
-//                } catch (JSONException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        });
-//        startButton.setOnClickListener(new View.OnClickListener() {
-//            public void onClick(View v) {
-//                // Perform animation
-//                Animation separateButton = AnimationUtils.loadAnimation(MainActivity.this, R.anim.pause_button_separation);
-//                v.startAnimation(separateButton);
-//
-//                mQuery.deleteAll();
-//                preLogicRunning.getData();
-//                refreshMap(mMap);
-//                startUpdatesButtonHandler(v);
-//            }
-//        });
-//        stopButton.setOnClickListener(new View.OnClickListener() {
-//            public void onClick(View v) {
-//                stopUpdatesButtonHandler(v);
-//                startPolyline();
-//                //preLogicRunning.saveRunning();
-//            }
-//        });
-
     }
 
     /**
@@ -362,7 +320,6 @@ public class MainActivity extends AppCompatActivity  implements ViewRunning, OnM
             if (savedInstanceState.keySet().contains(KEY_LAST_UPDATED_TIME_STRING)) {
                 mLastUpdateTime = savedInstanceState.getString(KEY_LAST_UPDATED_TIME_STRING);
             }
-            updateUI();
         }
     }
     /**
@@ -388,35 +345,12 @@ public class MainActivity extends AppCompatActivity  implements ViewRunning, OnM
                     case Activity.RESULT_CANCELED:
                         Log.i(TAG, "User chose not to make required location settings changes.");
                         mRequestingLocationUpdates = false;
-                        updateUI();
                         break;
                 }
                 break;
         }
     }
-    private void updateUI() {
-        setButtonsEnabledState();
-        //updateLocationUI();
-    }
-    /**
-     * Disables both buttons when functionality is disabled due to insuffucient location settings.
-     * Otherwise ensures that only one button is enabled at any time. The Start Updates button is
-     * enabled if the user is not requesting location updates. The Stop Updates button is enabled
-     * if the user is requesting location updates.
-     */
-    private void setButtonsEnabledState() {
-//        if (mRequestingLocationUpdates) {
-//            startButton.setEnabled(false);
-//            startButton.setVisibility(Button.INVISIBLE);
-//            stopButton.setEnabled(true);
-//            stopButton.setVisibility(Button.VISIBLE);
-//        } else {
-//            startButton.setEnabled(true);
-//            startButton.setVisibility(Button.VISIBLE);
-//            stopButton.setEnabled(false);
-//            stopButton.setVisibility(Button.INVISIBLE);
-//        }
-    }
+
     /**
      * Handles the Start Updates button and requests start of location updates. Does nothing if
      * updates have already been requested.
@@ -424,7 +358,7 @@ public class MainActivity extends AppCompatActivity  implements ViewRunning, OnM
     public void startUpdatesButtonHandler(View view) {
         if (!mRequestingLocationUpdates) {
             mRequestingLocationUpdates = true;
-            setButtonsEnabledState();
+           // setButtonsEnabledState();
             startLocationUpdates();
         }
     }
@@ -432,9 +366,6 @@ public class MainActivity extends AppCompatActivity  implements ViewRunning, OnM
      * Handles the Stop Updates button, and requests removal of location updates.
      */
     public void stopUpdatesButtonHandler(View view) {
-        // It is a good practice to remove location requests when the activity is in a paused or
-        // stopped state. Doing so helps battery performance and is especially
-        // recommended in applications that request frequent location updates.
         stopLocationUpdates();
     }
     /**
@@ -445,7 +376,6 @@ public class MainActivity extends AppCompatActivity  implements ViewRunning, OnM
             Log.d(TAG, "stopLocationUpdates: updates never requested, no-op.");
             return;
         }
-
         // It is a good practice to remove location requests when the activity is in a paused or
         // stopped state. Doing so helps battery performance and is especially
         // recommended in applications that request frequent location updates.
@@ -454,7 +384,7 @@ public class MainActivity extends AppCompatActivity  implements ViewRunning, OnM
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         mRequestingLocationUpdates = false;
-                        setButtonsEnabledState();
+                       // setButtonsEnabledState();
                     }
                 });
     }
@@ -465,13 +395,11 @@ public class MainActivity extends AppCompatActivity  implements ViewRunning, OnM
                     @Override
                     public void onSuccess(LocationSettingsResponse locationSettingsResponse) {
                         Log.i(TAG, "All location settings are satisfied.");
-
+                        checkTime = true;
                         //noinspection MissingPermission
                         mFusedLocationClient.requestLocationUpdates(mLocationRequest,
                                 mLocationCallback,
                                 Looper.myLooper());
-
-                        updateUI();
                     }
                 })
                 .addOnFailureListener(this, new OnFailureListener() {
@@ -498,8 +426,6 @@ public class MainActivity extends AppCompatActivity  implements ViewRunning, OnM
                                 Toast.makeText(MainActivity.this, errorMessage, Toast.LENGTH_LONG).show();
                                 mRequestingLocationUpdates = false;
                         }
-
-                        updateUI();
                     }
                 });
     }
@@ -511,7 +437,10 @@ public class MainActivity extends AppCompatActivity  implements ViewRunning, OnM
         iLocation.setLatitudeValue(location.getLatitude());
         iLocation.setLongitudeValue(location.getLongitude());
         moveCamera(location);
-        rStart();
+        if(checkTime == true){
+            rStart();
+            checkTime = false;
+        }
         if(mLatitude != 0){
             rlocation = new Location("A");
             rlocation.setLatitude(mLatitude);
@@ -541,7 +470,7 @@ public class MainActivity extends AppCompatActivity  implements ViewRunning, OnM
         if(checkPermissions()) {
             mMap = googleMap;
             mMap.setMyLocationEnabled(true);
-           mMap.getUiSettings().setMyLocationButtonEnabled(false);
+            mMap.getUiSettings().setMyLocationButtonEnabled(false);
             Location L = getMyLocation();
             if(L != null) {
                 moveCamera(L);
@@ -593,9 +522,13 @@ public class MainActivity extends AppCompatActivity  implements ViewRunning, OnM
 
     }
     private void polylineBetweenTwoPoint(Location A, Location B){
-        polyline = mMap.addPolyline(new PolylineOptions()
+        /*polyline = mMap.addPolyline(new PolylineOptions()
                 .add(new LatLng(A.getLatitude(), A.getLongitude()),
-                        new LatLng(B.getLatitude(), B.getLongitude())).color(Color.BLUE).width(10).geodesic(true));
+                        new LatLng(B.getLatitude(), B.getLongitude())).color(Color.BLUE).width(10).geodesic(true));*/
+         polygon = mMap.addPolygon(new PolygonOptions()
+                .add(new LatLng(A.getLatitude(), A.getLongitude()), new LatLng(B.getLatitude(), B.getLongitude()))
+                .strokeColor(Color.BLUE)
+                .fillColor(Color.BLUE));
     }
     private void refreshMap(GoogleMap mapInstance){
         mapInstance.clear();
@@ -607,46 +540,8 @@ public class MainActivity extends AppCompatActivity  implements ViewRunning, OnM
     }
 
 
-
-
     @Override
     public void onConnectionSuspended(int i) {
-
-    }
-
-    @Override
-    protected void onStart() {
-        // mGoogleApiClient.connect();
-
-
-        super.onStart();
-
-
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        // Within {@code onPause()}, we remove location updates. Here, we resume receiving
-        // location updates if the user has requested them.
-        if (mRequestingLocationUpdates && checkPermissions()) {
-            startLocationUpdates();
-        }
-        updateUI();
-    }
-    @Override
-    protected void onPause() {
-        super.onPause();
-        // Remove location updates to save battery.
-        stopLocationUpdates();
-
-    }
-
-
-    @Override
-    protected void onStop() {
-
-        super.onStop();
 
     }
 
@@ -676,7 +571,6 @@ public class MainActivity extends AppCompatActivity  implements ViewRunning, OnM
         return MainActivity.this;
     }
 
-
     public void rStart(){
         if(isRun)
             return;
@@ -691,6 +585,13 @@ public class MainActivity extends AppCompatActivity  implements ViewRunning, OnM
          lPauseTime = 0;
          handler.removeCallbacks(runnable);
      }
+     public void rPause(){
+         if(!isRun)
+             return;
+         isRun = false;
+         lPauseTime += lSystemTime;
+         handler.removeCallbacks(runnable);
+     }
 
     @Override
     public void setupViewRunning(float mDistanceValue, float mPaceValue, float mCalorie) {
@@ -698,9 +599,9 @@ public class MainActivity extends AppCompatActivity  implements ViewRunning, OnM
         TextView txtDisaTance = (TextView) findViewById(R.id.textDistanceValue);
         TextView txtNetCalorie = (TextView) findViewById(R.id.textCalorieValue);
         TextView txtPace = (TextView) findViewById(R.id.textPaceValue);
-/*        txtDisaTance.setText(Float.toString(mDistanceValue));
+        txtDisaTance.setText(Float.toString(mDistanceValue));
         txtNetCalorie.setText(Float.toString(mCalorie));
-        txtPace.setText(Float.toString(mPaceValue));*/
+        txtPace.setText(Float.toString(mPaceValue));
     }
 
     @Override
@@ -741,28 +642,26 @@ public class MainActivity extends AppCompatActivity  implements ViewRunning, OnM
 
     public void onClickStartButton(View startButton) {
         // Perform animation
-//        ViewGroup parentLayout = (ViewGroup) findViewById(R.id.belowSectionLayout);
+        ViewGroup parentLayout = (ViewGroup) findViewById(R.id.belowSectionLayout);//
         ImageButton pauseButton = (ImageButton) findViewById(R.id.pauseButton);
         ImageButton stopButton = (ImageButton) findViewById(R.id.stopButton);
 
-        /*Animation pauseButtonAnimation = AnimationUtils.loadAnimation(MainActivity.this, R.anim.pause_button_separation);
-        Animation stopButtonAnimation = AnimationUtils.loadAnimation(MainActivity.this, R.anim.stop_button_separation);*/
+        //Animation pauseButtonAnimation = AnimationUtils.loadAnimation(MainActivity.this, R.anim.pause_button_separation);  //
+        //Animation stopButtonAnimation = AnimationUtils.loadAnimation(MainActivity.this, R.anim.stop_button_separation);  //
         startButton.setEnabled(false);
         pauseButton.setEnabled(true);
         stopButton.setEnabled(true);
-//        TransitionManager.beginDelayedTransition(parentLayout);
+        TransitionManager.beginDelayedTransition(parentLayout);//
         startButton.setVisibility(View.INVISIBLE);
         pauseButton.setVisibility(View.VISIBLE);
         stopButton.setVisibility(View.VISIBLE);
-//        pauseButton.startAnimation(pauseButtonAnimation);
-//        stopButton.startAnimation(stopButtonAnimation);
-
-         mQuery.deleteAll();
-         preLogicRunning.getData();
-//         setupViewRunning();
-//         preLogicRunning.getData();
-         refreshMap(mMap);
-         startUpdatesButtonHandler(startButton);
+        //pauseButton.startAnimation(pauseButtonAnimation);  //
+        //stopButton.startAnimation(stopButtonAnimation);  //
+        mQuery.deleteAll();
+        preLogicRunning.getData();
+        startUpdatesButtonHandler(startButton);
+        refreshMap(mMap);
+       // tartUpdatesButtonHandler(startButton);  //
     }
 
     public void onClickPauseButton(View pauseButton) {
@@ -770,8 +669,8 @@ public class MainActivity extends AppCompatActivity  implements ViewRunning, OnM
         ImageButton resumeButton = (ImageButton) findViewById(R.id.resumeButton);
         ImageButton stopButton = (ImageButton) findViewById(R.id.stopButton);
         Animation resumeButtonAnimation = AnimationUtils.loadAnimation(MainActivity.this, R.anim.resume_button_fade_in);
-        Animation pauseButtonAnimation = AnimationUtils.loadAnimation(MainActivity.this, R.anim.pause_button_unification);
-        Animation stopButtonAnimation = AnimationUtils.loadAnimation(MainActivity.this, R.anim.stop_button_unification);
+        //Animation pauseButtonAnimation = AnimationUtils.loadAnimation(MainActivity.this, R.anim.pause_button_unification);
+        //Animation stopButtonAnimation = AnimationUtils.loadAnimation(MainActivity.this, R.anim.stop_button_unification);
         resumeButton.setEnabled(true);
         pauseButton.setEnabled(false);
         stopButton.setEnabled(false);
@@ -779,36 +678,39 @@ public class MainActivity extends AppCompatActivity  implements ViewRunning, OnM
         pauseButton.setVisibility(View.INVISIBLE);
         stopButton.setVisibility(View.INVISIBLE);
         resumeButton.startAnimation(resumeButtonAnimation);
-        pauseButton.startAnimation(pauseButtonAnimation);
-        stopButton.startAnimation(stopButtonAnimation);
+        //pauseButton.startAnimation(pauseButtonAnimation);
+        //stopButton.startAnimation(stopButtonAnimation);
+        //
+        rPause();
+        stopUpdatesButtonHandler(pauseButton);
     }
 
     public void onClickResumeButton(View resumeButton) {
         // Perform animation
         ImageButton pauseButton = (ImageButton) findViewById(R.id.pauseButton);
         ImageButton stopButton = (ImageButton) findViewById(R.id.stopButton);
-        Animation pauseButtonAnimation = AnimationUtils.loadAnimation(MainActivity.this, R.anim.pause_button_separation);
-        Animation stopButtonAnimation = AnimationUtils.loadAnimation(MainActivity.this, R.anim.stop_button_separation);
+        //Animation pauseButtonAnimation = AnimationUtils.loadAnimation(MainActivity.this, R.anim.pause_button_separation);
+        //Animation stopButtonAnimation = AnimationUtils.loadAnimation(MainActivity.this, R.anim.stop_button_separation);
         resumeButton.setEnabled(false);
         pauseButton.setEnabled(true);
         stopButton.setEnabled(true);
         resumeButton.setVisibility(View.INVISIBLE);
         pauseButton.setVisibility(View.VISIBLE);
         stopButton.setVisibility(View.VISIBLE);
-        pauseButton.startAnimation(pauseButtonAnimation);
-        stopButton.startAnimation(stopButtonAnimation);
+        //pauseButton.startAnimation(pauseButtonAnimation);
+        //stopButton.startAnimation(stopButtonAnimation);
+        //
+        rStart();
+        startLocationUpdates();
     }
 
     public void onClickStopButton(View view) {
         stopUpdatesButtonHandler(view);
         rStop();
-//        startPolyline();
         try {
             preLogicRunning.saveRunning();
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
-
-    
 }
