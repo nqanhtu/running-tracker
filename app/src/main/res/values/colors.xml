@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="colorPrimary">#009688</color>
-    <color name="colorSecondary">#FFFFFF</color>
+    <color name="colorPrimaryDark">#00796B</color>
+    <color name="colorAccent">#F4511E</color>
+    <color name="textColorPrimary">#FFFFFF</color>
+    <color name="navigationBarColor">#000000</color>
     <color name="colorStartBtn">#536DFE</color>
     <color name="colorPauseBtn">#E57373</color>
     <color name="colorResumeBtn">#536DFE</color>
