@@ -67,6 +67,6 @@ public class PreLogicRunning implements PreRunning {
                         }
                     }
                 }
-                );
+        );
     }
 }

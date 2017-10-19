@@ -210,7 +210,7 @@ public class MainActivity extends AppCompatActivity  implements ViewRunning, OnM
         createLocationCallback();
         createLocationRequest();
         buildLocationSettingsRequest();
-        txtTimer = (TextView) findViewById(R.id.textDurationValue);
+        txtTimer = (TextView) findViewById(R.id.textValueDuration);
         checkTime = false;
         preLogicRunning = new PreLogicRunning(this);
 
@@ -586,10 +586,10 @@ public class MainActivity extends AppCompatActivity  implements ViewRunning, OnM
     @Override
     public void setupViewRunning(float mDistanceValue, float mPaceValue, float mCalorie) {
 
-        TextView txtDisaTance = (TextView) findViewById(R.id.textDistanceValue);
-        TextView txtNetCalorie = (TextView) findViewById(R.id.textCalorieValue);
-        TextView txtPace = (TextView) findViewById(R.id.textPaceValue);
-        txtDisaTance.setText(Float.toString(mDistanceValue));
+        TextView txtDistance = (TextView) findViewById(R.id.textValueDistance);
+        TextView txtNetCalorie = (TextView) findViewById(R.id.textValueCalorie);
+        TextView txtPace = (TextView) findViewById(R.id.textValuePace);
+        txtDistance.setText(Float.toString(mDistanceValue));
         txtNetCalorie.setText(Float.toString(mCalorie));
         String rMin ="";
         String rSec ="";
@@ -650,8 +650,8 @@ public class MainActivity extends AppCompatActivity  implements ViewRunning, OnM
         mapFragment.getMapAsync(this);
     }
 
-    //sent date to ResultActivity
-    public void sentDataToResult() throws JSONException {
+    //send data to ResultActivity
+    public void sendDataToResult() throws JSONException {
         //calculator grossCalorieBurned
         rGrossCalorie = 0;
         if(m_Bodily != null) {
@@ -661,10 +661,10 @@ public class MainActivity extends AppCompatActivity  implements ViewRunning, OnM
 
         Intent nextActivity = new Intent(MainActivity.this, ResultActivity.class);
         nextActivity.putExtra("duration", rUpdateTime);//mili
-        nextActivity.putExtra("pace", preLogicRunning.RoundAvoid(rPace,2));
-        nextActivity.putExtra("netCalorie", preLogicRunning.RoundAvoid(rCalories,1));
         nextActivity.putExtra("distance", preLogicRunning.RoundAvoid(rDisaTance,2));
+        nextActivity.putExtra("avgPace", preLogicRunning.RoundAvoid(rPace,2));
         nextActivity.putExtra("maxPace", preLogicRunning.RoundAvoid(maxPace,2));
+        nextActivity.putExtra("netCalorie", preLogicRunning.RoundAvoid(rCalories,1));
         nextActivity.putExtra("grossCalorie", preLogicRunning.RoundAvoid(rGrossCalorie,1));
         //save data to server
         preLogicRunning.saveRunning();
@@ -673,10 +673,9 @@ public class MainActivity extends AppCompatActivity  implements ViewRunning, OnM
     }
 
     public void onClickStartButton(View startButton) {
-        if(mLatitude == 0)
+        if(mLatitude != 0)
         {
             // Perform animation
-            ViewGroup parentLayout = (ViewGroup) findViewById(R.id.belowSectionLayout);
             ImageButton pauseButton = (ImageButton) findViewById(R.id.pauseButton);
             ImageButton stopButton = (ImageButton) findViewById(R.id.stopButton);
 
@@ -745,7 +744,7 @@ public class MainActivity extends AppCompatActivity  implements ViewRunning, OnM
         stopUpdatesButtonHandler(view);
         rStop();
         stopCurrentTime = Calendar.getInstance().getTime();
-        sentDataToResult();
+        sendDataToResult();
 
     }
 }

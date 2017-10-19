@@ -29,9 +29,8 @@
 
     <TextView
         style="@style/textDescription"
-        android:id="@+id/textDistanceDuration"
+        android:id="@+id/textDescriptionDuration"
         android:text="@string/duration"
-        android:textSize="12sp"
 
         app:layout_constraintBottom_toTopOf="@+id/textValueDuration"
         app:layout_constraintLeft_toLeftOf="@+id/textValueDuration"
@@ -79,9 +78,8 @@
 
     <TextView
         style="@style/textDescription"
-        android:id="@+id/textDistanceDistance"
+        android:id="@+id/textDescriptionDistance"
         android:text="@string/distanceMetric"
-        android:textSize="12sp"
 
         app:layout_constraintBottom_toTopOf="@+id/textValueDistance"
         app:layout_constraintLeft_toLeftOf="@+id/textValueDistance"
@@ -95,7 +93,7 @@
         android:id="@+id/iconDistance"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:srcCompat="@drawable/timer"
+        app:srcCompat="@drawable/road_variant"
 
         app:layout_constraintTop_toTopOf="@+id/textValueDistance"
         app:layout_constraintBottom_toBottomOf="@+id/textValueDistance"
@@ -129,9 +127,8 @@
 
     <TextView
         style="@style/textDescription"
-        android:id="@+id/textDistanceAveragePace"
+        android:id="@+id/textDescriptionAveragePace"
         android:text="@string/avgPace"
-        android:textSize="12sp"
 
         app:layout_constraintBottom_toTopOf="@+id/textValueAveragePace"
         app:layout_constraintLeft_toLeftOf="@+id/textValueAveragePace"
@@ -145,7 +142,7 @@
         android:id="@+id/iconAveragePace"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:srcCompat="@drawable/timer"
+        app:srcCompat="@drawable/run_fast"
 
         app:layout_constraintTop_toTopOf="@+id/textValueAveragePace"
         app:layout_constraintBottom_toBottomOf="@+id/textValueAveragePace"
@@ -179,9 +176,8 @@
 
     <TextView
         style="@style/textDescription"
-        android:id="@+id/textDistanceMaxPace"
+        android:id="@+id/textDescriptionMaxPace"
         android:text="@string/maxPace"
-        android:textSize="12sp"
 
         app:layout_constraintBottom_toTopOf="@+id/textValueMaxPace"
         app:layout_constraintLeft_toLeftOf="@+id/textValueMaxPace"
@@ -195,7 +191,7 @@
         android:id="@+id/iconMaxPace"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:srcCompat="@drawable/timer"
+        app:srcCompat="@drawable/run_fast"
 
         app:layout_constraintTop_toTopOf="@+id/textValueMaxPace"
         app:layout_constraintBottom_toBottomOf="@+id/textValueMaxPace"
@@ -229,9 +225,8 @@
 
     <TextView
         style="@style/textDescription"
-        android:id="@+id/textDistanceAverageSpeed"
+        android:id="@+id/textDescriptionAverageSpeed"
         android:text="@string/avgSpeed"
-        android:textSize="12sp"
 
         app:layout_constraintBottom_toTopOf="@+id/textValueAverageSpeed"
         app:layout_constraintLeft_toLeftOf="@+id/textValueAverageSpeed"
@@ -245,7 +240,7 @@
         android:id="@+id/iconAverageSpeed"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:srcCompat="@drawable/timer"
+        app:srcCompat="@drawable/speedometer"
 
         app:layout_constraintTop_toTopOf="@+id/textValueAverageSpeed"
         app:layout_constraintBottom_toBottomOf="@+id/textValueAverageSpeed"
@@ -279,9 +274,8 @@
 
     <TextView
         style="@style/textDescription"
-        android:id="@+id/textDistanceMaxSpeed"
+        android:id="@+id/textDescriptionMaxSpeed"
         android:text="@string/maxSpeed"
-        android:textSize="12sp"
 
         app:layout_constraintBottom_toTopOf="@+id/textValueMaxSpeed"
         app:layout_constraintLeft_toLeftOf="@+id/textValueMaxSpeed"
@@ -295,7 +289,7 @@
         android:id="@+id/iconMaxSpeed"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:srcCompat="@drawable/timer"
+        app:srcCompat="@drawable/speedometer"
 
         app:layout_constraintTop_toTopOf="@+id/textValueMaxSpeed"
         app:layout_constraintBottom_toBottomOf="@+id/textValueMaxSpeed"
@@ -329,9 +323,8 @@
 
     <TextView
         style="@style/textDescription"
-        android:id="@+id/textDistanceNetCalorie"
+        android:id="@+id/textDescriptionNetCalorie"
         android:text="@string/netCalorie"
-        android:textSize="12sp"
 
         app:layout_constraintBottom_toTopOf="@+id/textValueNetCalorie"
         app:layout_constraintLeft_toLeftOf="@+id/textValueNetCalorie"
@@ -345,7 +338,7 @@
         android:id="@+id/iconNetCalorie"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:srcCompat="@drawable/timer"
+        app:srcCompat="@drawable/fire"
 
         app:layout_constraintTop_toTopOf="@+id/textValueNetCalorie"
         app:layout_constraintBottom_toBottomOf="@+id/textValueNetCalorie"
@@ -379,9 +372,8 @@
 
     <TextView
         style="@style/textDescription"
-        android:id="@+id/textDistanceGrossCalorie"
+        android:id="@+id/textDescriptionGrossCalorie"
         android:text="@string/grossCalorie"
-        android:textSize="12sp"
 
         app:layout_constraintBottom_toTopOf="@+id/textValueGrossCalorie"
         app:layout_constraintLeft_toLeftOf="@+id/textValueGrossCalorie"
@@ -395,7 +387,7 @@
         android:id="@+id/iconGrossCalorie"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:srcCompat="@drawable/timer"
+        app:srcCompat="@drawable/fire"
 
         app:layout_constraintTop_toTopOf="@+id/textValueGrossCalorie"
         app:layout_constraintBottom_toBottomOf="@+id/textValueGrossCalorie"
