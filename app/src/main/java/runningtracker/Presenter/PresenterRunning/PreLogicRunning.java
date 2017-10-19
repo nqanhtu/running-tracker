@@ -49,7 +49,7 @@ public class PreLogicRunning implements PreRunning {
     @Override
     public void getBodilyCharacter(M_BodilyCharacteristicObject m_Bodily) throws JSONException {
         final M_BodilyCharacteristicObject finalM_Bodily = m_Bodily;
-        ResAPICommon.RestGetClient("http://14.169.146.178/appuser/get/6", viewRunning.getMainActivity(),
+        ResAPICommon.RestGetClient("http://192.168.1.6:3000/appuser/get/6", viewRunning.getMainActivity(),
                 new DataCallback() {
                     @Override
                     public void onSuccess(JSONObject result) {
@@ -60,7 +60,7 @@ public class PreLogicRunning implements PreRunning {
                             Toast.makeText(viewRunning.getMainActivity(), "Error:  " + finalM_Bodily.getWeightInKg(), Toast.LENGTH_SHORT).show();
                             finalM_Bodily.setHeightInCm((Integer) result.get("HeightInCm"));
                             finalM_Bodily.setVO2max((Integer) result.get("VO2max"));
-                            //m_Bodily.setRestingMetabolicRate((float) result.get("RestingMetabolicRate"));
+                            finalM_Bodily.setRestingMetabolicRate((Integer) result.get("RestingMetabolicRate"));
                         } catch (Exception e) {
                             e.printStackTrace();
                             Toast.makeText(viewRunning.getMainActivity(), "Error" +e, Toast.LENGTH_SHORT).show();

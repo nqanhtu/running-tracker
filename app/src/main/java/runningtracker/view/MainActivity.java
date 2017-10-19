@@ -15,6 +15,7 @@ import android.os.Looper;
 import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.transition.TransitionManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -23,6 +24,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
@@ -56,6 +58,8 @@ import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polygon;
+import com.google.android.gms.maps.model.PolygonOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -68,6 +72,7 @@ import org.json.JSONObject;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -123,24 +128,19 @@ public class MainActivity extends AppCompatActivity  implements ViewRunning, OnM
      * Callback for Location events.
      */
     private LocationCallback mLocationCallback;
-   // public M_DatabaseLocation mQuery;
+    // public M_DatabaseLocation mQuery;
     private ArrayList<M_LocationObject> startToPresentLocations;
     private Polyline polyline;
-
+    private Polygon polygon;
+    private boolean checkTime;
+    Date startCurrentTime, stopCurrentTime;
+    float rGrossCalorie;
 
     /**
      * Represents a geographical location.
      */
     private Location mCurrentLocation;
     LocationManager rLocationManager;
-
-
-
- /*   private Button mStartUpdatesButton;
-    private Button mStopUpdatesButton;*/ //van tri
-    //private M_LocationObject locationObject;
-
-    //private LocationObject locationObject;
 
     /**
      * Tracks the status of the location updates request. Value changes when the user presses the
@@ -157,12 +157,14 @@ public class MainActivity extends AppCompatActivity  implements ViewRunning, OnM
     private float rDisaTance;
     Location rlocation;
     double mLatitude, mLongitude;
+    float rCalories, rPace, maxPace;
+
 
     /*
      * Real timer running
      */
     TextView txtTimer;
-    long lStartTime, lPauseTime, lSystemTime = 0L;
+    long lStartTime, rUpdateTime, lPauseTime, lSystemTime = 0L;
     Handler handler = new Handler();
     boolean isRun;
     public Runnable runnable = new Runnable() {
@@ -170,6 +172,7 @@ public class MainActivity extends AppCompatActivity  implements ViewRunning, OnM
         public void run() {
             lSystemTime = SystemClock.uptimeMillis() - lStartTime;
             long lUpdateTime = lPauseTime + lSystemTime;
+            rUpdateTime = lUpdateTime;
             long secs = (long) (lUpdateTime / 1000);
             long mins = secs / 60;
             long hour = mins /60;
@@ -184,28 +187,31 @@ public class MainActivity extends AppCompatActivity  implements ViewRunning, OnM
     private PreLogicRunning preLogicRunning;
     private final M_DatabaseLocation mQuery = new M_DatabaseLocation(this);
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         initializeUI();
 
         mRequestingLocationUpdates = false;
         mLastUpdateTime = "";
-
+        rCalories = 0;
+        maxPace = 0;
+        rGrossCalorie = 0;
         // Update values using data stored in the Bundle.
-        updateValuesFromBundle(savedInstanceState);
+       // updateValuesFromBundle(savedInstanceState);
 
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         mSettingsClient = LocationServices.getSettingsClient(this);
 
         rlocation = new Location("A");
-        // Kick off the process of building the LocationCallback, LocationRequest, and
-        // LocationSettingsRequest objects.
         createLocationCallback();
         createLocationRequest();
         buildLocationSettingsRequest();
-
+        txtTimer = (TextView) findViewById(R.id.textDurationValue);
+        checkTime = false;
         preLogicRunning = new PreLogicRunning(this);
 
         m_Bodily = new M_BodilyCharacteristicObject();
@@ -234,15 +240,6 @@ public class MainActivity extends AppCompatActivity  implements ViewRunning, OnM
      */
 
     private Location getMyLocation() {
-/*        LocationManager lm = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
-        Location myLocation = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-        if (myLocation == null) {
-            Criteria criteria = new Criteria();
-            criteria.setAccuracy(Criteria.ACCURACY_COARSE);
-            String provider = lm.getBestProvider(criteria, true);
-            myLocation = lm.getLastKnownLocation(provider);
-        }
-        return myLocation;*/
         rLocationManager = (LocationManager)getApplicationContext().getSystemService(LOCATION_SERVICE);
         List<String> providers = rLocationManager.getProviders(true);
         Location bestLocation = null;
@@ -252,7 +249,6 @@ public class MainActivity extends AppCompatActivity  implements ViewRunning, OnM
                 continue;
             }
             if (bestLocation == null || l.getAccuracy() < bestLocation.getAccuracy()) {
-                // Found best last known location: %s", l);
                 bestLocation = l;
             }
         }
@@ -316,7 +312,6 @@ public class MainActivity extends AppCompatActivity  implements ViewRunning, OnM
             if (savedInstanceState.keySet().contains(KEY_LAST_UPDATED_TIME_STRING)) {
                 mLastUpdateTime = savedInstanceState.getString(KEY_LAST_UPDATED_TIME_STRING);
             }
-            // updateUI();
         }
     }
     /**
@@ -342,43 +337,19 @@ public class MainActivity extends AppCompatActivity  implements ViewRunning, OnM
                     case Activity.RESULT_CANCELED:
                         Log.i(TAG, "User chose not to make required location settings changes.");
                         mRequestingLocationUpdates = false;
-                        // updateUI();
                         break;
                 }
                 break;
         }
     }
-//    private void updateUI() {
-//        setButtonsEnabledState();
-//        //updateLocationUI();
-//    }
-    /**
-     * Disables both buttons when functionality is disabled due to insuffucient location settings.
-     * Otherwise ensures that only one button is enabled at any time. The Start Updates button is
-     * enabled if the user is not requesting location updates. The Stop Updates button is enabled
-     * if the user is requesting location updates.
-     */
-//    private void setButtonsEnabledState() {
-//        if (mRequestingLocationUpdates) {
-//            startButton.setEnabled(false);
-//            startButton.setVisibility(Button.INVISIBLE);
-//            stopButton.setEnabled(true);
-//            stopButton.setVisibility(Button.VISIBLE);
-//        } else {
-//            startButton.setEnabled(true);
-//            startButton.setVisibility(Button.VISIBLE);
-//            stopButton.setEnabled(false);
-//            stopButton.setVisibility(Button.INVISIBLE);
-//        }
-//    }
+
     /**
      * Handles the Start Updates button and requests start of location updates. Does nothing if
      * updates have already been requested.
      */
-    public void startUpdatesButtonHandler(View view) {
+    public void startUpdatesButtonHandler() {
         if (!mRequestingLocationUpdates) {
             mRequestingLocationUpdates = true;
-//            setButtonsEnabledState();
             startLocationUpdates();
         }
     }
@@ -386,9 +357,6 @@ public class MainActivity extends AppCompatActivity  implements ViewRunning, OnM
      * Handles the Stop Updates button, and requests removal of location updates.
      */
     public void stopUpdatesButtonHandler(View view) {
-        // It is a good practice to remove location requests when the activity is in a paused or
-        // stopped state. Doing so helps battery performance and is especially
-        // recommended in applications that request frequent location updates.
         stopLocationUpdates();
     }
     /**
@@ -399,7 +367,6 @@ public class MainActivity extends AppCompatActivity  implements ViewRunning, OnM
             Log.d(TAG, "stopLocationUpdates: updates never requested, no-op.");
             return;
         }
-
         // It is a good practice to remove location requests when the activity is in a paused or
         // stopped state. Doing so helps battery performance and is especially
         // recommended in applications that request frequent location updates.
@@ -419,13 +386,11 @@ public class MainActivity extends AppCompatActivity  implements ViewRunning, OnM
                     @Override
                     public void onSuccess(LocationSettingsResponse locationSettingsResponse) {
                         Log.i(TAG, "All location settings are satisfied.");
-
+                        checkTime = true;
                         //noinspection MissingPermission
                         mFusedLocationClient.requestLocationUpdates(mLocationRequest,
                                 mLocationCallback,
                                 Looper.myLooper());
-
-                        // updateUI();
                     }
                 })
                 .addOnFailureListener(this, new OnFailureListener() {
@@ -452,8 +417,6 @@ public class MainActivity extends AppCompatActivity  implements ViewRunning, OnM
                                 Toast.makeText(MainActivity.this, errorMessage, Toast.LENGTH_LONG).show();
                                 mRequestingLocationUpdates = false;
                         }
-
-                        // updateUI();
                     }
                 });
     }
@@ -465,18 +428,23 @@ public class MainActivity extends AppCompatActivity  implements ViewRunning, OnM
         iLocation.setLatitudeValue(location.getLatitude());
         iLocation.setLongitudeValue(location.getLongitude());
         moveCamera(location);
-        rStart();
+        if(checkTime == true){
+            rStart();
+            checkTime = false;
+        }
         if(mLatitude != 0){
             rlocation = new Location("A");
             rlocation.setLatitude(mLatitude);
             rlocation.setLongitude(mLongitude);
             float mDisaTance = rDisaTance;
             rDisaTance = rDisaTance +  preLogicRunning.DistanceLocation(rlocation,location);
-            float rPace = ((rDisaTance - mDisaTance) / ((float)UPDATE_INTERVAL_IN_MILLISECONDS / 3600000));
-            float rCalories = 0;
+            float rAvg_Distance = rDisaTance - mDisaTance;
+            rPace = 0;
+            if(rDisaTance > 0) {rPace = ((float) rUpdateTime / 60000) / rDisaTance;}
             if(m_Bodily != null)
                 rCalories = (float) Calculator.netCalorieBurned(m_Bodily.getWeightInKg(), m_Bodily.getVO2max(), rDisaTance, 0, false);
-            setupViewRunning(preLogicRunning.RoundAvoid(rDisaTance,2), preLogicRunning.RoundAvoid(rPace,1), preLogicRunning.RoundAvoid(rCalories, 1));
+            if(rPace > maxPace) {maxPace = rPace;}
+            setupViewRunning(preLogicRunning.RoundAvoid(rDisaTance,2), preLogicRunning.RoundAvoid(rPace,2), preLogicRunning.RoundAvoid(rCalories, 1));
             polylineBetweenTwoPoint(rlocation, location);
         }
         else {
@@ -495,7 +463,7 @@ public class MainActivity extends AppCompatActivity  implements ViewRunning, OnM
         if(checkPermissions()) {
             mMap = googleMap;
             mMap.setMyLocationEnabled(true);
-           mMap.getUiSettings().setMyLocationButtonEnabled(false);
+            mMap.getUiSettings().setMyLocationButtonEnabled(false);
             Location L = getMyLocation();
             if(L != null) {
                 moveCamera(L);
@@ -528,15 +496,15 @@ public class MainActivity extends AppCompatActivity  implements ViewRunning, OnM
         LatLng myLocation = null;
         ArrayList<LatLng> points; // list of latlng
         try {
-           points = getPoints(startToPresentLocations);
+            points = getPoints(startToPresentLocations);
             for (int z = 0; z < points.size() - 1; z++) {  //add Arraylist points on Polyline
-              LatLng src = points.get(z);
-              LatLng dest = points.get(z + 1);
-                    myLocation = new LatLng(src.latitude, src.longitude);
-              polyline = mMap.addPolyline(new PolylineOptions()
-                      .add(new LatLng(src.latitude, src.longitude),
-                              new LatLng(dest.latitude, dest.longitude)).color(Color.BLUE).width(10));
-          }
+                LatLng src = points.get(z);
+                LatLng dest = points.get(z + 1);
+                myLocation = new LatLng(src.latitude, src.longitude);
+                polyline = mMap.addPolyline(new PolylineOptions()
+                        .add(new LatLng(src.latitude, src.longitude),
+                                new LatLng(dest.latitude, dest.longitude)).color(Color.BLUE).width(10));
+            }
             mMap.addMarker(new MarkerOptions().position(myLocation).title("My Location"));
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(myLocation, 14));
 
@@ -547,9 +515,10 @@ public class MainActivity extends AppCompatActivity  implements ViewRunning, OnM
 
     }
     private void polylineBetweenTwoPoint(Location A, Location B){
-        polyline = mMap.addPolyline(new PolylineOptions()
-                .add(new LatLng(A.getLatitude(), A.getLongitude()),
-                        new LatLng(B.getLatitude(), B.getLongitude())).color(Color.BLUE).width(10).geodesic(true));
+        polygon = mMap.addPolygon(new PolygonOptions()
+                .add(new LatLng(A.getLatitude(), A.getLongitude()), new LatLng(B.getLatitude(), B.getLongitude()))
+                .strokeColor(Color.BLUE)
+                .fillColor(Color.BLACK));
     }
     private void refreshMap(GoogleMap mapInstance){
         mapInstance.clear();
@@ -561,46 +530,8 @@ public class MainActivity extends AppCompatActivity  implements ViewRunning, OnM
     }
 
 
-
-
     @Override
     public void onConnectionSuspended(int i) {
-
-    }
-
-    @Override
-    protected void onStart() {
-        // mGoogleApiClient.connect();
-
-
-        super.onStart();
-
-
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        // Within {@code onPause()}, we remove location updates. Here, we resume receiving
-        // location updates if the user has requested them.
-        if (mRequestingLocationUpdates && checkPermissions()) {
-            startLocationUpdates();
-        }
-        // updateUI();
-    }
-    @Override
-    protected void onPause() {
-        super.onPause();
-        // Remove location updates to save battery.
-        stopLocationUpdates();
-
-    }
-
-
-    @Override
-    protected void onStop() {
-
-        super.onStop();
 
     }
 
@@ -611,12 +542,12 @@ public class MainActivity extends AppCompatActivity  implements ViewRunning, OnM
             //jsonObject.put("RunningSessionID",1);
             jsonObject.put("Userid", 1);
             jsonObject.put("Runontreadmill", 0);
-            jsonObject.put("Roadgradient", 23);
-            jsonObject.put("Grosscalorieburned", 100);
-            jsonObject.put("Netcalorieburned", 100);
-            jsonObject.put("Distanceinkm", 50);
-            jsonObject.put("Starttimestamp", "2017-2-1");
-            jsonObject.put("Finishtimestamp", "2017-1-1");
+            jsonObject.put("Roadgradient", 0);
+            jsonObject.put("Grosscalorieburned", preLogicRunning.RoundAvoid(rGrossCalorie,1));
+            jsonObject.put("Netcalorieburned", preLogicRunning.RoundAvoid(rCalories,1));
+            jsonObject.put("Distanceinkm", preLogicRunning.RoundAvoid(rDisaTance,2));
+            jsonObject.put("Starttimestamp", startCurrentTime);
+            jsonObject.put("Finishtimestamp", stopCurrentTime);
 
             return jsonObject;
         }catch (JSONException e){
@@ -630,7 +561,6 @@ public class MainActivity extends AppCompatActivity  implements ViewRunning, OnM
         return MainActivity.this;
     }
 
-
     public void rStart(){
         if(isRun)
             return;
@@ -638,13 +568,20 @@ public class MainActivity extends AppCompatActivity  implements ViewRunning, OnM
         lStartTime = SystemClock.uptimeMillis();
         handler.postDelayed(runnable, 0);
     }
-     public void rStop(){
-         if(!isRun)
-             return;
-         isRun = false;
-         lPauseTime = 0;
-         handler.removeCallbacks(runnable);
-     }
+    public void rStop(){
+        if(!isRun)
+            return;
+        isRun = false;
+        lPauseTime = 0;
+        handler.removeCallbacks(runnable);
+    }
+    public void rPause(){
+        if(!isRun)
+            return;
+        isRun = false;
+        lPauseTime += lSystemTime;
+        handler.removeCallbacks(runnable);
+    }
 
     @Override
     public void setupViewRunning(float mDistanceValue, float mPaceValue, float mCalorie) {
@@ -652,9 +589,30 @@ public class MainActivity extends AppCompatActivity  implements ViewRunning, OnM
         TextView txtDisaTance = (TextView) findViewById(R.id.textDistanceValue);
         TextView txtNetCalorie = (TextView) findViewById(R.id.textCalorieValue);
         TextView txtPace = (TextView) findViewById(R.id.textPaceValue);
-/*        txtDisaTance.setText(Float.toString(mDistanceValue));
+        txtDisaTance.setText(Float.toString(mDistanceValue));
         txtNetCalorie.setText(Float.toString(mCalorie));
-        txtPace.setText(Float.toString(mPaceValue));*/
+        String rMin ="";
+        String rSec ="";
+        if(mPaceValue > 0.0) {
+            Log.d(TAG, "index=" + mPaceValue);
+            int rA = (int) (mPaceValue);
+            int rB = (int) ((mPaceValue -rA )*100);
+            if(rA > 999){
+                rSec = String.valueOf(rB);
+                String rPace = "999:"+rSec;
+                txtPace.setText(rPace);
+            }
+            else{
+                rMin = String.valueOf(rA);
+                rSec = String.valueOf(rB);
+                String rPace = rMin+":"+rSec;
+                txtPace.setText(rPace);
+            }
+        }
+        else{
+            txtPace.setText("00:00");
+        }
+
     }
 
     @Override
@@ -681,42 +639,66 @@ public class MainActivity extends AppCompatActivity  implements ViewRunning, OnM
         actionBar.setTitleTextColor(ContextCompat.getColor(this, R.color.textColorPrimary));
         setSupportActionBar(actionBar);
 
-        // Map
-        if (mGoogleApiClient == null) {
-            mGoogleApiClient = new GoogleApiClient.Builder(this)
-                    .addConnectionCallbacks(this)
-                    .addApi(LocationServices.API)
-                    .build();
-        }
+//        if (mGoogleApiClient == null) {
+//            mGoogleApiClient = new GoogleApiClient.Builder(this)
+//                    .addConnectionCallbacks(this)
+//                    .addApi(LocationServices.API)
+//                    .build();
+//        }
 
         MapFragment mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+    }
 
-        txtTimer = (TextView) findViewById(R.id.textDurationValue);
+    //sent date to ResultActivity
+    public void sentDataToResult() throws JSONException {
+        //calculator grossCalorieBurned
+        rGrossCalorie = 0;
+        if(m_Bodily != null) {
+            rGrossCalorie = (float) Calculator.grossCalorieBurned(rCalories, m_Bodily.getRestingMetabolicRate(), rUpdateTime /3600000);
+            rGrossCalorie = preLogicRunning.RoundAvoid(rGrossCalorie, 2);
+        }
+
+        Intent nextActivity = new Intent(MainActivity.this, ResultActivity.class);
+        nextActivity.putExtra("duration", rUpdateTime);//mili
+        nextActivity.putExtra("pace", preLogicRunning.RoundAvoid(rPace,2));
+        nextActivity.putExtra("netCalorie", preLogicRunning.RoundAvoid(rCalories,1));
+        nextActivity.putExtra("distance", preLogicRunning.RoundAvoid(rDisaTance,2));
+        nextActivity.putExtra("maxPace", preLogicRunning.RoundAvoid(maxPace,2));
+        nextActivity.putExtra("grossCalorie", preLogicRunning.RoundAvoid(rGrossCalorie,1));
+        //save data to server
+        preLogicRunning.saveRunning();
+
+        startActivity(nextActivity);
     }
 
     public void onClickStartButton(View startButton) {
-        // Perform animation
-        ImageButton pauseButton = (ImageButton) findViewById(R.id.pauseButton);
-        ImageButton stopButton = (ImageButton) findViewById(R.id.stopButton);
+        if(mLatitude == 0)
+        {
+            // Perform animation
+            ViewGroup parentLayout = (ViewGroup) findViewById(R.id.belowSectionLayout);
+            ImageButton pauseButton = (ImageButton) findViewById(R.id.pauseButton);
+            ImageButton stopButton = (ImageButton) findViewById(R.id.stopButton);
 
-        Animation pauseButtonAnimation = AnimationUtils.loadAnimation(MainActivity.this, R.anim.pause_button_separation);
-        Animation stopButtonAnimation = AnimationUtils.loadAnimation(MainActivity.this, R.anim.stop_button_separation);
-        startButton.setEnabled(false);
-        pauseButton.setEnabled(true);
-        stopButton.setEnabled(true);
-        startButton.setVisibility(View.INVISIBLE);
-        pauseButton.setVisibility(View.VISIBLE);
-        stopButton.setVisibility(View.VISIBLE);
-        pauseButton.startAnimation(pauseButtonAnimation);
-        stopButton.startAnimation(stopButtonAnimation);
+            Animation pauseButtonAnimation = AnimationUtils.loadAnimation(MainActivity.this, R.anim.pause_button_separation);
+            Animation stopButtonAnimation = AnimationUtils.loadAnimation(MainActivity.this, R.anim.stop_button_separation);
+            startButton.setEnabled(false);
+            pauseButton.setEnabled(true);
+            stopButton.setEnabled(true);
+            startButton.setVisibility(View.INVISIBLE);
+            pauseButton.setVisibility(View.VISIBLE);
+            stopButton.setVisibility(View.VISIBLE);
+            pauseButton.startAnimation(pauseButtonAnimation);
+            stopButton.startAnimation(stopButtonAnimation);
+        }
 
-         mQuery.deleteAll();
-         preLogicRunning.getData();
-//         setupViewRunning();
-//         preLogicRunning.getData();
-         refreshMap(mMap);
-         startUpdatesButtonHandler(startButton);
+//        mQuery.deleteAll();
+
+        startUpdatesButtonHandler();
+//        refreshMap(mMap);
+        // Get start time
+        startCurrentTime = Calendar.getInstance().getTime();
+
     }
 
     public void onClickPauseButton(View pauseButton) {
@@ -735,6 +717,9 @@ public class MainActivity extends AppCompatActivity  implements ViewRunning, OnM
         resumeButton.startAnimation(resumeButtonAnimation);
         pauseButton.startAnimation(pauseButtonAnimation);
         stopButton.startAnimation(stopButtonAnimation);
+
+        rPause();
+        stopUpdatesButtonHandler(pauseButton);
     }
 
     public void onClickResumeButton(View resumeButton) {
@@ -751,22 +736,16 @@ public class MainActivity extends AppCompatActivity  implements ViewRunning, OnM
         stopButton.setVisibility(View.VISIBLE);
         pauseButton.startAnimation(pauseButtonAnimation);
         stopButton.startAnimation(stopButtonAnimation);
+        //
+        rStart();
+        startLocationUpdates();
     }
 
-    public void onClickStopButton(View view) {
+    public void onClickStopButton(View view) throws JSONException {
         stopUpdatesButtonHandler(view);
         rStop();
-//        startPolyline();
-        try {
-            preLogicRunning.saveRunning();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        stopCurrentTime = Calendar.getInstance().getTime();
+        sentDataToResult();
 
-        // Jump to result activity
-        Intent intent = new Intent(this, ResultActivity.class);
-        startActivity(intent);
     }
-
-    
 }

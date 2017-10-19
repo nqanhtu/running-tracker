@@ -18,5 +18,4 @@ public interface PreRunning {
     float RoundAvoid(double value, int places);
     void getBodilyCharacter(M_BodilyCharacteristicObject m_Bodily) throws JSONException;
 
-
 }

@@ -99,14 +99,17 @@
             style="@style/textDescription"
             android:id="@+id/textPace"
             android:text="@string/avgPace"
+            android:textSize="@dimen/font_size"
 
             app:layout_constraintTop_toTopOf="@+id/textPaceValue"
-            app:layout_constraintLeft_toLeftOf="@+id/textPaceValue"
             app:layout_constraintRight_toRightOf="@+id/textPaceValue"
             android:layout_marginTop="45dp"
             android:layout_marginLeft="0dp"
             android:layout_marginRight="0dp"
-        />
+            android:layout_height="15dp"
+            android:layout_width="119dp"
+            app:layout_constraintHorizontal_bias="0.428"
+            app:layout_constraintLeft_toLeftOf="@+id/textPaceValue" />
 
         <ImageView
             android:id="@+id/imagePace"
@@ -143,6 +146,7 @@
             style="@style/textDescription"
             android:id="@+id/textDistance"
             android:text="@string/distanceMetric"
+            android:textSize="@dimen/font_size"
 
             app:layout_constraintTop_toTopOf="@+id/textDistanceValue"
             app:layout_constraintLeft_toLeftOf="@+id/textDistanceValue"
@@ -187,14 +191,16 @@
             style="@style/textDescription"
             android:id="@+id/textCalorie"
             android:text="@string/netCalorie"
+            android:textSize="@dimen/font_size"
 
             app:layout_constraintTop_toTopOf="@+id/textCalorieValue"
-            app:layout_constraintLeft_toLeftOf="@+id/textCalorieValue"
             app:layout_constraintRight_toRightOf="@+id/textCalorieValue"
-            android:layout_marginTop="45dp"
-            android:layout_marginLeft="0dp"
+            android:layout_marginTop="44dp"
             android:layout_marginRight="0dp"
-        />
+            android:layout_height="16dp"
+            android:layout_width="119dp"
+            android:layout_marginLeft="0dp"
+            app:layout_constraintLeft_toLeftOf="@+id/textCalorieValue" />
 
         <ImageView
             android:id="@+id/imageCalorie"
@@ -243,17 +249,18 @@
             android:layout_marginLeft="0dp"
             android:layout_marginRight="0dp"
         >
+
             <fragment
                 android:id="@+id/map"
                 android:name="com.google.android.gms.maps.MapFragment"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
 
-                app:layout_constraintTop_toBottomOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
-            />
+                app:layout_constraintTop_toBottomOf="parent" />
+
         </FrameLayout>
 
         <ImageButton
