@@ -25,7 +25,7 @@ public class PreLogicRunning implements PreRunning {
 
     @Override
     public void saveRunning() throws JSONException {
-        resAPICommon.RestPostClient(viewRunning.getMainActivity(), "http://192.168.43.188:8000/runningsession/new", viewRunning.getValueRunning());
+        resAPICommon.RestPostClient(viewRunning.getMainActivity(), "http://14.169.228.44/runningsession/new", viewRunning.getValueRunning());
     }
         //function get data using ResAPI
     @Override
@@ -49,7 +49,7 @@ public class PreLogicRunning implements PreRunning {
     @Override
     public void getBodilyCharacter(M_BodilyCharacteristicObject m_Bodily) throws JSONException {
         final M_BodilyCharacteristicObject finalM_Bodily = m_Bodily;
-        ResAPICommon.RestGetClient("http://192.168.1.6:3000/appuser/get/6", viewRunning.getMainActivity(),
+        ResAPICommon.RestGetClient("http://14.169.228.44/appuser/get/1", viewRunning.getMainActivity(),
                 new DataCallback() {
                     @Override
                     public void onSuccess(JSONObject result) {

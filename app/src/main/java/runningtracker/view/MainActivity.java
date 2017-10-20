@@ -673,7 +673,7 @@ public class MainActivity extends AppCompatActivity  implements ViewRunning, OnM
     }
 
     public void onClickStartButton(View startButton) {
-        if(mLatitude == 0)
+        if(mLatitude != 0)
         {
             // Perform animation
             ViewGroup parentLayout = (ViewGroup) findViewById(R.id.belowSectionLayout);
