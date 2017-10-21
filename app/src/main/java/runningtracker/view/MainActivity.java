@@ -692,10 +692,10 @@ public class MainActivity extends AppCompatActivity  implements ViewRunning, OnM
             stopButton.startAnimation(stopButtonAnimation);
         }
 
-//        mQuery.deleteAll();
+        mQuery.deleteAll();
 
         startUpdatesButtonHandler();
-//        refreshMap(mMap);
+        refreshMap(mMap);
         // Get start time
         startCurrentTime = Calendar.getInstance().getTime();
 
