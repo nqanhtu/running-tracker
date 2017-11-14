@@ -1,18 +1,13 @@
 package runningtracker.model.modelrunning;
-
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-
 import java.util.ArrayList;
 
-/**
- * Created by Minh Tri on 2017-10-04.
- */
 
-public class M_DatabaseRunningSession extends SQLiteOpenHelper {
+public class DatabaseRunningSession extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "dbUserRunning";
     private static final int DATABASE_VERSION = 1;
 
@@ -28,7 +23,7 @@ public class M_DatabaseRunningSession extends SQLiteOpenHelper {
     private static final String KEY_Flag = "FlagStatus";
     private static final String TABLE_RUNNINGSESSION ="RunningSession" ;
 
-    public M_DatabaseRunningSession(Context context) {
+    public DatabaseRunningSession(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
     @Override
@@ -54,7 +49,7 @@ public class M_DatabaseRunningSession extends SQLiteOpenHelper {
      * All CRUD(Create, Read, Update, Delete) Operations
      */
     //add new data running session
-    public  void addNewRunningSession(M_RunningObject m_runningObject){
+    public  void addNewRunningSession(RunningObject m_runningObject){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(Key_User, m_runningObject.getUserID());
@@ -68,8 +63,8 @@ public class M_DatabaseRunningSession extends SQLiteOpenHelper {
         values.put(KEY_Flag, m_runningObject.getFlagStatus());
     }
     //get all Running session to database
-    public ArrayList<M_RunningObject> getAllRunningSession(){
-        ArrayList<M_RunningObject> runningList = new ArrayList<M_RunningObject>();
+    public ArrayList<RunningObject> getAllRunningSession(){
+        ArrayList<RunningObject> runningList = new ArrayList<RunningObject>();
         // Select All Query
         String selectQuery = "SELECT  * FROM " + TABLE_RUNNINGSESSION;
 
@@ -78,7 +73,7 @@ public class M_DatabaseRunningSession extends SQLiteOpenHelper {
         // looping through all rows and adding to list
         if (cursor.moveToFirst()) {
             do {
-                M_RunningObject runningObject = new M_RunningObject();
+                RunningObject runningObject = new RunningObject();
                 runningObject.setRunningSessionID(cursor.getInt(0));
                 runningObject.setUserID(cursor.getInt(1));
                 runningObject.setStartTimestamp(cursor.getString(2));
@@ -98,10 +93,9 @@ public class M_DatabaseRunningSession extends SQLiteOpenHelper {
         return runningList;
     }
     //get data with id
-    public M_RunningObject getID(int id) {
-
+    public RunningObject getID(int id) {
         String selectQuery = "SELECT  * FROM" + TABLE_RUNNINGSESSION + "WHERE " + KEY_ID + "= '" + id + "'";
-        M_RunningObject m_runningObject = new M_RunningObject();
+        RunningObject m_runningObject = new RunningObject();
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
 
@@ -127,6 +121,4 @@ public class M_DatabaseRunningSession extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         db.execSQL("delete from "+ TABLE_RUNNINGSESSION);
     }
-
-
 }

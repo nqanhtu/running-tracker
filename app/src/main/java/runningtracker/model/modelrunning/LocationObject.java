@@ -1,14 +1,13 @@
 package runningtracker.model.modelrunning;
 
-
-public class M_LocationObject {
+public class LocationObject {
     public double latitudeValue;
     public double longitudeValue;
 
-    public M_LocationObject(){
+    public LocationObject(){
 
     }
-    public M_LocationObject(double latitudeValue, double longitudeValue) {
+    public LocationObject(double latitudeValue, double longitudeValue) {
         this.latitudeValue = latitudeValue;
         this.longitudeValue = longitudeValue;
     }
@@ -28,6 +27,4 @@ public class M_LocationObject {
     public void setLongitudeValue(double longitudeValue) {
         this.longitudeValue = longitudeValue;
     }
-
-
 }

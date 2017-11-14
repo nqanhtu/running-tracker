@@ -1,15 +1,12 @@
 package runningtracker.model.modelrunning;
-
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-
 import java.util.ArrayList;
 
-
-public class M_DatabaseLocation extends SQLiteOpenHelper {
+public class DatabaseLocation extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "dbLocation";
     private static final int DATABASE_VERSION = 1;
 
@@ -19,7 +16,7 @@ public class M_DatabaseLocation extends SQLiteOpenHelper {
     private static final String KEY_Longitude = "Longitude";
     private static final String TABLE_LOCATION ="Location" ;
 
-    public M_DatabaseLocation(Context context) {
+    public DatabaseLocation(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
@@ -44,7 +41,7 @@ public class M_DatabaseLocation extends SQLiteOpenHelper {
      */
 
     // Adding new location
-    public void addLocation(M_LocationObject location) {
+    public void addLocation(LocationObject location) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
@@ -57,8 +54,8 @@ public class M_DatabaseLocation extends SQLiteOpenHelper {
         db.close(); // Closing database connection
     }
     // Getting All Location
-    public ArrayList<M_LocationObject> getAllLocation() {
-        ArrayList<M_LocationObject> locationList = new ArrayList<M_LocationObject>();
+    public ArrayList<LocationObject> getAllLocation() {
+        ArrayList<LocationObject> locationList = new ArrayList<LocationObject>();
         // Select All Query
         String selectQuery = "SELECT  * FROM " + TABLE_LOCATION;
 
@@ -68,7 +65,7 @@ public class M_DatabaseLocation extends SQLiteOpenHelper {
         // looping through all rows and adding to list
         if (cursor.moveToFirst()) {
             do {
-                M_LocationObject location = new M_LocationObject();
+                LocationObject location = new LocationObject();
                 location.setLatitudeValue(cursor.getDouble(1));
                 location.setLongitudeValue(cursor.getDouble(2));
                 // Adding contact to list

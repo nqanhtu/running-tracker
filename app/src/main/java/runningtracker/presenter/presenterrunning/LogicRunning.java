@@ -1,24 +1,20 @@
 package runningtracker.presenter.presenterrunning;
-
-
-
 import android.location.Location;
 import android.widget.Toast;
-
 import org.json.JSONException;
 import org.json.JSONObject;
-
-
 import runningtracker.model.DataCallback;
-import runningtracker.model.modelrunning.M_BodilyCharacteristicObject;
+import runningtracker.model.modelrunning.BodilyCharacteristicObject;
 import runningtracker.model.ResAPICommon;
-import runningtracker.view.ViewRunning;
+import runningtracker.model.modelrunning.DatabaseRunningSession;
+import runningtracker.model.modelrunning.RunningObject;
+import runningtracker.view.viewrunning.ViewRunning;
 
-
-public class PreLogicRunning implements PreRunning {
+public class LogicRunning implements Running {
     ViewRunning viewRunning;
     ResAPICommon resAPICommon;
-    public PreLogicRunning(ViewRunning viewRunning){
+    DatabaseRunningSession dataRunning;
+    public LogicRunning(ViewRunning viewRunning){
         this.viewRunning = viewRunning;
         this.resAPICommon = new ResAPICommon();
     }
@@ -27,12 +23,12 @@ public class PreLogicRunning implements PreRunning {
     public void saveRunning() throws JSONException {
         resAPICommon.RestPostClient(viewRunning.getMainActivity(), "http://14.169.228.44/runningsession/new", viewRunning.getValueRunning());
     }
-        //function get data using ResAPI
+
     @Override
     public void getData() {
         //resAPICommon.RestGetClient("http://192.168.43.188:8000/runningsession/new", viewRunning.getMainActivity());
     }
-    //function Distance between 2 location
+
     @Override
     public float DistanceLocation(Location locationA, Location locationB) {
         float distance;
@@ -47,8 +43,8 @@ public class PreLogicRunning implements PreRunning {
     }
 
     @Override
-    public void getBodilyCharacter(M_BodilyCharacteristicObject m_Bodily) throws JSONException {
-        final M_BodilyCharacteristicObject finalM_Bodily = m_Bodily;
+    public void getBodilyCharacter(BodilyCharacteristicObject m_Bodily) throws JSONException {
+        final BodilyCharacteristicObject finalM_Bodily = m_Bodily;
         ResAPICommon.RestGetClient("" +
                         "http://14.169.228.44/appuser/get/1", viewRunning.getMainActivity(),
                 new DataCallback() {
@@ -68,6 +64,19 @@ public class PreLogicRunning implements PreRunning {
                         }
                     }
                 }
-                );
+        );
+    }
+
+    @Override
+    public RunningObject setRunningObject(int runningSessionID, int userID, String startTimestamp, String finishTimestamp, double distanceInKm, int roadGradient, int runOnTreadmill, int netCalorieBurned, int grossCalorieBurned, int flagStatus) {
+        RunningObject runningObject = new RunningObject(runningSessionID, userID, startTimestamp, finishTimestamp, distanceInKm, roadGradient, runOnTreadmill, netCalorieBurned, grossCalorieBurned, flagStatus);
+        return runningObject;
+    }
+
+    @Override
+    public boolean SaveRunningSession(RunningObject runningObject) {
+       /* if(dataRunning.addNewRunningSession(runningObject))
+            return true;*/
+        return false;
     }
 }

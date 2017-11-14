@@ -1,22 +1,15 @@
 package runningtracker.model.modelrunning;
 
-
-/**
- * Created by Minh Tri on 2017-10-12.
- */
-
-public class M_BodilyCharacteristicObject {
-
-
+public class BodilyCharacteristicObject {
     private int Age;
     private  String Gender;
     private int WeightInKg;
     private  int HeightInCm;
     private int VO2max;
     private  float RestingMetabolicRate;
-    public M_BodilyCharacteristicObject(){}
+    public BodilyCharacteristicObject(){}
 
-    public M_BodilyCharacteristicObject(int age, String gender, int weightInKg, int heightInCm, int VO2max, float restingMetabolicRate) {
+    public BodilyCharacteristicObject(int age, String gender, int weightInKg, int heightInCm, int VO2max, float restingMetabolicRate) {
         Age = age;
         Gender = gender;
         WeightInKg = weightInKg;
@@ -41,9 +34,7 @@ public class M_BodilyCharacteristicObject {
         Gender = gender;
     }
 
-    public float getWeightInKg() {
-        return WeightInKg;
-    }
+    public float getWeightInKg() {return WeightInKg;}
 
     public void setWeightInKg(int weightInKg) {
         WeightInKg = weightInKg;

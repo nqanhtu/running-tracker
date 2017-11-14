@@ -14,7 +14,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <activity android:name=".view.MainActivity">
+        <activity android:name=".view.viewrunning.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -26,7 +26,7 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/map_api_key" />
 
-        <activity android:name=".view.ResultActivity"></activity>
+        <activity android:name=".view.viewrunning.ResultActivity"></activity>
     </application>
 
 </manifest>

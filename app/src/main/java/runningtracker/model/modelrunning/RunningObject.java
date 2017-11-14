@@ -1,11 +1,6 @@
 package runningtracker.model.modelrunning;
 
-
-/**
- * Created by Minh Tri on 2017-10-04.
- */
-
-public class M_RunningObject {
+public class RunningObject {
     public int RunningSessionID;
     public int UserID;
     public String StartTimestamp;
@@ -16,9 +11,9 @@ public class M_RunningObject {
     public int NetCalorieBurned;
     public int GrossCalorieBurned;
     public int FlagStatus;
-    public M_RunningObject(){}
+    public RunningObject(){}
 
-    public M_RunningObject(int runningSessionID, int userID, String startTimestamp, String finishTimestamp, double distanceInKm, int roadGradient, int runOnTreadmill, int netCalorieBurned, int grossCalorieBurned, int flagStatus) {
+    public RunningObject(int runningSessionID, int userID, String startTimestamp, String finishTimestamp, double distanceInKm, int roadGradient, int runOnTreadmill, int netCalorieBurned, int grossCalorieBurned, int flagStatus) {
         RunningSessionID = runningSessionID;
         UserID = userID;
         StartTimestamp = startTimestamp;
