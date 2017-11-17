@@ -117,7 +117,7 @@ public class MainActivity extends AppCompatActivity implements ViewRunning, OnMa
       the status of the location updates request. Value changes when the user presses the
       Start Updates and Stop Updates buttons.
     */
-    private Boolean mRequestingLocationUpdates;
+    //private Boolean mRequestingLocationUpdates;
     //Time when the location was updated represented as a String.
     private String mLastUpdateTime;
     //setup running global variable
@@ -178,7 +178,7 @@ public class MainActivity extends AppCompatActivity implements ViewRunning, OnMa
      * updates.
      */
     private void initialization(){
-        mRequestingLocationUpdates = false;
+       // mRequestingLocationUpdates = false;
         mLastUpdateTime = "";
         rCalories = 0;
         maxPace = 0;
@@ -188,8 +188,8 @@ public class MainActivity extends AppCompatActivity implements ViewRunning, OnMa
         mStatusTime = false;
         logicRunning = new LogicRunning(this);
     }
-
-    private Location getMyLocation() {
+    @Override
+    public Location getMyLocation() {
         rLocationManager = (LocationManager)getApplicationContext().getSystemService(LOCATION_SERVICE);
         List<String> providers = rLocationManager.getProviders(true);
         Location bestLocation = null;
@@ -204,8 +204,8 @@ public class MainActivity extends AppCompatActivity implements ViewRunning, OnMa
         }
         return bestLocation;
     }
-
-    private void moveCamera(Location location){
+    @Override
+    public void moveCamera(Location location){
         LatLng latLng;
         latLng = new LatLng(location.getLatitude(), location.getLongitude());
         CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 17);
@@ -227,7 +227,8 @@ public class MainActivity extends AppCompatActivity implements ViewRunning, OnMa
     /*
       Creates a callback for receiving location events.
     */
-    private void createLocationCallback() {
+    @Override
+    public void createLocationCallback() {
         mLocationCallback = new LocationCallback() {
             @Override
             public void onLocationResult(LocationResult locationResult) {
@@ -260,46 +261,26 @@ public class MainActivity extends AppCompatActivity implements ViewRunning, OnMa
                         break;
                     case Activity.RESULT_CANCELED:
                         Log.i(TAG, "User chose not to make required location settings changes.");
-                        mRequestingLocationUpdates = false;
+                        //mRequestingLocationUpdates = false;
                         break;
                 }
                 break;
         }
     }
     /*
-      Handles the Start Updates button and requests start of location updates. Does nothing if
-      updates have already been requested.
-   */
-    private void startUpdatesButtonHandler() {
-        if (!mRequestingLocationUpdates) {
-            mRequestingLocationUpdates = true;
-            startLocationUpdates();
-        }
-    }
-    /*
-      Handles the Stop Updates button, and requests removal of location updates.
-    */
-    private void stopUpdatesButtonHandler(View view) {
-        stopLocationUpdates();
-    }
-    /*
       Removes location updates from the FusedLocationApi.
     */
-    private void stopLocationUpdates() {
-        if (!mRequestingLocationUpdates) {
-            Log.d(TAG, "stopLocationUpdates: updates never requested, no-op.");
-            return;
-        }
+    @Override
+    public void stopLocationUpdates() {
         mFusedLocationClient.removeLocationUpdates(mLocationCallback)
                 .addOnCompleteListener(this, new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
-                        mRequestingLocationUpdates = false;
                     }
                 });
     }
-
-    private void startLocationUpdates() {
+    @Override
+    public void startLocationUpdates() {
         // Begin by checking if the device has the necessary location settings.
         mSettingsClient.checkLocationSettings(mLocationSettingsRequest)
                 .addOnSuccessListener(this, new OnSuccessListener<LocationSettingsResponse>() {
@@ -335,7 +316,6 @@ public class MainActivity extends AppCompatActivity implements ViewRunning, OnMa
                                         "fixed here. Fix in Settings.";
                                 Log.e(TAG, errorMessage);
                                 Toast.makeText(MainActivity.this, errorMessage, Toast.LENGTH_LONG).show();
-                                mRequestingLocationUpdates = false;
                         }
                     }
                 });
@@ -568,7 +548,7 @@ public class MainActivity extends AppCompatActivity implements ViewRunning, OnMa
         stopButton.startAnimation(stopButtonAnimation);
 
         //mQuery.deleteAll();
-        startUpdatesButtonHandler();
+        startLocationUpdates();
         //refreshMap(mMap);
         // Get start time
         startCurrentTime = Calendar.getInstance().getTime();
@@ -592,7 +572,7 @@ public class MainActivity extends AppCompatActivity implements ViewRunning, OnMa
         stopButton.startAnimation(stopButtonAnimation);
 
         PauseTime();
-        stopUpdatesButtonHandler(pauseButton);
+        stopLocationUpdates();
     }
 
     public void onClickResumeButton(View resumeButton) {
@@ -615,7 +595,7 @@ public class MainActivity extends AppCompatActivity implements ViewRunning, OnMa
     }
 
     public void onClickStopButton(View view) throws JSONException {
-        stopUpdatesButtonHandler(view);
+        stopLocationUpdates();
         StopTime();
         stopCurrentTime = Calendar.getInstance().getTime();
         sendDataToResult();

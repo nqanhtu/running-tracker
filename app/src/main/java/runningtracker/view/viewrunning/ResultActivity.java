@@ -1,6 +1,7 @@
 package runningtracker.view.viewrunning;
 import android.content.Context;
 import android.content.Intent;
+import android.location.Location;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -81,6 +82,31 @@ public class ResultActivity extends AppCompatActivity implements ViewRunning {
 
     @Override
     public void setupViewRunning(float mDistanceValue, float mAvgPaceValue, float mCalorie) {
+
+    }
+
+    @Override
+    public Location getMyLocation() {
+        return null;
+    }
+
+    @Override
+    public void moveCamera(Location location) {
+
+    }
+
+    @Override
+    public void createLocationCallback() {
+        
+    }
+
+    @Override
+    public void stopLocationUpdates() {
+
+    }
+
+    @Override
+    public void startLocationUpdates() {
 
     }
 
