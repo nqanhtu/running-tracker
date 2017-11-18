@@ -15,6 +15,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import com.google.android.gms.maps.GoogleMap;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 import runningtracker.R;
@@ -35,7 +38,7 @@ public class ResultActivity extends AppCompatActivity implements ViewRunning {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_result);
-        logicRunning = new LogicRunning((ViewRunning) this);
+        logicRunning = new LogicRunning(this);
 
         initializeUI();
         StatsTabFragment.setStatsValue(getIntent());
@@ -71,11 +74,6 @@ public class ResultActivity extends AppCompatActivity implements ViewRunning {
     }
 
     @Override
-    public JSONObject getValueRunning() throws JSONException {
-        return null;
-    }
-
-    @Override
     public Context getMainActivity() {
         return null;
     }
@@ -86,29 +84,30 @@ public class ResultActivity extends AppCompatActivity implements ViewRunning {
     }
 
     @Override
-    public Location getMyLocation() {
+    public void startTime() {
+
+    }
+
+    @Override
+    public float getUpdateTime() {
+        return 0;
+    }
+
+    @Override
+    public void pauseTime() {
+
+    }
+
+    @Override
+    public void stopTime() {
+
+    }
+
+    @Override
+    public GoogleMap getMap() {
         return null;
     }
 
-    @Override
-    public void moveCamera(Location location) {
-
-    }
-
-    @Override
-    public void createLocationCallback() {
-        
-    }
-
-    @Override
-    public void stopLocationUpdates() {
-
-    }
-
-    @Override
-    public void startLocationUpdates() {
-
-    }
 
     private class ViewPagerAdapter extends FragmentPagerAdapter {
         private ArrayList<String> fragmentTitleList = new ArrayList<>();
