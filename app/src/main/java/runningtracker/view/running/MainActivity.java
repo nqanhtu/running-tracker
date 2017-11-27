@@ -18,6 +18,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import runningtracker.R;
+import runningtracker.model.ObjectCommon;
 import runningtracker.model.modelrunning.BodilyCharacteristicObject;
 import runningtracker.model.modelrunning.DatabaseLocation;
 import runningtracker.presenter.running.LogicRunning;
@@ -70,6 +71,7 @@ public class MainActivity extends AppCompatActivity implements ViewRunning, OnMa
         logicRunning.createLocationCallback();
         logicRunning.createLocationRequest();
         logicRunning.buildLocationSettingsRequest();
+
     }
 
 

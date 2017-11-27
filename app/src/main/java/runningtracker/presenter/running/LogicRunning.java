@@ -45,6 +45,7 @@ import java.util.Date;
 import java.util.List;
 
 import runningtracker.model.DataCallback;
+import runningtracker.model.ObjectCommon;
 import runningtracker.model.modelrunning.BodilyCharacteristicObject;
 import runningtracker.model.ResAPICommon;
 import runningtracker.model.modelrunning.DatabaseLocation;
@@ -57,7 +58,6 @@ import runningtracker.view.running.ViewRunning;
 import static android.content.Context.LOCATION_SERVICE;
 
 public class LogicRunning implements Running {
-    //khai bao bien
     private static final int REQUEST_FINE_LOCATION = 0;
     private static final int REQUEST_CHECK_SETTINGS = 0x1;
     private static final long UPDATE_INTERVAL_IN_MILLISECONDS = 3000;
@@ -75,8 +75,6 @@ public class LogicRunning implements Running {
     LocationManager rLocationManager;
     LocationListener locationListener;
     private String provider;
-    private Location mCurrentLocation;
-    private String mLastUpdateTime;
     private float rDisaTance;
     Location mLocation;
     double mLatitude, mLongitude;
@@ -85,13 +83,14 @@ public class LogicRunning implements Running {
     BodilyCharacteristicObject m_Bodily;
     //private final DatabaseLocation mQuery = new DatabaseLocation(this);
 
-    //Ket thuc khai bao bien
     ViewRunning viewRunning;
     ResAPICommon resAPICommon;
     DatabaseRunningSession dataRunning;
+    ObjectCommon objectCommon;
     public LogicRunning(ViewRunning viewRunning){
         this.viewRunning = viewRunning;
         this.resAPICommon = new ResAPICommon();
+        objectCommon = new ObjectCommon();
     }
 
     @Override
@@ -158,7 +157,6 @@ public class LogicRunning implements Running {
     //Ham cai dat running
     @Override
     public void initialization() {
-        mLastUpdateTime = "";
         rCalories = 0;
         maxPace = 0;
         rGrossCalorie = 0;
@@ -167,20 +165,31 @@ public class LogicRunning implements Running {
         //logicRunning = new LogicRunning(this);
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient( viewRunning.getMainActivity());
         mSettingsClient = LocationServices.getSettingsClient( viewRunning.getMainActivity());
+        objectCommon.setMaxCalores(2);
     }
 
     @Override
     public void createLocationCallback() {
+        if(objectCommon.getMaxCalores() > 0){
             mLocationCallback = new LocationCallback() {
-            @Override
-            public void onLocationResult(LocationResult locationResult) {
-                super.onLocationResult(locationResult);
-                mCurrentLocation = locationResult.getLastLocation();
-                mLastUpdateTime = DateFormat.getTimeInstance().format(new Date());
-                onLocationChanged(locationResult.getLastLocation());
-                //onLocationChangedOffline(locationResult.getLastLocation());
-            }
-        };
+                @Override
+                public void onLocationResult(LocationResult locationResult) {
+                    super.onLocationResult(locationResult);
+                    if(objectCommon.getMaxCalores() < rCalories)
+                        Toast.makeText(viewRunning.getMainActivity(), "Bạn đã chạy đủ lượng calories cần luyện tập", Toast.LENGTH_LONG).show();
+                    onLocationChanged(locationResult.getLastLocation());
+                }
+            };
+        }
+        else {
+            mLocationCallback = new LocationCallback() {
+                @Override
+                public void onLocationResult(LocationResult locationResult) {
+                    super.onLocationResult(locationResult);
+                    onLocationChanged(locationResult.getLastLocation());
+                }
+            };
+        }
     }
 
     @Override
@@ -202,18 +211,13 @@ public class LogicRunning implements Running {
         iLocation.setLatitudeValue(location.getLatitude());
         iLocation.setLongitudeValue(location.getLongitude());
         moveCamera(location);
-/*        if(mStatusTime == true){
-            viewRunning.startTime();
-            mStatusTime = false;
-        }*/
         if(mLatitude != 0){
+            rPace = 0;
             mLocation = new Location("B");
             mLocation.setLatitude(mLatitude);
             mLocation.setLongitude(mLongitude);
             float mDisaTance = rDisaTance;
             rDisaTance = rDisaTance +  DistanceLocation(mLocation,location);
-            float rAvg_Distance = rDisaTance - mDisaTance;
-            rPace = 0;
             if(rDisaTance > 0) {rPace = (viewRunning.getUpdateTime() / 60000) / rDisaTance;}
             //if(m_Bodily != null)
             //rCalories = (float) Calculator.netCalorieBurned(m_Bodily.getWeightInKg(), m_Bodily.getVO2max(), rDisaTance, 0, false);
@@ -365,6 +369,7 @@ public class LogicRunning implements Running {
             mStatusTime = false;
         }*/
         if(mLatitude != 0){
+            rPace = 0;
             mLocation = new Location("B");
             mLocation.setLatitude(mLatitude);
             mLocation.setLongitude(mLongitude);
@@ -372,15 +377,12 @@ public class LogicRunning implements Running {
             rDisaTance = rDisaTance +  DistanceLocation(mLocation,location);
             Log.v(String.valueOf(viewRunning.getMainActivity()), "A=" +mLocation);
             Log.v(String.valueOf(viewRunning.getMainActivity()), "B=" +location);
-            float rAvg_Distance = rDisaTance - mDisaTance;
-            rPace = 0;
             if(rDisaTance > 0) {
                 rPace = (viewRunning.getUpdateTime() / 60000) / rDisaTance;
-                Toast.makeText(viewRunning.getMainActivity(), ""+viewRunning.getUpdateTime(), Toast.LENGTH_LONG).show();
             }
             rCalories = (float) Calculator.netCalorieBurned(80, 42, rDisaTance, 0, false);
             if(rPace > maxPace) {maxPace = rPace;}
-            Toast.makeText(viewRunning.getMainActivity(), ""+rDisaTance, Toast.LENGTH_LONG).show();
+            //Toast.makeText(viewRunning.getMainActivity(), ""+rDisaTance, Toast.LENGTH_LONG).show();
             viewRunning.setupViewRunning(RoundAvoid(rDisaTance,2), RoundAvoid(rPace,2), RoundAvoid(rCalories, 1));
         }
         mLatitude = location.getLatitude();
