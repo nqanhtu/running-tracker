@@ -10,7 +10,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import org.json.JSONException;
 import org.json.JSONObject;
-import runningtracker.view.viewrunning.MainActivity;
+import runningtracker.view.running.MainActivity;
 
 public class ResAPICommon extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getSimpleName();

@@ -4,12 +4,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#0277BD">
+    xmlns:android.support.v7.appcompat="http://schemas.android.com/apk/res-auto"
+    android:background="@drawable/gradient_background_offline">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#4DB6AC">
+        android:background="@drawable/gradient_background_offline">
 
         <TextView
             android:id="@+id/txtTimer"
@@ -29,12 +30,12 @@
             android:id="@+id/imgTimer"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/imgDuration"
+            android:layout_alignParentTop="true"
+            android:layout_alignStart="@+id/imgDuration"
             android:layout_marginTop="50dp"
             android:tint="#000000"
-            app:srcCompat="@drawable/ic_timer_black_24dp"
-            android:layout_alignParentTop="true"
-            android:layout_alignLeft="@+id/imgDuration"
-            android:layout_alignStart="@+id/imgDuration" />
+            app:srcCompat="@drawable/ic_timer_black_24dp" />
 
         <TextView
             android:id="@+id/txtDuration"
@@ -52,10 +53,10 @@
             android:id="@+id/imgDuration"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="30dp"
-            app:srcCompat="@drawable/ic_road_variant_black_24dp"
             android:layout_below="@+id/txtTimer"
-            android:layout_centerHorizontal="true" />
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="30dp"
+            app:srcCompat="@drawable/ic_road_variant_black_24dp" />
 
         <TextView
             android:id="@+id/txtCalorie"
@@ -87,29 +88,86 @@
             android:id="@+id/imgAvgPace"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:srcCompat="@drawable/ic_run_fast_black_24dp"
             android:layout_above="@+id/txtAvgPace"
             android:layout_alignLeft="@+id/txtTimer"
-            android:layout_alignStart="@+id/txtTimer" />
+            android:layout_alignStart="@+id/txtTimer"
+            app:srcCompat="@drawable/ic_run_fast_black_24dp" />
 
         <ImageView
             android:id="@+id/imgCalorie"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:srcCompat="@drawable/ic_fire_black_24dp"
             android:layout_above="@+id/txtAvgPace"
+            android:layout_alignEnd="@+id/txtTimer"
             android:layout_alignRight="@+id/txtTimer"
-            android:layout_alignEnd="@+id/txtTimer" />
+            app:srcCompat="@drawable/ic_fire_black_24dp" />
 
-        <ImageView
-            android:id="@+id/imageView"
-            android:layout_width="150dp"
-            android:layout_height="120dp"
-            android:layout_alignLeft="@+id/imgAvgPace"
-            android:layout_alignParentBottom="true"
-            android:layout_alignStart="@+id/imgAvgPace"
-            android:layout_marginBottom="46dp"
-            app:srcCompat="@drawable/run_fast" />
+        <ImageButton
+            style="@style/ActionCircularImageButton"
+            android:id="@+id/startButton"
+            android.support.v7.appcompat:srcCompat="@drawable/ic_directions_run_white_48dp"
+            android:background="@drawable/start_circle_button"
+            android:onClick="onClickStartButton"
+
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            android:layout_alignTop="@+id/resumeButton"
+            android:layout_alignLeft="@+id/resumeButton"
+            android:layout_alignStart="@+id/resumeButton" />
+
+        <ImageButton
+            style="@style/ActionCircularImageButton"
+            android:id="@+id/pauseButton"
+            android.support.v7.appcompat:srcCompat="@drawable/ic_pause_white_48dp"
+            android:background="@drawable/pause_circle_button"
+            android:longClickable="true"
+            android:onClick="onClickPauseButton"
+            android:enabled="false"
+            android:visibility="invisible"
+
+            app:layout_constraintBottom_toBottomOf="@+id/startButton"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="@+id/startButton"
+            android:layout_alignTop="@+id/startButton"
+            android:layout_toLeftOf="@+id/imgDuration"
+            android:layout_toStartOf="@+id/imgDuration"
+            android:layout_marginRight="10dp"
+            android:layout_marginEnd="10dp" />
+
+        <ImageButton
+            style="@style/ActionCircularImageButton"
+            android:id="@+id/resumeButton"
+            android.support.v7.appcompat:srcCompat="@drawable/ic_replay_white_48dp"
+            android:background="@drawable/resume_circle_button"
+            android:onClick="onClickResumeButton"
+            android:enabled="false"
+            android:visibility="invisible"
+
+            app:layout_constraintBottom_toBottomOf="@+id/startButton"
+            app:layout_constraintLeft_toLeftOf="@+id/startButton"
+            app:layout_constraintRight_toRightOf="@+id/startButton"
+            android:layout_alignTop="@+id/stopButton"
+            android:layout_centerHorizontal="true" />
+
+        <ImageButton
+            style="@style/ActionCircularImageButton"
+            android:id="@+id/stopButton"
+            android.support.v7.appcompat:srcCompat="@drawable/ic_stop_white_48dp"
+            android:background="@drawable/stop_circle_button"
+            android:onClick="onClickStopButton"
+            android:enabled="false"
+            android:visibility="invisible"
+
+            app:layout_constraintBottom_toBottomOf="@+id/startButton"
+            app:layout_constraintLeft_toLeftOf="@+id/startButton"
+            app:layout_constraintRight_toRightOf="parent"
+            android:layout_marginTop="76dp"
+            android:layout_below="@+id/txtCalorie"
+            android:layout_toRightOf="@+id/imgDuration"
+            android:layout_toEndOf="@+id/imgDuration"
+            android:layout_marginLeft="10dp"
+            android:layout_marginStart="10dp" />
 
     </RelativeLayout>
 </LinearLayout>

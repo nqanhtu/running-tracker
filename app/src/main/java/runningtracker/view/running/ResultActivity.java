@@ -1,7 +1,6 @@
-package runningtracker.view.viewrunning;
+package runningtracker.view.running;
 import android.content.Context;
 import android.content.Intent;
-import android.location.Location;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -18,10 +17,8 @@ import android.widget.TextView;
 
 import com.google.android.gms.maps.GoogleMap;
 
-import org.json.JSONException;
-import org.json.JSONObject;
 import runningtracker.R;
-import runningtracker.presenter.presenterrunning.LogicRunning;
+import runningtracker.presenter.running.LogicRunning;
 import java.util.ArrayList;
 import java.util.HashMap;
 

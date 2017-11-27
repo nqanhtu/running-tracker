@@ -1,20 +1,23 @@
-package runningtracker.presenter.presenterrunning;
+package runningtracker.presenter.running;
 import android.Manifest;
 import android.app.Activity;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
@@ -49,7 +52,7 @@ import runningtracker.model.modelrunning.DatabaseRunningSession;
 import runningtracker.model.modelrunning.LocationObject;
 import runningtracker.model.modelrunning.RunningObject;
 import runningtracker.presenter.fitnessstatistic.Calculator;
-import runningtracker.view.viewrunning.ViewRunning;
+import runningtracker.view.running.ViewRunning;
 
 import static android.content.Context.LOCATION_SERVICE;
 
@@ -70,6 +73,8 @@ public class LogicRunning implements Running {
     private boolean mStatusTime;
     float rGrossCalorie;
     LocationManager rLocationManager;
+    LocationListener locationListener;
+    private String provider;
     private Location mCurrentLocation;
     private String mLastUpdateTime;
     private float rDisaTance;
@@ -166,13 +171,26 @@ public class LogicRunning implements Running {
 
     @Override
     public void createLocationCallback() {
-        mLocationCallback = new LocationCallback() {
+            mLocationCallback = new LocationCallback() {
             @Override
             public void onLocationResult(LocationResult locationResult) {
                 super.onLocationResult(locationResult);
                 mCurrentLocation = locationResult.getLastLocation();
                 mLastUpdateTime = DateFormat.getTimeInstance().format(new Date());
                 onLocationChanged(locationResult.getLastLocation());
+                //onLocationChangedOffline(locationResult.getLastLocation());
+            }
+        };
+    }
+
+    @Override
+    public void createLocationCallbackOffline() {
+        mLocationCallback = new LocationCallback() {
+            @Override
+            public void onLocationResult(LocationResult locationResult) {
+                super.onLocationResult(locationResult);
+                Location location = getMyLocation();
+                onLocationChangedOffline(location);
             }
         };
     }
@@ -184,10 +202,10 @@ public class LogicRunning implements Running {
         iLocation.setLatitudeValue(location.getLatitude());
         iLocation.setLongitudeValue(location.getLongitude());
         moveCamera(location);
-        if(mStatusTime == true){
+/*        if(mStatusTime == true){
             viewRunning.startTime();
             mStatusTime = false;
-        }
+        }*/
         if(mLatitude != 0){
             mLocation = new Location("B");
             mLocation.setLatitude(mLatitude);
@@ -266,13 +284,11 @@ public class LogicRunning implements Running {
 
     @Override
     public void startLocationUpdates() {
+
         mSettingsClient.checkLocationSettings(mLocationSettingsRequest)
                 .addOnSuccessListener((Activity) viewRunning.getMainActivity(), new OnSuccessListener<LocationSettingsResponse>() {
                     @Override
                     public void onSuccess(LocationSettingsResponse locationSettingsResponse) {
-                        //Log.i(TAG, "All location settings are satisfied.");
-                        mStatusTime = true;
-                        //noinspection MissingPermission
                         mFusedLocationClient.requestLocationUpdates(mLocationRequest,
                                 mLocationCallback,
                                 Looper.myLooper());
@@ -284,21 +300,20 @@ public class LogicRunning implements Running {
                         int statusCode = ((ApiException) e).getStatusCode();
                         switch (statusCode) {
                             case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
-                                /*Log.i(TAG, "Location settings are not satisfied. Attempting to upgrade " +
-                                        "location settings ");*/
+                                Log.i(String.valueOf(viewRunning.getMainActivity()), "Location settings are not satisfied. Attempting to upgrade " +
+                                        "location settings ");
                                 try {
                                     // Show the dialog by calling startResolutionForResult(), and check the
                                     // result in onActivityResult()
                                     ResolvableApiException rae = (ResolvableApiException) e;
                                     rae.startResolutionForResult((Activity) viewRunning.getMainActivity(), REQUEST_CHECK_SETTINGS);
                                 } catch (IntentSender.SendIntentException sie) {
-                                    /*Log.i(TAG, "PendingIntent unable to execute request.");*/
+                                    Log.i(String.valueOf(viewRunning.getMainActivity()), "PendingIntent unable to execute request.");
                                 }
                                 break;
                             case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
                                 String errorMessage = "Location settings are inadequate, and cannot be " +
                                         "fixed here. Fix in Settings.";
-                               /* Log.e(TAG, errorMessage);*/
                                 Toast.makeText(viewRunning.getMainActivity(), errorMessage, Toast.LENGTH_LONG).show();
                         }
                     }
@@ -314,15 +329,8 @@ public class LogicRunning implements Running {
     @Override
     public void createLocationRequest() {
         mLocationRequest = new LocationRequest();
-        // Sets the desired interval for active location updates. This interval is
-        // inexact. You may not receive updates at all if no location sources are available, or
-        // you may receive them slower than requested. You may also receive updates faster than
-        // requested if other applications are requesting location at a faster interval.
         mLocationRequest.setInterval(UPDATE_INTERVAL_IN_MILLISECONDS);
-        // Sets the fastest rate for active location updates. This interval is exact, and your
-        // application will never receive updates faster than this value.
         mLocationRequest.setFastestInterval(FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS);
-
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
     }
 
@@ -345,4 +353,39 @@ public class LogicRunning implements Running {
     public float getMaxPace() {
         return maxPace;
     }
+
+    @Override
+    public void onLocationChangedOffline(Location location) {
+/*        DatabaseLocation mQuery = new DatabaseLocation(viewRunning.getMainActivity());
+        LocationObject iLocation = new LocationObject();
+        iLocation.setLatitudeValue(location.getLatitude());
+        iLocation.setLongitudeValue(location.getLongitude());*/
+/*        if(mStatusTime == true){
+            viewRunning.startTime();
+            mStatusTime = false;
+        }*/
+        if(mLatitude != 0){
+            mLocation = new Location("B");
+            mLocation.setLatitude(mLatitude);
+            mLocation.setLongitude(mLongitude);
+            float mDisaTance = rDisaTance;
+            rDisaTance = rDisaTance +  DistanceLocation(mLocation,location);
+            Log.v(String.valueOf(viewRunning.getMainActivity()), "A=" +mLocation);
+            Log.v(String.valueOf(viewRunning.getMainActivity()), "B=" +location);
+            float rAvg_Distance = rDisaTance - mDisaTance;
+            rPace = 0;
+            if(rDisaTance > 0) {
+                rPace = (viewRunning.getUpdateTime() / 60000) / rDisaTance;
+                Toast.makeText(viewRunning.getMainActivity(), ""+viewRunning.getUpdateTime(), Toast.LENGTH_LONG).show();
+            }
+            rCalories = (float) Calculator.netCalorieBurned(80, 42, rDisaTance, 0, false);
+            if(rPace > maxPace) {maxPace = rPace;}
+            Toast.makeText(viewRunning.getMainActivity(), ""+rDisaTance, Toast.LENGTH_LONG).show();
+            viewRunning.setupViewRunning(RoundAvoid(rDisaTance,2), RoundAvoid(rPace,2), RoundAvoid(rCalories, 1));
+        }
+        mLatitude = location.getLatitude();
+        mLongitude = location.getLongitude();
+    }
+
+
 }

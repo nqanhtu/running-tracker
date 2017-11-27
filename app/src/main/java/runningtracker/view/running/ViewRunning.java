@@ -1,11 +1,7 @@
-package runningtracker.view.viewrunning;
+package runningtracker.view.running;
 import android.content.Context;
-import android.location.Location;
 
 import com.google.android.gms.maps.GoogleMap;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 public interface ViewRunning {
     Context getMainActivity();//lay view main

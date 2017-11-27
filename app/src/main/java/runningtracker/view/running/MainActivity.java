@@ -1,4 +1,4 @@
-package runningtracker.view.viewrunning;
+package runningtracker.view.running;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
@@ -20,7 +20,7 @@ import android.widget.TextView;
 import runningtracker.R;
 import runningtracker.model.modelrunning.BodilyCharacteristicObject;
 import runningtracker.model.modelrunning.DatabaseLocation;
-import runningtracker.presenter.presenterrunning.LogicRunning;
+import runningtracker.presenter.running.LogicRunning;
 import runningtracker.presenter.fitnessstatistic.Calculator;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.maps.GoogleMap;
@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity implements ViewRunning, OnMa
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_running);
         logicRunning = new LogicRunning(this);
 
         initializeUI();
@@ -249,6 +249,7 @@ public class MainActivity extends AppCompatActivity implements ViewRunning, OnMa
         stopButton.startAnimation(stopButtonAnimation);
 
         //mQuery.deleteAll();
+        startTime();
         logicRunning.startLocationUpdates();
         //refreshMap(mMap);
         // Get start time

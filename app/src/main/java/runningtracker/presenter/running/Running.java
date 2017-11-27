@@ -1,4 +1,4 @@
-package runningtracker.presenter.presenterrunning;
+package runningtracker.presenter.running;
 import android.location.Location;
 import org.json.JSONException;
 import runningtracker.model.modelrunning.BodilyCharacteristicObject;
@@ -14,6 +14,7 @@ public interface Running {
     boolean SaveRunningSession(RunningObject runningObject);//save database running session
     void initialization();// set up gia tri bien truyen vao
     void createLocationCallback();//ham gan gia tri cho bien callback
+    void createLocationCallbackOffline();//ham tao bien callback cho truong hop khong co internet
     void onLocationChanged(Location location);//ham lay thay doi vi tri
     void moveCamera(Location location);//Ham di chuyen camera den vi tri hien tai
     void polylineBetweenTwoPoint(Location A, Location B);//Ham ve duong di giua 2 diem
@@ -27,5 +28,5 @@ public interface Running {
     float getDisaTance();//Lay gia tri cua DisaTance
     float getPace();//Lay gia tri cua Pace
     float getMaxPace();//Lay gia tri cua MaxPace
-
+    void onLocationChangedOffline(Location location);//Ham cap nhat vi tri khi khong co mang
 }
