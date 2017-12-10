@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
+import android.media.MediaPlayer;
 import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -44,6 +45,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import runningtracker.R;
 import runningtracker.model.DataCallback;
 import runningtracker.model.ObjectCommon;
 import runningtracker.model.modelrunning.BodilyCharacteristicObject;
@@ -79,6 +81,7 @@ public class LogicRunning implements Running {
     Location mLocation;
     double mLatitude, mLongitude;
     float rCalories, rPace, maxPace;
+    MediaPlayer ring;
 
     BodilyCharacteristicObject m_Bodily;
     //private final DatabaseLocation mQuery = new DatabaseLocation(this);
@@ -166,6 +169,7 @@ public class LogicRunning implements Running {
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient( viewRunning.getMainActivity());
         mSettingsClient = LocationServices.getSettingsClient( viewRunning.getMainActivity());
         objectCommon.setMaxCalores(2);
+        ring= MediaPlayer.create(viewRunning.getMainActivity(), R.raw.report_maxcalorie);
     }
 
     @Override
@@ -176,7 +180,7 @@ public class LogicRunning implements Running {
                 public void onLocationResult(LocationResult locationResult) {
                     super.onLocationResult(locationResult);
                     if(objectCommon.getMaxCalores() < rCalories)
-                        Toast.makeText(viewRunning.getMainActivity(), "Bạn đã chạy đủ lượng calories cần luyện tập", Toast.LENGTH_LONG).show();
+                        ring.start();
                     onLocationChanged(locationResult.getLastLocation());
                 }
             };
