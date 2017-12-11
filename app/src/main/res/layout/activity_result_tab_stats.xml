@@ -1,0 +1,402 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".view.ResultActivity.TabFragment"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+>
+
+    <!-- Duration -->
+    <TextView
+        style="@style/textMediumValue"
+        android:id="@+id/textValueDuration"
+        android:text="00:00:00"
+        android:textSize="25sp"
+
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/textValueAveragePace"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@+id/textValueDistance"
+        android:layout_marginTop="0dp"
+        android:layout_marginBottom="0dp"
+        android:layout_marginLeft="40dp"
+        android:layout_marginRight="0dp"
+        android:layout_width="119dp"
+        android:layout_height="32dp"
+        android:gravity="left"
+    />
+
+    <TextView
+        style="@style/textDescription"
+        android:id="@+id/textDescriptionDuration"
+        android:text="@string/duration"
+
+        app:layout_constraintBottom_toTopOf="@+id/textValueDuration"
+        app:layout_constraintLeft_toLeftOf="@+id/textValueDuration"
+        android:layout_marginTop="0dp"
+        android:layout_marginBottom="0dp"
+        android:layout_marginLeft="0dp"
+        android:layout_marginRight="0dp"
+    />
+
+    <ImageView
+        android:id="@+id/iconDuration"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/timer"
+
+        app:layout_constraintTop_toTopOf="@+id/textValueDuration"
+        app:layout_constraintBottom_toBottomOf="@+id/textValueDuration"
+        app:layout_constraintRight_toRightOf="@+id/textValueDuration"
+        app:layout_constraintLeft_toLeftOf="@+id/textValueDuration"
+        android:layout_marginTop="0dp"
+        android:layout_marginBottom="20dp"
+        android:layout_marginLeft="0dp"
+        android:layout_marginRight="160dp"
+    />
+
+    <!-- Distance -->
+    <TextView
+        style="@style/textMediumValue"
+        android:id="@+id/textValueDistance"
+        android:text="00.0"
+        android:textSize="25sp"
+
+        app:layout_constraintTop_toTopOf="@+id/textValueDuration"
+        app:layout_constraintBottom_toBottomOf="@+id/textValueDuration"
+        app:layout_constraintLeft_toRightOf="@+id/textValueDuration"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginTop="0dp"
+        android:layout_marginBottom="0dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="0dp"
+        android:layout_width="119dp"
+        android:layout_height="32dp"
+        android:gravity="left"
+    />
+
+    <TextView
+        style="@style/textDescription"
+        android:id="@+id/textDescriptionDistance"
+        android:text="@string/distanceMetric"
+
+        app:layout_constraintBottom_toTopOf="@+id/textValueDistance"
+        app:layout_constraintLeft_toLeftOf="@+id/textValueDistance"
+        android:layout_marginTop="0dp"
+        android:layout_marginBottom="0dp"
+        android:layout_marginLeft="0dp"
+        android:layout_marginRight="0dp"
+    />
+
+    <ImageView
+        android:id="@+id/iconDistance"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/road_variant"
+
+        app:layout_constraintTop_toTopOf="@+id/textValueDistance"
+        app:layout_constraintBottom_toBottomOf="@+id/textValueDistance"
+        app:layout_constraintRight_toRightOf="@+id/textValueDistance"
+        app:layout_constraintLeft_toLeftOf="@+id/textValueDistance"
+        android:layout_marginTop="0dp"
+        android:layout_marginBottom="20dp"
+        android:layout_marginLeft="0dp"
+        android:layout_marginRight="160dp"
+    />
+
+    <!-- Average Pace -->
+    <TextView
+        style="@style/textMediumValue"
+        android:id="@+id/textValueAveragePace"
+        android:text="00.0"
+        android:textSize="25sp"
+
+        app:layout_constraintTop_toBottomOf="@+id/textValueDuration"
+        app:layout_constraintBottom_toTopOf="@+id/textValueAverageSpeed"
+        app:layout_constraintLeft_toLeftOf="@+id/textValueDuration"
+        app:layout_constraintRight_toRightOf="@+id/textValueDuration"
+        android:layout_marginTop="0dp"
+        android:layout_marginBottom="0dp"
+        android:layout_marginLeft="0dp"
+        android:layout_marginRight="0dp"
+        android:layout_width="119dp"
+        android:layout_height="32dp"
+        android:gravity="left"
+    />
+
+    <TextView
+        style="@style/textDescription"
+        android:id="@+id/textDescriptionAveragePace"
+        android:text="@string/avgPace"
+
+        app:layout_constraintBottom_toTopOf="@+id/textValueAveragePace"
+        app:layout_constraintLeft_toLeftOf="@+id/textValueAveragePace"
+        android:layout_marginTop="0dp"
+        android:layout_marginBottom="0dp"
+        android:layout_marginLeft="0dp"
+        android:layout_marginRight="0dp"
+    />
+
+    <ImageView
+        android:id="@+id/iconAveragePace"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/run_fast"
+
+        app:layout_constraintTop_toTopOf="@+id/textValueAveragePace"
+        app:layout_constraintBottom_toBottomOf="@+id/textValueAveragePace"
+        app:layout_constraintRight_toRightOf="@+id/textValueAveragePace"
+        app:layout_constraintLeft_toLeftOf="@+id/textValueAveragePace"
+        android:layout_marginTop="0dp"
+        android:layout_marginBottom="20dp"
+        android:layout_marginLeft="0dp"
+        android:layout_marginRight="160dp"
+    />
+
+    <!-- Max Pace -->
+    <TextView
+        style="@style/textMediumValue"
+        android:id="@+id/textValueMaxPace"
+        android:text="00.0"
+        android:textSize="25sp"
+
+        app:layout_constraintTop_toTopOf="@+id/textValueAveragePace"
+        app:layout_constraintBottom_toBottomOf="@+id/textValueAveragePace"
+        app:layout_constraintLeft_toLeftOf="@+id/textValueDistance"
+        app:layout_constraintRight_toRightOf="@+id/textValueDistance"
+        android:layout_marginTop="0dp"
+        android:layout_marginBottom="0dp"
+        android:layout_marginLeft="0dp"
+        android:layout_marginRight="0dp"
+        android:layout_width="119dp"
+        android:layout_height="32dp"
+        android:gravity="left"
+    />
+
+    <TextView
+        style="@style/textDescription"
+        android:id="@+id/textDescriptionMaxPace"
+        android:text="@string/maxPace"
+
+        app:layout_constraintBottom_toTopOf="@+id/textValueMaxPace"
+        app:layout_constraintLeft_toLeftOf="@+id/textValueMaxPace"
+        android:layout_marginTop="0dp"
+        android:layout_marginBottom="0dp"
+        android:layout_marginLeft="0dp"
+        android:layout_marginRight="0dp"
+    />
+
+    <ImageView
+        android:id="@+id/iconMaxPace"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/run_fast"
+
+        app:layout_constraintTop_toTopOf="@+id/textValueMaxPace"
+        app:layout_constraintBottom_toBottomOf="@+id/textValueMaxPace"
+        app:layout_constraintRight_toRightOf="@+id/textValueMaxPace"
+        app:layout_constraintLeft_toLeftOf="@+id/textValueMaxPace"
+        android:layout_marginTop="0dp"
+        android:layout_marginBottom="20dp"
+        android:layout_marginLeft="0dp"
+        android:layout_marginRight="160dp"
+    />
+
+    <!-- Average Speed -->
+    <TextView
+        style="@style/textMediumValue"
+        android:id="@+id/textValueAverageSpeed"
+        android:text="00.0"
+        android:textSize="25sp"
+
+        app:layout_constraintTop_toBottomOf="@+id/textValueAveragePace"
+        app:layout_constraintBottom_toTopOf="@+id/textValueNetCalorie"
+        app:layout_constraintLeft_toLeftOf="@+id/textValueDuration"
+        app:layout_constraintRight_toRightOf="@+id/textValueDuration"
+        android:layout_marginTop="0dp"
+        android:layout_marginBottom="0dp"
+        android:layout_marginLeft="0dp"
+        android:layout_marginRight="0dp"
+        android:layout_width="119dp"
+        android:layout_height="32dp"
+        android:gravity="left"
+    />
+
+    <TextView
+        style="@style/textDescription"
+        android:id="@+id/textDescriptionAverageSpeed"
+        android:text="@string/avgSpeed"
+
+        app:layout_constraintBottom_toTopOf="@+id/textValueAverageSpeed"
+        app:layout_constraintLeft_toLeftOf="@+id/textValueAverageSpeed"
+        android:layout_marginTop="0dp"
+        android:layout_marginBottom="0dp"
+        android:layout_marginLeft="0dp"
+        android:layout_marginRight="0dp"
+    />
+
+    <ImageView
+        android:id="@+id/iconAverageSpeed"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/speedometer"
+
+        app:layout_constraintTop_toTopOf="@+id/textValueAverageSpeed"
+        app:layout_constraintBottom_toBottomOf="@+id/textValueAverageSpeed"
+        app:layout_constraintRight_toRightOf="@+id/textValueAverageSpeed"
+        app:layout_constraintLeft_toLeftOf="@+id/textValueAverageSpeed"
+        android:layout_marginTop="0dp"
+        android:layout_marginBottom="20dp"
+        android:layout_marginLeft="0dp"
+        android:layout_marginRight="160dp"
+    />
+
+    <!-- Max Speed -->
+    <TextView
+        style="@style/textMediumValue"
+        android:id="@+id/textValueMaxSpeed"
+        android:text="00.0"
+        android:textSize="25sp"
+
+        app:layout_constraintTop_toTopOf="@+id/textValueAverageSpeed"
+        app:layout_constraintBottom_toBottomOf="@+id/textValueAverageSpeed"
+        app:layout_constraintLeft_toLeftOf="@+id/textValueDistance"
+        app:layout_constraintRight_toRightOf="@+id/textValueDistance"
+        android:layout_marginTop="0dp"
+        android:layout_marginBottom="0dp"
+        android:layout_marginLeft="0dp"
+        android:layout_marginRight="0dp"
+        android:layout_width="119dp"
+        android:layout_height="32dp"
+        android:gravity="left"
+    />
+
+    <TextView
+        style="@style/textDescription"
+        android:id="@+id/textDescriptionMaxSpeed"
+        android:text="@string/maxSpeed"
+
+        app:layout_constraintBottom_toTopOf="@+id/textValueMaxSpeed"
+        app:layout_constraintLeft_toLeftOf="@+id/textValueMaxSpeed"
+        android:layout_marginTop="0dp"
+        android:layout_marginBottom="0dp"
+        android:layout_marginLeft="0dp"
+        android:layout_marginRight="0dp"
+    />
+
+    <ImageView
+        android:id="@+id/iconMaxSpeed"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/speedometer"
+
+        app:layout_constraintTop_toTopOf="@+id/textValueMaxSpeed"
+        app:layout_constraintBottom_toBottomOf="@+id/textValueMaxSpeed"
+        app:layout_constraintRight_toRightOf="@+id/textValueMaxSpeed"
+        app:layout_constraintLeft_toLeftOf="@+id/textValueMaxSpeed"
+        android:layout_marginTop="0dp"
+        android:layout_marginBottom="20dp"
+        android:layout_marginLeft="0dp"
+        android:layout_marginRight="160dp"
+    />
+
+    <!-- Net Calorie -->
+    <TextView
+        style="@style/textMediumValue"
+        android:id="@+id/textValueNetCalorie"
+        android:text="0000"
+        android:textSize="25sp"
+
+        app:layout_constraintTop_toBottomOf="@+id/textValueAverageSpeed"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="@+id/textValueDuration"
+        app:layout_constraintRight_toRightOf="@+id/textValueDuration"
+        android:layout_marginTop="0dp"
+        android:layout_marginBottom="0dp"
+        android:layout_marginLeft="0dp"
+        android:layout_marginRight="0dp"
+        android:layout_width="119dp"
+        android:layout_height="32dp"
+        android:gravity="left"
+    />
+
+    <TextView
+        style="@style/textDescription"
+        android:id="@+id/textDescriptionNetCalorie"
+        android:text="@string/netCalorie"
+
+        app:layout_constraintBottom_toTopOf="@+id/textValueNetCalorie"
+        app:layout_constraintLeft_toLeftOf="@+id/textValueNetCalorie"
+        android:layout_marginTop="0dp"
+        android:layout_marginBottom="0dp"
+        android:layout_marginLeft="0dp"
+        android:layout_marginRight="0dp"
+    />
+
+    <ImageView
+        android:id="@+id/iconNetCalorie"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/fire"
+
+        app:layout_constraintTop_toTopOf="@+id/textValueNetCalorie"
+        app:layout_constraintBottom_toBottomOf="@+id/textValueNetCalorie"
+        app:layout_constraintRight_toRightOf="@+id/textValueNetCalorie"
+        app:layout_constraintLeft_toLeftOf="@+id/textValueNetCalorie"
+        android:layout_marginTop="0dp"
+        android:layout_marginBottom="20dp"
+        android:layout_marginLeft="0dp"
+        android:layout_marginRight="160dp"
+    />
+
+    <!-- Gross Calorie -->
+    <TextView
+        style="@style/textMediumValue"
+        android:id="@+id/textValueGrossCalorie"
+        android:text="0000"
+        android:textSize="25sp"
+
+        app:layout_constraintTop_toTopOf="@+id/textValueNetCalorie"
+        app:layout_constraintBottom_toBottomOf="@+id/textValueNetCalorie"
+        app:layout_constraintLeft_toLeftOf="@+id/textValueDistance"
+        app:layout_constraintRight_toRightOf="@+id/textValueDistance"
+        android:layout_marginTop="0dp"
+        android:layout_marginBottom="0dp"
+        android:layout_marginLeft="0dp"
+        android:layout_marginRight="0dp"
+        android:layout_width="119dp"
+        android:layout_height="32dp"
+        android:gravity="left"
+    />
+
+    <TextView
+        style="@style/textDescription"
+        android:id="@+id/textDescriptionGrossCalorie"
+        android:text="@string/grossCalorie"
+
+        app:layout_constraintBottom_toTopOf="@+id/textValueGrossCalorie"
+        app:layout_constraintLeft_toLeftOf="@+id/textValueGrossCalorie"
+        android:layout_marginTop="0dp"
+        android:layout_marginBottom="0dp"
+        android:layout_marginLeft="0dp"
+        android:layout_marginRight="0dp"
+    />
+
+    <ImageView
+        android:id="@+id/iconGrossCalorie"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/fire"
+
+        app:layout_constraintTop_toTopOf="@+id/textValueGrossCalorie"
+        app:layout_constraintBottom_toBottomOf="@+id/textValueGrossCalorie"
+        app:layout_constraintRight_toRightOf="@+id/textValueGrossCalorie"
+        app:layout_constraintLeft_toLeftOf="@+id/textValueGrossCalorie"
+        android:layout_marginTop="0dp"
+        android:layout_marginBottom="20dp"
+        android:layout_marginLeft="0dp"
+        android:layout_marginRight="160dp"
+    />
+
+</android.support.constraint.ConstraintLayout>

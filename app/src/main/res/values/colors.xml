@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#309f68</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="colorPrimary">#009688</color>
+    <color name="colorPrimaryDark">#2A89BF</color>
+    <color name="colorAccent">#F4511E</color>
+    <color name="textColorPrimary">#FFFFFF</color>
+    <color name="navigationBarColor">#000000</color>
+    <color name="colorStartBtn">#536DFE</color>
+    <color name="colorPauseBtn">#E57373</color>
+    <color name="colorResumeBtn">#536DFE</color>
+    <color name="colorStopBtn">#EF5350</color>
+    <color name="colorTextValue">#424242</color>
+    <color name="colorTextDescription">#9E9E9E</color>
 </resources>
