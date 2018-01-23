@@ -1,13 +1,20 @@
-package runningtracker.presenter.main;
+package runningtracker.Presenter.main;
 
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.IntentSender;
+import android.location.Location;
+import android.location.LocationManager;
 import android.media.MediaPlayer;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.google.android.gms.common.api.ApiException;
@@ -21,8 +28,29 @@ import com.google.android.gms.location.SettingsClient;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
+
+import runningtracker.Model.DataCallback;
+import runningtracker.Model.ResAPICommon;
+import runningtracker.Model.modelrunning.DatabaseLocation;
+import runningtracker.Model.modelrunning.DatabaseWeather;
+import runningtracker.Model.modelrunning.LocationObject;
+import runningtracker.Model.modelrunning.WeatherObject;
 import runningtracker.R;
+import runningtracker.view.main.MainActivityHome;
 import runningtracker.view.main.ViewMain;
+import runningtracker.view.running.MainActivityOffline;
+
+import static android.content.ContentValues.TAG;
+import static android.content.Context.LOCATION_SERVICE;
 
 public class LogicMain implements Main {
     private SettingsClient mSettingsClient;
@@ -33,8 +61,14 @@ public class LogicMain implements Main {
             UPDATE_INTERVAL_IN_MILLISECONDS / 2;
     private LocationRequest mLocationRequest;
     ViewMain main;
+    ResAPICommon resAPICommon;
+    WeatherObject weatherObject;
+    DatabaseWeather databaseWeather;
+    LocationObject locationObject;
     public LogicMain(ViewMain main){
         this.main = main;
+        resAPICommon = new ResAPICommon();
+        weatherObject = new WeatherObject();
     }
 
     @Override
@@ -66,19 +100,16 @@ public class LogicMain implements Main {
                         switch (statusCode) {
                             case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
                                 try {
-                                    // Show the dialog by calling startResolutionForResult(), and check the
-                                    // result in onActivityResult()
                                     ResolvableApiException rae = (ResolvableApiException) e;
                                     rae.startResolutionForResult((Activity) main.getMainActivity(), REQUEST_CHECK_SETTINGS);
                                 } catch (IntentSender.SendIntentException sie) {
-                                    /*Log.i(TAG, "PendingIntent unable to execute request.");*/
+                                    Log.i(TAG, "PendingIntent unable to execute request.");
                                 }
                                 break;
                             case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
                                 String errorMessage = "Location settings are inadequate, and cannot be " +
                                         "fixed here. Fix in Settings.";
-                               /* Log.e(TAG, errorMessage);*/
-                                Toast.makeText(main.getMainActivity(), errorMessage, Toast.LENGTH_LONG).show();
+                                Log.e(TAG, errorMessage);
                         }
                     }
                 });
@@ -93,6 +124,8 @@ public class LogicMain implements Main {
     @Override
     public void initialization() {
         mSettingsClient = LocationServices.getSettingsClient(main.getMainActivity());
+        databaseWeather = new DatabaseWeather( main.getMainActivity());
+        databaseWeather.deleteAll();
     }
 
     @Override
@@ -109,7 +142,7 @@ public class LogicMain implements Main {
         mLocationRequest.setFastestInterval(FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
     }
-
+    //check internet and gps
     @Override
     public int checkStartRunning() {
         boolean checkInternet, checkGPS;
@@ -139,5 +172,96 @@ public class LogicMain implements Main {
         if(startActivity == 2){
             main.navigationRunningOffline();
         }
+    }
+
+    @Override
+    public void getWeatherAPI(double latitude, double longitude) {
+        String url = "http://api.openweathermap.org/data/2.5/weather?lat="+latitude+"&lon="+longitude+"&appid=4649c1a62014cc396d0e6e55f7245313";
+        resAPICommon.RestGetClient(url,main.getMainActivity(),
+                new DataCallback() {
+                    @Override
+                    public void onSuccess(JSONObject result) {
+                            try {
+                                weatherObject.setName(result.getString("name"));
+                                String day = result.getString("dt");
+
+                                long l = Long.valueOf(day);
+                                Date date = new Date(l * 1000L);
+                                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("EEEE yyyy-MM-dd");
+                                String dayFormat = simpleDateFormat.format(date);
+                                weatherObject.setDay(dayFormat);
+
+                                JSONArray jsonArrayWeather = result.getJSONArray("weather");
+                                JSONObject jsonObjectWeather = jsonArrayWeather.getJSONObject(0);
+                                weatherObject.setMain(jsonObjectWeather.getString("main"));
+                                weatherObject.setDescription(jsonObjectWeather.getString("description"));
+                                weatherObject.setIcon(jsonObjectWeather.getString("icon"));
+
+                                JSONObject jsonObjectMain = result.getJSONObject("main");
+                                String temp = jsonObjectMain.getString("temp");
+                                Double a = Double.valueOf(temp);
+                                a = a - 273.15;
+                                String iTemp = String.valueOf(a.intValue());
+                                weatherObject.setTemp(iTemp);
+
+                                databaseWeather.addNewWeather(weatherObject);
+                                ArrayList<WeatherObject> arrayList = new ArrayList<>();
+                                arrayList = databaseWeather.getAllWeather();
+                                arrayList.size();
+                                Toast.makeText(main.getMainActivity(), "" +weatherObject.getName(), Toast.LENGTH_SHORT).show();
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                    }
+                }
+                );
+    }
+    //get my location if it have GPS
+    public  Location getMyLocation(){
+        LocationManager rLocationManager = (LocationManager)main.getMainActivity().getSystemService(LOCATION_SERVICE);
+        List<String> providers = rLocationManager.getProviders(true);
+        Location bestLocation = null;
+        for (String provider : providers) {
+            Location myLocation = rLocationManager.getLastKnownLocation(provider);
+            if (myLocation == null) {
+                continue;
+            }
+            if (bestLocation == null || myLocation.getAccuracy() < bestLocation.getAccuracy()) {
+                bestLocation = myLocation;
+            }
+        }
+        //test location
+/*        locationObject = new LocationObject();
+        locationObject.setLatitudeValue(bestLocation.getLatitude());
+        locationObject.setLongitudeValue(bestLocation.getLongitude());*/
+        return bestLocation;
+    }
+    @Override
+    public void supPortWeather() {
+        final Handler handler = new Handler();
+        final Timer timer = new Timer();
+        final Location[] finalBestLocation = new Location[1];
+        TimerTask doAsynchronousTask = new TimerTask() {
+            @Override
+            public void run() {
+                handler.post(new Runnable() {
+                    @SuppressWarnings("unchecked")
+                    public void run() {
+                        try {
+                            finalBestLocation[0] = getMyLocation();
+                            getWeatherAPI(finalBestLocation[0].getLatitude(), finalBestLocation[0].getLongitude());
+                            Log.e(TAG, "N: "+weatherObject.getName());
+                            if(weatherObject != null){
+                                timer.cancel();
+                            }
+                        }
+                        catch (Exception e) {
+                            Log.e(TAG, ""+e);
+                        }
+                    }
+                });
+            }
+        };
+        timer.schedule(doAsynchronousTask, 0, 2000);
     }
 }

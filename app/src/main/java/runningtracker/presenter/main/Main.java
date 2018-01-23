@@ -1,14 +1,17 @@
-package runningtracker.presenter.main;
+package runningtracker.Presenter.main;
 
 
 import android.content.Context;
 
 public interface Main {
-    boolean isConnected(Context context);//kiem tra co internet hay khong
-    boolean checkTurnOnLocation();//Kiem tra da bat vi tri cua thiet bi
-    void initialization();// Khoi tao gia tri
+    boolean isConnected(Context context);//Check internet
+    boolean checkTurnOnLocation();//Check GPS turn on or off
+    void initialization();// Create values
     void buildLocationSettingsRequest();
     void createLocationRequest();
-    int checkStartRunning();//kiem tra dieu kien bat dau truoc khi bat dau chay
-    void onNavigationActivity();//Chuyen hướng activity theo dieu kien
+    int checkStartRunning();//Check start condition
+    void onNavigationActivity();//change view
+    void getWeatherAPI(double latitude, double longitude);//get weather api
+    void supPortWeather();
+
 }

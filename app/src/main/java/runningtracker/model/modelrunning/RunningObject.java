@@ -1,4 +1,4 @@
-package runningtracker.model.modelrunning;
+package runningtracker.Model.modelrunning;
 
 public class RunningObject {
     public int RunningSessionID;

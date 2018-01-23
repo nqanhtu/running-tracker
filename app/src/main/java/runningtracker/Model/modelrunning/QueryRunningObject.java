@@ -1,15 +1,26 @@
 package runningtracker.Model.modelrunning;
 
-public class LocationObject {
-    public double latitudeValue;
-    public double longitudeValue;
 
-    public LocationObject(){
+public class QueryRunningObject {
+    private int id;
+    private double latitudeValue;
+    private double longitudeValue;
 
+    public QueryRunningObject() {
     }
-    public LocationObject(double latitudeValue, double longitudeValue) {
+
+    public QueryRunningObject(int id, double latitudeValue, double longitudeValue) {
+        this.id = id;
         this.latitudeValue = latitudeValue;
         this.longitudeValue = longitudeValue;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public double getLatitudeValue() {
@@ -27,4 +38,5 @@ public class LocationObject {
     public void setLongitudeValue(double longitudeValue) {
         this.longitudeValue = longitudeValue;
     }
+
 }

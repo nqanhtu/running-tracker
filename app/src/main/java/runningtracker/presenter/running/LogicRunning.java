@@ -1,10 +1,9 @@
-package runningtracker.presenter.running;
+package runningtracker.Presenter.running;
 import android.Manifest;
 import android.app.Activity;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
-import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
 import android.media.MediaPlayer;
@@ -40,21 +39,19 @@ import com.google.android.gms.tasks.Task;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.text.DateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import runningtracker.R;
-import runningtracker.model.DataCallback;
-import runningtracker.model.ObjectCommon;
-import runningtracker.model.modelrunning.BodilyCharacteristicObject;
-import runningtracker.model.ResAPICommon;
-import runningtracker.model.modelrunning.DatabaseLocation;
-import runningtracker.model.modelrunning.DatabaseRunningSession;
-import runningtracker.model.modelrunning.LocationObject;
-import runningtracker.model.modelrunning.RunningObject;
-import runningtracker.presenter.fitnessstatistic.Calculator;
+import runningtracker.Model.DataCallback;
+import runningtracker.Model.ObjectCommon;
+import runningtracker.Model.modelrunning.BodilyCharacteristicObject;
+import runningtracker.Model.ResAPICommon;
+import runningtracker.Model.modelrunning.DatabaseLocation;
+import runningtracker.Model.modelrunning.DatabaseRunningSession;
+import runningtracker.Model.modelrunning.LocationObject;
+import runningtracker.Model.modelrunning.RunningObject;
+import runningtracker.Presenter.fitnessstatistic.Calculator;
 import runningtracker.view.running.ViewRunning;
 
 import static android.content.Context.LOCATION_SERVICE;
@@ -133,7 +130,7 @@ public class LogicRunning implements Running {
                             finalM_Bodily.setWeightInKg((Integer) result.get("WeightInKg"));
                             Toast.makeText(viewRunning.getMainActivity(), "Error:  " + finalM_Bodily.getWeightInKg(), Toast.LENGTH_SHORT).show();
                             finalM_Bodily.setHeightInCm((Integer) result.get("HeightInCm"));
-                            finalM_Bodily.setVO2max((Integer) result.get("VO2max"));
+                            finalM_Bodily.setVo2Max((Integer) result.get("VO2max"));
                             finalM_Bodily.setRestingMetabolicRate((Integer) result.get("RestingMetabolicRate"));
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -224,7 +221,7 @@ public class LogicRunning implements Running {
             rDisaTance = rDisaTance +  DistanceLocation(mLocation,location);
             if(rDisaTance > 0) {rPace = (viewRunning.getUpdateTime() / 60000) / rDisaTance;}
             //if(m_Bodily != null)
-            //rCalories = (float) Calculator.netCalorieBurned(m_Bodily.getWeightInKg(), m_Bodily.getVO2max(), rDisaTance, 0, false);
+            //rCalories = (float) Calculator.netCalorieBurned(m_Bodily.getWeightInKg(), m_Bodily.getVo2Max(), rDisaTance, 0, false);
             rCalories = (float) Calculator.netCalorieBurned(80, 42, rDisaTance, 0, false);
             if(rPace > maxPace) {maxPace = rPace;}
             viewRunning.setupViewRunning(RoundAvoid(rDisaTance,2), RoundAvoid(rPace,2), RoundAvoid(rCalories, 1));
@@ -379,14 +376,11 @@ public class LogicRunning implements Running {
             mLocation.setLongitude(mLongitude);
             float mDisaTance = rDisaTance;
             rDisaTance = rDisaTance +  DistanceLocation(mLocation,location);
-            Log.v(String.valueOf(viewRunning.getMainActivity()), "A=" +mLocation);
-            Log.v(String.valueOf(viewRunning.getMainActivity()), "B=" +location);
             if(rDisaTance > 0) {
                 rPace = (viewRunning.getUpdateTime() / 60000) / rDisaTance;
             }
             rCalories = (float) Calculator.netCalorieBurned(80, 42, rDisaTance, 0, false);
             if(rPace > maxPace) {maxPace = rPace;}
-            //Toast.makeText(viewRunning.getMainActivity(), ""+rDisaTance, Toast.LENGTH_LONG).show();
             viewRunning.setupViewRunning(RoundAvoid(rDisaTance,2), RoundAvoid(rPace,2), RoundAvoid(rCalories, 1));
         }
         mLatitude = location.getLatitude();
