@@ -114,11 +114,11 @@ public class DashboardFragment extends Fragment implements  ViewMain {
         adapter = new MenuAdapter(getContext(), R.layout.item_dashboard, menuObjectArrayList);
         lvItemMenu.setAdapter(adapter);
         //get all location
-        ArrayList<DetailRunningObject> detailRunningObjects = new ArrayList<>();
+  /*      ArrayList<DetailRunningObject> detailRunningObjects = new ArrayList<DetailRunningObject>();
         detailRunningObjects = getListLocation();
         if(detailRunningObjects.size() > 0) {
             messeageWeather = suggestionLocation(detailRunningObjects);
-        }
+        }*/
 
 
         //sync list view
