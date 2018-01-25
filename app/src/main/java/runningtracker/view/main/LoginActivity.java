@@ -17,9 +17,16 @@ public class LoginActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         // TODO Use fields...
     }
+
     @OnClick(R.id.buttonHome)
     public void startHomeActivity() {
-        Intent intent = new Intent(LoginActivity.this, MainActivityHome.class);
+        Intent intent = new Intent(this, MainActivityHome.class);
+        startActivity(intent);
+    }
+
+    @OnClick(R.id.buttonSignUp)
+    public void startSignUpActivity() {
+        Intent intent = new Intent(this, SignUpActivity.class);
         startActivity(intent);
     }
 }
