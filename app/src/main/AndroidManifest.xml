@@ -31,7 +31,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".view.main.SignUpActivity"></activity>
+        <activity android:name=".view.main.RegisterActivity"></activity>
     </application>
 
 </manifest>
