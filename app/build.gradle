@@ -46,4 +46,9 @@ dependencies {
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
     testCompile 'junit:junit:4.12'
 
+    // Retrofit & OkHttp
+    compile 'com.squareup.retrofit2:retrofit:2.3.0'
+    compile 'com.squareup.retrofit2:converter-gson:2.3.0'
+    // loging res req
+    compile 'com.squareup.okhttp3:logging-interceptor:3.8.0'
 }

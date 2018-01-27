@@ -1,4 +1,4 @@
-package runningtracker.Model.modelrunning;
+package runningtracker.model.modelrunning;
 
 public class RunningLocationObject {
     private String name;

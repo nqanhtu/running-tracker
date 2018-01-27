@@ -43,14 +43,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import runningtracker.R;
-import runningtracker.Model.DataCallback;
-import runningtracker.Model.ObjectCommon;
-import runningtracker.Model.modelrunning.BodilyCharacteristicObject;
-import runningtracker.Model.ResAPICommon;
-import runningtracker.Model.modelrunning.DatabaseLocation;
-import runningtracker.Model.modelrunning.DatabaseRunningSession;
-import runningtracker.Model.modelrunning.LocationObject;
-import runningtracker.Model.modelrunning.RunningObject;
+import runningtracker.model.DataCallback;
+import runningtracker.model.ObjectCommon;
+import runningtracker.model.modelrunning.BodilyCharacteristicObject;
+import runningtracker.model.ResAPICommon;
+import runningtracker.model.modelrunning.DatabaseLocation;
+import runningtracker.model.modelrunning.DatabaseRunningSession;
+import runningtracker.model.modelrunning.LocationObject;
+import runningtracker.model.modelrunning.RunningObject;
 import runningtracker.Presenter.fitnessstatistic.Calculator;
 import runningtracker.view.running.ViewRunning;
 

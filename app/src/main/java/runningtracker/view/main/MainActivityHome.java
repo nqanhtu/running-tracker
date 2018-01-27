@@ -11,9 +11,6 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
-import runningtracker.Model.modelrunning.DatabaseRunningLocation;
-import runningtracker.Model.modelrunning.DetailRunningObject;
-import runningtracker.Model.modelrunning.RunningLocationObject;
 import runningtracker.R;
 import runningtracker.Presenter.main.LogicMain;
 import runningtracker.view.running.MainActivity;

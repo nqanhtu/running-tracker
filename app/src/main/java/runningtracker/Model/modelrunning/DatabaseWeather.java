@@ -1,4 +1,4 @@
-package runningtracker.Model.modelrunning;
+package runningtracker.model.modelrunning;
 
 import android.content.ContentValues;
 import android.content.Context;

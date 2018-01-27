@@ -1,8 +1,8 @@
 package runningtracker.Presenter.running;
 import android.location.Location;
 import org.json.JSONException;
-import runningtracker.Model.modelrunning.BodilyCharacteristicObject;
-import runningtracker.Model.modelrunning.RunningObject;
+import runningtracker.model.modelrunning.BodilyCharacteristicObject;
+import runningtracker.model.modelrunning.RunningObject;
 
 public interface Running {
     void saveRunning() throws JSONException;

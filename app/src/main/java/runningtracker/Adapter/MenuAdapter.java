@@ -11,7 +11,7 @@ import android.widget.TextView;
 
 import java.util.List;
 
-import runningtracker.Model.modelrunning.MenuObject;
+import runningtracker.model.modelrunning.MenuObject;
 import runningtracker.R;
 
 public class MenuAdapter extends BaseAdapter{

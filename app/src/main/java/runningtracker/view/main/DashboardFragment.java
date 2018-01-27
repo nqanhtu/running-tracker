@@ -17,14 +17,14 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import runningtracker.Adapter.MenuAdapter;
-import runningtracker.Model.modelrunning.DatabaseLocation;
-import runningtracker.Model.modelrunning.DatabaseRunningLocation;
-import runningtracker.Model.modelrunning.DatabaseWeather;
-import runningtracker.Model.modelrunning.DetailRunningObject;
-import runningtracker.Model.modelrunning.LocationObject;
-import runningtracker.Model.modelrunning.MenuObject;
-import runningtracker.Model.modelrunning.QueryRunningObject;
-import runningtracker.Model.modelrunning.WeatherObject;
+import runningtracker.model.modelrunning.DatabaseLocation;
+import runningtracker.model.modelrunning.DatabaseRunningLocation;
+import runningtracker.model.modelrunning.DatabaseWeather;
+import runningtracker.model.modelrunning.DetailRunningObject;
+import runningtracker.model.modelrunning.LocationObject;
+import runningtracker.model.modelrunning.MenuObject;
+import runningtracker.model.modelrunning.QueryRunningObject;
+import runningtracker.model.modelrunning.WeatherObject;
 import runningtracker.R;
 import runningtracker.Presenter.main.LogicMain;
 

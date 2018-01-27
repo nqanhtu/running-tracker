@@ -2,14 +2,10 @@ package runningtracker.Presenter.main;
 
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.IntentSender;
 import android.location.Location;
 import android.location.LocationManager;
-import android.media.MediaPlayer;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Handler;
@@ -38,16 +34,12 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import runningtracker.Model.DataCallback;
-import runningtracker.Model.ResAPICommon;
-import runningtracker.Model.modelrunning.DatabaseLocation;
-import runningtracker.Model.modelrunning.DatabaseWeather;
-import runningtracker.Model.modelrunning.LocationObject;
-import runningtracker.Model.modelrunning.WeatherObject;
-import runningtracker.R;
-import runningtracker.view.main.MainActivityHome;
+import runningtracker.model.DataCallback;
+import runningtracker.model.ResAPICommon;
+import runningtracker.model.modelrunning.DatabaseWeather;
+import runningtracker.model.modelrunning.LocationObject;
+import runningtracker.model.modelrunning.WeatherObject;
 import runningtracker.view.main.ViewMain;
-import runningtracker.view.running.MainActivityOffline;
 
 import static android.content.ContentValues.TAG;
 import static android.content.Context.LOCATION_SERVICE;

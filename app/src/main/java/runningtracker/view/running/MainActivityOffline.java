@@ -23,7 +23,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 import runningtracker.R;
-import runningtracker.Model.modelrunning.DatabaseLocation;
+import runningtracker.model.modelrunning.DatabaseLocation;
 import runningtracker.Presenter.running.LogicRunning;
 
 

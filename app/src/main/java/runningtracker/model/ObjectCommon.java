@@ -1,4 +1,4 @@
-package runningtracker.Model;
+package runningtracker.model;
 
 
 public class ObjectCommon {

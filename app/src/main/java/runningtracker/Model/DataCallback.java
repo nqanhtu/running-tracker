@@ -1,4 +1,4 @@
-package runningtracker.Model;
+package runningtracker.model;
 import org.json.JSONObject;
 
 public interface DataCallback {
