@@ -1,6 +1,7 @@
 package runningtracker.view.main;
 
 import android.content.Context;
+import android.content.Intent;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
@@ -10,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import java.util.ArrayList;
@@ -27,6 +29,8 @@ import runningtracker.model.modelrunning.QueryRunningObject;
 import runningtracker.model.modelrunning.WeatherObject;
 import runningtracker.R;
 import runningtracker.Presenter.main.LogicMain;
+import runningtracker.view.running.MainActivity;
+import runningtracker.view.running.ResultActivity;
 
 import static android.content.ContentValues.TAG;
 
@@ -113,6 +117,38 @@ public class DashboardFragment extends Fragment implements  ViewMain {
 
         adapter = new MenuAdapter(getContext(), R.layout.item_dashboard, menuObjectArrayList);
         lvItemMenu.setAdapter(adapter);
+        //Bat su kien click vao dong tren listview
+        lvItemMenu.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                switch(position){
+                    case 0:
+                        Intent nextActivity = new Intent(getContext(), WeatherSuggestion.class);
+                        startActivity(nextActivity);
+                        break;
+                    case 1:
+                        //
+                        break;
+                    case 2:
+                        //
+                        break;
+                    case 3:
+                        //
+                        break;
+                    case 4:
+                        //
+                        break;
+                    case 5:
+                        mListener.onStartRunning();
+                        break;
+                    default :
+                        //
+                        break;
+
+                }
+            }
+        });
+
         //get all location
   /*      ArrayList<DetailRunningObject> detailRunningObjects = new ArrayList<DetailRunningObject>();
         detailRunningObjects = getListLocation();
@@ -137,7 +173,7 @@ public class DashboardFragment extends Fragment implements  ViewMain {
                             Log.e(TAG, "N: "+arrayList.size());
 
                             if(arrayList.size() > 0){
-                                menuObjectArrayList.add(0,new MenuObject("Thành công", R.drawable.setup_calories));
+                                menuObjectArrayList.add(0,new MenuObject("Gợi ý thời tiết", R.drawable.setup_calories));
                                 adapter.notifyDataSetChanged();
                                 timer.cancel();
                             }
@@ -161,46 +197,9 @@ public class DashboardFragment extends Fragment implements  ViewMain {
         return rootView;*/
         return rootView;
     }
-    //suggestions location to user
-    private String suggestionLocation(ArrayList<DetailRunningObject> detailRunningObjects) {
-        WeatherObject weatherObject  = new WeatherObject();
-        DatabaseWeather databaseWeather = new DatabaseWeather(getContext());
-        ArrayList<WeatherObject> objectArrayList = new ArrayList<>();
-        objectArrayList = databaseWeather.getAllWeather();
-        String str = "";
-        if(objectArrayList.size() > 0) {
-            weatherObject = objectArrayList.get(0);
-            switch(weatherObject.getIcon())
-            {
-                case "01d":
-                    str = "trời quang đãng có thể tập luyện";
-                    break;
-                case "02d" :
-                    str = "trời có ít mây rất mát mẻ để tập luyện";
-                case "03d" :
-                    str = "trời có mây nhẹ rất thuận lợi cho việc tập luyện";
-                    break;
-                case "04d" :
-                    str = "trời có mây đen nhiều không thoải mái để tập luyện";
-                case "09d" :
-                    str = "trời có mưa không thích hợp  để tập luyện";
-                    break;
-                case "10d" :
-                    str = "trời có mưa không thích hợp  để tập luyện";
-                    break;
-                case "11d" :
-                    str = "trời có mưa kèm theo dông và sắm chớp rất nguy hiểm khi tập luyện";
-                    break;
-                case "13d" :
-                    str = "Trời đang có tuyết không thích hợp để tập luyện";
-                    break;
-                default :
-                    str = "Trời đang có sương mù không thích hợp để tập luyện";
-            }
-        }
-        return str;
-    }
 
+
+    //ham lay ra vi tri gan voi vi tri nguoi dung
     private ArrayList<DetailRunningObject> getListLocation() {
         ArrayList<QueryRunningObject> queryRunningObjectArrayList = new ArrayList<>();
         ArrayList<DetailRunningObject> detailRunningObjects = new ArrayList<>();

@@ -1,11 +1,15 @@
 package runningtracker.view.running;
+
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -17,21 +21,25 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
 import android.widget.TextView;
+
 import runningtracker.R;
 import runningtracker.model.modelrunning.BodilyCharacteristicObject;
 import runningtracker.model.modelrunning.DatabaseLocation;
 import runningtracker.Presenter.running.LogicRunning;
 import runningtracker.Presenter.fitnessstatistic.Calculator;
+
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
+
 import org.json.JSONException;
+
 import java.util.Calendar;
 import java.util.Date;
 
 
-public class MainActivity extends AppCompatActivity implements ViewRunning, OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks{
+public class MainActivity extends AppCompatActivity implements ViewRunning, OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks {
     private static final String TAG = MainActivity.class.getSimpleName();
     private GoogleMap mMap;
     Date startCurrentTime, stopCurrentTime;
@@ -48,7 +56,7 @@ public class MainActivity extends AppCompatActivity implements ViewRunning, OnMa
             rUpdateTime = lUpdateTime;
             long secs = (long) (lUpdateTime / 1000);
             long mins = secs / 60;
-            long hour = mins /60;
+            long hour = mins / 60;
             secs = secs % 60;
             txtTimer.setText("" + hour + ":" + String.format("%02d", mins) + ":" + String.format("%02d", secs));
             handler.postDelayed(this, 0);
@@ -57,6 +65,7 @@ public class MainActivity extends AppCompatActivity implements ViewRunning, OnMa
     BodilyCharacteristicObject m_Bodily;
     private LogicRunning logicRunning;
     private final DatabaseLocation mQuery = new DatabaseLocation(this);
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,8 +85,18 @@ public class MainActivity extends AppCompatActivity implements ViewRunning, OnMa
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        if(logicRunning.checkPermissions()) {
+        if (logicRunning.checkPermissions()) {
             mMap = googleMap;
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                // TODO: Consider calling
+                //    ActivityCompat#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for ActivityCompat#requestPermissions for more details.
+                return;
+            }
             mMap.setMyLocationEnabled(true);
             mMap.getUiSettings().setMyLocationButtonEnabled(false);
             Location L = logicRunning.getMyLocation();
