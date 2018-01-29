@@ -21,7 +21,6 @@ public class WeatherObject {
         this.temp = temp;
         this.day = day;
     }
-
     public String getName() {
         return name;
     }

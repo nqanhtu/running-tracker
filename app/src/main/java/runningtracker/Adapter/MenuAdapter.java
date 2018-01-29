@@ -51,8 +51,6 @@ public class MenuAdapter extends BaseAdapter{
         MenuObject menuObject  = menuObjectList.get(i);
         txtName.setText(menuObject.getDescription());
         imageItem.setImageResource(menuObject.getImage());
-
-
         return view;
     }
 }

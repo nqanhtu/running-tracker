@@ -11,7 +11,7 @@ import java.util.ArrayList;
 
 
 public class DatabaseWeather extends SQLiteOpenHelper {
-    private static final String DATABASE_NAME = "dbRunning";
+    private static final String DATABASE_NAME = "db_Running";
     private static final int DATABASE_VERSION = 1;
 
     private static final String KEY_id = "id";
@@ -21,7 +21,7 @@ public class DatabaseWeather extends SQLiteOpenHelper {
     private static final String KEY_Icon = "icon";
     private static final String KEY_Temp = "temp";
     private static final String KEY_Day = "day";
-    private static final String TABLE_WEATHER ="Weather" ;
+    private static final String TABLE_WEATHER ="Weather1" ;
 
     public DatabaseWeather(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -31,7 +31,7 @@ public class DatabaseWeather extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         String CREATE_CONTACTS_TABLE = "CREATE TABLE " + TABLE_WEATHER + "("
                 + KEY_id + " INTEGER PRIMARY KEY AUTOINCREMENT," + KEY_Name + " TEXT,"
-                + KEY_Main + " TEXT,"  + KEY_Description +  " TEXT," + KEY_Icon + " TEXT," + " TEXT," + KEY_Temp + " TEXT,"
+                + KEY_Main + " TEXT,"  + KEY_Description +  " TEXT," + KEY_Icon + " TEXT," + KEY_Temp + " TEXT,"
                 + KEY_Day + " TEXT" + ")";
         sqLiteDatabase.execSQL(CREATE_CONTACTS_TABLE);
     }

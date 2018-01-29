@@ -20,7 +20,6 @@ import runningtracker.view.running.MainActivityOffline;
 public class MainActivityHome extends AppCompatActivity implements ViewMain, DashboardFragment.OnFragmentInteractionListener,  NotificationFragment.OnFragmentInteractionListener{
     LogicMain main;
 
-
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
 
