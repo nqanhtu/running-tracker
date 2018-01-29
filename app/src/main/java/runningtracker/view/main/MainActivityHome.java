@@ -12,14 +12,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
 import runningtracker.R;
-import runningtracker.presenter.main.LogicMain;
+import runningtracker.Presenter.main.LogicMain;
 import runningtracker.view.running.MainActivity;
 import runningtracker.view.running.MainActivityOffline;
 
 
 public class MainActivityHome extends AppCompatActivity implements ViewMain, DashboardFragment.OnFragmentInteractionListener,  NotificationFragment.OnFragmentInteractionListener{
     LogicMain main;
-
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -62,8 +61,8 @@ public class MainActivityHome extends AppCompatActivity implements ViewMain, Das
         main.createLocationRequest();
         main.buildLocationSettingsRequest();
         main.initialization();
-
-/*        setContentView(R.layout.fragment_dashboard);
+        main.supPortWeather();
+/*      setContentView(R.layout.fragment_dashboard);
         Button startRunning = (Button) findViewById(R.id.bnRunning);
         startRunning.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -71,6 +70,71 @@ public class MainActivityHome extends AppCompatActivity implements ViewMain, Das
                 main.navigationActivity();
             }
         });*/
+
+        //insert data demo
+      /*  DatabaseRunningLocation databaseRunningLocation = new DatabaseRunningLocation(this);
+        RunningLocationObject runningLocationObject = new RunningLocationObject();
+        DetailRunningObject detailRunningObject = new DetailRunningObject();
+
+        *//*databaseRunningLocation.deleteAllDetail();
+        databaseRunningLocation.deleteAll();*//*
+
+        for(int i = 1; i <= 3; i++){
+            runningLocationObject.setName("abc");
+            runningLocationObject.setType(i);
+            databaseRunningLocation.addNewRunningLocation(runningLocationObject);
+        }
+        for(int i = 1; i <= 9; i++){
+            if(i<=3){
+                if(i==1) {
+                    detailRunningObject.setLatitudeValue(10.765339);
+                    detailRunningObject.setLongitudeValue(106.662921);
+                    detailRunningObject.setFirstLocation(1);
+                    detailRunningObject.setIdLocation(1);
+                    databaseRunningLocation.addLocation(detailRunningObject);
+                }
+                else{
+                    detailRunningObject.setLatitudeValue(10.766492);
+                    detailRunningObject.setLongitudeValue(106.664975);
+                    detailRunningObject.setFirstLocation(0);
+                    detailRunningObject.setIdLocation(1);
+                    databaseRunningLocation.addLocation(detailRunningObject);
+                }
+            }
+            else if(i> 3 && i<=6){
+                if(i==4) {
+                    detailRunningObject.setLatitudeValue(10.775192);
+                    detailRunningObject.setLongitudeValue(106.652864);
+                    detailRunningObject.setFirstLocation(1);
+                    detailRunningObject.setIdLocation(2);
+                    databaseRunningLocation.addLocation(detailRunningObject);
+                }
+                else{
+                    detailRunningObject.setLatitudeValue(10.775010);
+                    detailRunningObject.setLongitudeValue(106.652853);
+                    detailRunningObject.setFirstLocation(0);
+                    detailRunningObject.setIdLocation(2);
+                    databaseRunningLocation.addLocation(detailRunningObject);
+                }
+            }
+            else{
+                if(i==4) {
+                    detailRunningObject.setLatitudeValue(10.785968);
+                    detailRunningObject.setLongitudeValue(106.665097);
+                    detailRunningObject.setFirstLocation(1);
+                    detailRunningObject.setIdLocation(3);
+                    databaseRunningLocation.addLocation(detailRunningObject);
+                }
+                else{
+                    detailRunningObject.setLatitudeValue(10.785702);
+                    detailRunningObject.setLongitudeValue(106.664926);
+                    detailRunningObject.setFirstLocation(0);
+                    detailRunningObject.setIdLocation(3);
+                    databaseRunningLocation.addLocation(detailRunningObject);
+                }
+            }
+        }
+*/
     }
 
     @Override

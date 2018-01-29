@@ -1,4 +1,4 @@
-package runningtracker.presenter.running;
+package runningtracker.Presenter.running;
 import android.location.Location;
 import org.json.JSONException;
 import runningtracker.model.modelrunning.BodilyCharacteristicObject;

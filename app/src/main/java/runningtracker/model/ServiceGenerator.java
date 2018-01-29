@@ -5,9 +5,6 @@ import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-/**
- * Created by ngqan on 1/26/2018.
- */
 
 public class ServiceGenerator {
     private static final String BASE_URL = "https://running-server-2903.herokuapp.com/";

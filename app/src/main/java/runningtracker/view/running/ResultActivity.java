@@ -18,7 +18,7 @@ import android.widget.TextView;
 import com.google.android.gms.maps.GoogleMap;
 
 import runningtracker.R;
-import runningtracker.presenter.running.LogicRunning;
+import runningtracker.Presenter.running.LogicRunning;
 import java.util.ArrayList;
 import java.util.HashMap;
 

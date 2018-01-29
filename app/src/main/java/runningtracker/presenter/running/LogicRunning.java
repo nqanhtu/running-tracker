@@ -1,10 +1,10 @@
-package runningtracker.presenter.running;
+package runningtracker.Presenter.running;
+
 import android.Manifest;
 import android.app.Activity;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
-import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
 import android.media.MediaPlayer;
@@ -40,9 +40,7 @@ import com.google.android.gms.tasks.Task;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.text.DateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import runningtracker.R;
@@ -54,7 +52,7 @@ import runningtracker.model.modelrunning.DatabaseLocation;
 import runningtracker.model.modelrunning.DatabaseRunningSession;
 import runningtracker.model.modelrunning.LocationObject;
 import runningtracker.model.modelrunning.RunningObject;
-import runningtracker.presenter.fitnessstatistic.Calculator;
+import runningtracker.Presenter.fitnessstatistic.Calculator;
 import runningtracker.view.running.ViewRunning;
 
 import static android.content.Context.LOCATION_SERVICE;
@@ -90,7 +88,8 @@ public class LogicRunning implements Running {
     ResAPICommon resAPICommon;
     DatabaseRunningSession dataRunning;
     ObjectCommon objectCommon;
-    public LogicRunning(ViewRunning viewRunning){
+
+    public LogicRunning(ViewRunning viewRunning) {
         this.viewRunning = viewRunning;
         this.resAPICommon = new ResAPICommon();
         objectCommon = new ObjectCommon();
@@ -109,7 +108,7 @@ public class LogicRunning implements Running {
     @Override
     public float DistanceLocation(Location locationA, Location locationB) {
         float distance;
-        distance = locationA.distanceTo(locationB)/1000;// chang to meter to kilometer
+        distance = locationA.distanceTo(locationB) / 1000;// chang to meter to kilometer
         return distance;
     }
 
@@ -133,11 +132,11 @@ public class LogicRunning implements Running {
                             finalM_Bodily.setWeightInKg((Integer) result.get("WeightInKg"));
                             Toast.makeText(viewRunning.getMainActivity(), "Error:  " + finalM_Bodily.getWeightInKg(), Toast.LENGTH_SHORT).show();
                             finalM_Bodily.setHeightInCm((Integer) result.get("HeightInCm"));
-                            finalM_Bodily.setVO2max((Integer) result.get("VO2max"));
+                            finalM_Bodily.setVo2Max((Integer) result.get("VO2max"));
                             finalM_Bodily.setRestingMetabolicRate((Integer) result.get("RestingMetabolicRate"));
                         } catch (Exception e) {
                             e.printStackTrace();
-                            Toast.makeText(viewRunning.getMainActivity(), "Error" +e, Toast.LENGTH_SHORT).show();
+                            Toast.makeText(viewRunning.getMainActivity(), "Error" + e, Toast.LENGTH_SHORT).show();
                         }
                     }
                 }
@@ -166,26 +165,25 @@ public class LogicRunning implements Running {
         mLocation = new Location("A");
         mStatusTime = false;
         //logicRunning = new LogicRunning(this);
-        mFusedLocationClient = LocationServices.getFusedLocationProviderClient( viewRunning.getMainActivity());
-        mSettingsClient = LocationServices.getSettingsClient( viewRunning.getMainActivity());
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(viewRunning.getMainActivity());
+        mSettingsClient = LocationServices.getSettingsClient(viewRunning.getMainActivity());
         objectCommon.setMaxCalores(2);
-        ring= MediaPlayer.create(viewRunning.getMainActivity(), R.raw.report_maxcalorie);
+        ring = MediaPlayer.create(viewRunning.getMainActivity(), R.raw.report_maxcalorie);
     }
 
     @Override
     public void createLocationCallback() {
-        if(objectCommon.getMaxCalores() > 0){
+        if (objectCommon.getMaxCalores() > 0) {
             mLocationCallback = new LocationCallback() {
                 @Override
                 public void onLocationResult(LocationResult locationResult) {
                     super.onLocationResult(locationResult);
-                    if(objectCommon.getMaxCalores() < rCalories)
+                    if (objectCommon.getMaxCalores() < rCalories)
                         ring.start();
                     onLocationChanged(locationResult.getLastLocation());
                 }
             };
-        }
-        else {
+        } else {
             mLocationCallback = new LocationCallback() {
                 @Override
                 public void onLocationResult(LocationResult locationResult) {
@@ -215,22 +213,25 @@ public class LogicRunning implements Running {
         iLocation.setLatitudeValue(location.getLatitude());
         iLocation.setLongitudeValue(location.getLongitude());
         moveCamera(location);
-        if(mLatitude != 0){
+        if (mLatitude != 0) {
             rPace = 0;
             mLocation = new Location("B");
             mLocation.setLatitude(mLatitude);
             mLocation.setLongitude(mLongitude);
             float mDisaTance = rDisaTance;
-            rDisaTance = rDisaTance +  DistanceLocation(mLocation,location);
-            if(rDisaTance > 0) {rPace = (viewRunning.getUpdateTime() / 60000) / rDisaTance;}
+            rDisaTance = rDisaTance + DistanceLocation(mLocation, location);
+            if (rDisaTance > 0) {
+                rPace = (viewRunning.getUpdateTime() / 60000) / rDisaTance;
+            }
             //if(m_Bodily != null)
-            //rCalories = (float) Calculator.netCalorieBurned(m_Bodily.getWeightInKg(), m_Bodily.getVO2max(), rDisaTance, 0, false);
+            //rCalories = (float) Calculator.netCalorieBurned(m_Bodily.getWeightInKg(), m_Bodily.getVo2Max(), rDisaTance, 0, false);
             rCalories = (float) Calculator.netCalorieBurned(80, 42, rDisaTance, 0, false);
-            if(rPace > maxPace) {maxPace = rPace;}
-            viewRunning.setupViewRunning(RoundAvoid(rDisaTance,2), RoundAvoid(rPace,2), RoundAvoid(rCalories, 1));
+            if (rPace > maxPace) {
+                maxPace = rPace;
+            }
+            viewRunning.setupViewRunning(RoundAvoid(rDisaTance, 2), RoundAvoid(rPace, 2), RoundAvoid(rCalories, 1));
             polylineBetweenTwoPoint(mLocation, location);
-        }
-        else {
+        } else {
             LatLng myLocation = null;
             myLocation = new LatLng(location.getLatitude(), location.getLongitude());
             viewRunning.getMap().addMarker(new MarkerOptions().position(myLocation).title("My Location"));
@@ -258,10 +259,23 @@ public class LogicRunning implements Running {
 
     @Override
     public Location getMyLocation() {
-        rLocationManager = (LocationManager)viewRunning.getMainActivity().getSystemService(LOCATION_SERVICE);
+        rLocationManager = (LocationManager) viewRunning.getMainActivity().getSystemService(LOCATION_SERVICE);
         List<String> providers = rLocationManager.getProviders(true);
         Location bestLocation = null;
         for (String provider : providers) {
+
+            if (ActivityCompat.checkSelfPermission((Activity) viewRunning.getMainActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                    && ActivityCompat.checkSelfPermission((Activity) viewRunning.getMainActivity()
+                    , Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                // TODO: Consider calling
+                //    ActivityCompat#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for ActivityCompat#requestPermissions for more details.
+                return null;
+            }
             Location myLocation = rLocationManager.getLastKnownLocation(provider);
             if (myLocation == null) {
                 continue;
@@ -297,6 +311,16 @@ public class LogicRunning implements Running {
                 .addOnSuccessListener((Activity) viewRunning.getMainActivity(), new OnSuccessListener<LocationSettingsResponse>() {
                     @Override
                     public void onSuccess(LocationSettingsResponse locationSettingsResponse) {
+                        if (ActivityCompat.checkSelfPermission((Activity) viewRunning.getMainActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission((Activity) viewRunning.getMainActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                            // TODO: Consider calling
+                            //    ActivityCompat#requestPermissions
+                            // here to request the missing permissions, and then overriding
+                            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                            //                                          int[] grantResults)
+                            // to handle the case where the user grants the permission. See the documentation
+                            // for ActivityCompat#requestPermissions for more details.
+                            return;
+                        }
                         mFusedLocationClient.requestLocationUpdates(mLocationRequest,
                                 mLocationCallback,
                                 Looper.myLooper());
@@ -379,14 +403,11 @@ public class LogicRunning implements Running {
             mLocation.setLongitude(mLongitude);
             float mDisaTance = rDisaTance;
             rDisaTance = rDisaTance +  DistanceLocation(mLocation,location);
-            Log.v(String.valueOf(viewRunning.getMainActivity()), "A=" +mLocation);
-            Log.v(String.valueOf(viewRunning.getMainActivity()), "B=" +location);
             if(rDisaTance > 0) {
                 rPace = (viewRunning.getUpdateTime() / 60000) / rDisaTance;
             }
             rCalories = (float) Calculator.netCalorieBurned(80, 42, rDisaTance, 0, false);
             if(rPace > maxPace) {maxPace = rPace;}
-            //Toast.makeText(viewRunning.getMainActivity(), ""+rDisaTance, Toast.LENGTH_LONG).show();
             viewRunning.setupViewRunning(RoundAvoid(rDisaTance,2), RoundAvoid(rPace,2), RoundAvoid(rCalories, 1));
         }
         mLatitude = location.getLatitude();

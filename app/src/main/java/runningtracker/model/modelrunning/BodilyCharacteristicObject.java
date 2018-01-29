@@ -1,67 +1,67 @@
 package runningtracker.model.modelrunning;
 
 public class BodilyCharacteristicObject {
-    private int Age;
-    private  String Gender;
-    private int WeightInKg;
-    private  int HeightInCm;
-    private int VO2max;
-    private  float RestingMetabolicRate;
+    private int age;
+    private  String gender;
+    private int weightInKg;
+    private  int heightInCm;
+    private int vo2Max;
+    private  float restingMetabolicRate;
     public BodilyCharacteristicObject(){}
 
     public BodilyCharacteristicObject(int age, String gender, int weightInKg, int heightInCm, int VO2max, float restingMetabolicRate) {
-        Age = age;
-        Gender = gender;
-        WeightInKg = weightInKg;
-        HeightInCm = heightInCm;
-        this.VO2max = VO2max;
-        RestingMetabolicRate = restingMetabolicRate;
+        this.age = age;
+        this.gender = gender;
+        this.weightInKg = weightInKg;
+        this.heightInCm = heightInCm;
+        this.vo2Max = VO2max;
+        this.restingMetabolicRate = restingMetabolicRate;
     }
 
     public int getAge() {
-        return Age;
+        return age;
     }
 
     public void setAge(int age) {
-        Age = age;
+        this.age = age;
     }
 
     public String getGender() {
-        return Gender;
+        return gender;
     }
 
     public void setGender(String gender) {
-        Gender = gender;
+        this.gender = gender;
     }
 
-    public float getWeightInKg() {return WeightInKg;}
+    public float getWeightInKg() {return weightInKg;}
 
     public void setWeightInKg(int weightInKg) {
-        WeightInKg = weightInKg;
+        this.weightInKg = weightInKg;
     }
 
     public int getHeightInCm() {
-        return HeightInCm;
+        return heightInCm;
     }
 
     public void setHeightInCm(int heightInCm) {
-        HeightInCm = heightInCm;
+        this.heightInCm = heightInCm;
     }
 
-    public int getVO2max() {
-        return VO2max;
+    public int getVo2Max() {
+        return vo2Max;
     }
 
-    public void setVO2max(int VO2max) {
-        this.VO2max = VO2max;
+    public void setVo2Max(int vo2Max) {
+        this.vo2Max = vo2Max;
     }
 
     public float getRestingMetabolicRate() {
-        return RestingMetabolicRate;
+        return restingMetabolicRate;
     }
 
     public void setRestingMetabolicRate(float restingMetabolicRate) {
-        RestingMetabolicRate = restingMetabolicRate;
+        this.restingMetabolicRate = restingMetabolicRate;
     }
 
 }

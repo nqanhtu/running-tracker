@@ -24,7 +24,7 @@ import java.util.Date;
 
 import runningtracker.R;
 import runningtracker.model.modelrunning.DatabaseLocation;
-import runningtracker.presenter.running.LogicRunning;
+import runningtracker.Presenter.running.LogicRunning;
 
 
 public class MainActivityOffline extends AppCompatActivity implements ViewRunning{

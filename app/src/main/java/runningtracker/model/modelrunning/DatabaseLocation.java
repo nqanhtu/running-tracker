@@ -7,7 +7,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import java.util.ArrayList;
 
 public class DatabaseLocation extends SQLiteOpenHelper {
-    private static final String DATABASE_NAME = "dbLocation";
+    private static final String DATABASE_NAME = "dbRunning";
     private static final int DATABASE_VERSION = 1;
 
     // dbLoaction Table Columns names

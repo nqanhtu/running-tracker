@@ -8,7 +8,7 @@ import java.util.ArrayList;
 
 
 public class DatabaseRunningSession extends SQLiteOpenHelper {
-    private static final String DATABASE_NAME = "dbUserRunning";
+    private static final String DATABASE_NAME = "dbRunning";
     private static final int DATABASE_VERSION = 1;
 
     private static final String KEY_ID = "RunningSessionID";
