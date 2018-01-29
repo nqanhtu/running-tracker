@@ -29,8 +29,6 @@ import runningtracker.model.modelrunning.QueryRunningObject;
 import runningtracker.model.modelrunning.WeatherObject;
 import runningtracker.R;
 import runningtracker.Presenter.main.LogicMain;
-import runningtracker.view.running.MainActivity;
-import runningtracker.view.running.ResultActivity;
 
 import static android.content.ContentValues.TAG;
 
