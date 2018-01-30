@@ -23,7 +23,8 @@
         <activity android:name=".view.running.MainActivity" />
         <activity android:name=".view.running.MainActivityOffline" />
         <activity android:name=".view.main.WeatherSuggestion"/>
-        <activity android:name=".view.main.LoginActivity">
+        <activity android:name=".view.main.LoginActivity"/>
+        <activity android:name=".view.suggest_place.suggest_place">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
