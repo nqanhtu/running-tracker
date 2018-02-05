@@ -9,11 +9,7 @@ import runningtracker.model.modelrunning.DaoSession;
 import runningtracker.model.modelrunning.Note;
 import runningtracker.model.modelrunning.SuggestLocation;
 
-/**
- * Created by Anh Tu on 1/30/2018.
- */
-
-public class App extends Application{
+public class    App extends Application{
     private DaoSession mDaoSession;
     @Override
     public void onCreate(){
