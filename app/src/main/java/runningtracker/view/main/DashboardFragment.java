@@ -28,7 +28,7 @@ import runningtracker.model.modelrunning.MenuObject;
 import runningtracker.model.modelrunning.QueryRunningObject;
 import runningtracker.model.modelrunning.WeatherObject;
 import runningtracker.R;
-import runningtracker.Presenter.main.LogicMain;
+import runningtracker.presenter.main.LogicMain;
 
 import static android.content.ContentValues.TAG;
 

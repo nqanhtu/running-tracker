@@ -1,4 +1,4 @@
-package runningtracker.Presenter.running;
+package runningtracker.presenter.running;
 
 import android.Manifest;
 import android.app.Activity;
@@ -52,7 +52,7 @@ import runningtracker.model.modelrunning.DatabaseLocation;
 import runningtracker.model.modelrunning.DatabaseRunningSession;
 import runningtracker.model.modelrunning.LocationObject;
 import runningtracker.model.modelrunning.RunningObject;
-import runningtracker.Presenter.fitnessstatistic.Calculator;
+import runningtracker.presenter.fitnessstatistic.Calculator;
 import runningtracker.view.running.ViewRunning;
 
 import static android.content.Context.LOCATION_SERVICE;

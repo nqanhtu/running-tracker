@@ -1,4 +1,4 @@
-package runningtracker.Presenter.main;
+package runningtracker.presenter.main;
 
 
 import android.content.Context;

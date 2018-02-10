@@ -12,7 +12,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
 import runningtracker.R;
-import runningtracker.Presenter.main.LogicMain;
+import runningtracker.presenter.main.LogicMain;
 import runningtracker.view.running.MainActivity;
 import runningtracker.view.running.MainActivityOffline;
 
@@ -20,42 +20,11 @@ import runningtracker.view.running.MainActivityOffline;
 public class MainActivityHome extends AppCompatActivity implements ViewMain, DashboardFragment.OnFragmentInteractionListener,  NotificationFragment.OnFragmentInteractionListener{
     LogicMain main;
 
-    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
-            = new BottomNavigationView.OnNavigationItemSelectedListener() {
-
-        @Override
-        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-            FragmentManager fragmentManager = getSupportFragmentManager();
-            FragmentTransaction transaction = fragmentManager.beginTransaction();
-            switch (item.getItemId()) {
-                case R.id.navigation_profile:
-                    ProfileFragment profileFragment = new ProfileFragment();
-                    transaction.replace(R.id.content,profileFragment,"Fragment name").commit();
-                    return true;
-                case R.id.navigation_dashboard:
-                    DashboardFragment dashboardFragment = new DashboardFragment();
-                    transaction.replace(R.id.content,dashboardFragment,"Fragment name").commit();
-                    return true;
-                case R.id.navigation_notifications:
-                    NotificationFragment notificationFragment = new NotificationFragment();
-                    transaction.replace(R.id.content,notificationFragment,"Fragment name").commit();
-                    return true;
-            }
-            return false;
-        }
-    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction transaction = fragmentManager.beginTransaction();
-        DashboardFragment dashboardFragment = new DashboardFragment();
-        transaction.replace(R.id.content,dashboardFragment,"Fragment name").commit();
-
-        BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
-        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+        setContentView(R.layout.activity_home);
 
         main = new LogicMain(this);
         main.createLocationRequest();

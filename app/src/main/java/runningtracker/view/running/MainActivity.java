@@ -25,8 +25,8 @@ import android.widget.TextView;
 import runningtracker.R;
 import runningtracker.model.modelrunning.BodilyCharacteristicObject;
 import runningtracker.model.modelrunning.DatabaseLocation;
-import runningtracker.Presenter.running.LogicRunning;
-import runningtracker.Presenter.fitnessstatistic.Calculator;
+import runningtracker.presenter.running.LogicRunning;
+import runningtracker.presenter.fitnessstatistic.Calculator;
 
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.maps.GoogleMap;

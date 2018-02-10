@@ -4,7 +4,7 @@
     <color name="colorAccent">#64b5f6</color>
     <color name="colorPrimaryDark">#2286c3</color>
     <color name="colorPrimaryLight">#9be7ff</color>
-    <color name="textColorPrimary">#FFFFFF</color>
+    <color name="textColorPrimary">#000000</color>
     <color name="navigationBarColor">#000000</color>
     <color name="colorStartBtn">#536DFE</color>
     <color name="colorPauseBtn">#E57373</color>

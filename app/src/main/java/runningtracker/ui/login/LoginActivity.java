@@ -1,4 +1,4 @@
-package runningtracker.view.main;
+package runningtracker.ui.login;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
@@ -9,10 +9,12 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import runningtracker.App;
 import runningtracker.R;
-import runningtracker.model.modelrunning.DaoSession;
 import runningtracker.model.modelrunning.Note;
 import runningtracker.model.modelrunning.NoteDao;
-import runningtracker.view.running.MainActivity;
+import runningtracker.ui.dashboard.DashBoardActivity;
+import runningtracker.ui.home.HomeActivity;
+import runningtracker.view.main.MainActivityHome;
+import runningtracker.view.main.RegisterActivity;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -35,7 +37,7 @@ public class LoginActivity extends AppCompatActivity {
 
     @OnClick(R.id.buttonHome)
     public void startHomeActivity() {
-        Intent intent = new Intent(this, MainActivityHome.class);
+        Intent intent = new Intent(this, DashBoardActivity.class);
         startActivity(intent);
     }
 
