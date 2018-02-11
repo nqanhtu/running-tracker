@@ -31,7 +31,8 @@ public class HomeActivity extends AppCompatActivity {
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 switch (item.getItemId()){
                     case R.id.navigation_dashboard:
-                        Intent intent1 = new Intent(HomeActivity.this, DashBoardActivity.class);
+                        //tú muốn sài thì bỏ lại DashBoardActivity vào lại, hiện tại bạn đang cần t
+                        Intent intent1 = new Intent(HomeActivity.this, DashboardFragment.class);
                         startActivity(intent1);
                         break;
                     case R.id.navigation_profile:

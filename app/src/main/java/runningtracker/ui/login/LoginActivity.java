@@ -13,6 +13,7 @@ import runningtracker.model.modelrunning.Note;
 import runningtracker.model.modelrunning.NoteDao;
 import runningtracker.ui.dashboard.DashBoardActivity;
 import runningtracker.ui.home.HomeActivity;
+import runningtracker.view.main.DashboardFragment;
 import runningtracker.view.main.MainActivityHome;
 import runningtracker.view.main.RegisterActivity;
 
@@ -46,4 +47,10 @@ public class LoginActivity extends AppCompatActivity {
         Intent intent = new Intent(this, RegisterActivity.class);
         startActivity(intent);
     }
+    @OnClick(R.id.btnTest)
+    public void startTUpActivity() {
+        Intent intent = new Intent(this, HomeActivity.class);
+        startActivity(intent);
+    }
+
 }
