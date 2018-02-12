@@ -44,7 +44,7 @@
         android:id="@+id/iconDuration"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:srcCompat="@drawable/timer"
+        app:srcCompat="@drawable/ic_stopwatch"
 
         app:layout_constraintTop_toTopOf="@+id/textValueDuration"
         app:layout_constraintBottom_toBottomOf="@+id/textValueDuration"
@@ -240,7 +240,7 @@
         android:id="@+id/iconAverageSpeed"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:srcCompat="@drawable/speedometer"
+        android:src="@drawable/ic_stopwatch"
 
         app:layout_constraintTop_toTopOf="@+id/textValueAverageSpeed"
         app:layout_constraintBottom_toBottomOf="@+id/textValueAverageSpeed"
@@ -289,7 +289,7 @@
         android:id="@+id/iconMaxSpeed"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:srcCompat="@drawable/speedometer"
+        android:src="@drawable/ic_stopwatch"
 
         app:layout_constraintTop_toTopOf="@+id/textValueMaxSpeed"
         app:layout_constraintBottom_toBottomOf="@+id/textValueMaxSpeed"
