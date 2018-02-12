@@ -53,6 +53,12 @@
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toBottomOf="parent" />
 
+            <Button
+                android:id="@+id/btnSuggets"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Goi Y Chay" />
+
         </FrameLayout>
 
     </android.support.constraint.ConstraintLayout>
