@@ -1,4 +1,4 @@
-package runningtracker.view.suggest_place;
+package runningtracker.ui.suggest_place;
 
 import android.Manifest;
 import android.content.pm.PackageManager;

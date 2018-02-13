@@ -18,7 +18,6 @@ import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import runningtracker.Adapter.MenuAdapter;
 import runningtracker.model.modelrunning.DatabaseLocation;
 import runningtracker.model.modelrunning.DatabaseRunningLocation;
 import runningtracker.model.modelrunning.DatabaseWeather;
@@ -55,7 +54,6 @@ public class DashboardFragment extends Fragment implements  ViewMain {
 
     ListView lvItemMenu;
     ArrayList<MenuObject> menuObjectArrayList;
-    MenuAdapter adapter;
     DatabaseWeather databaseWeather;
     ArrayList<WeatherObject> arrayList;
     //test my location
@@ -96,7 +94,6 @@ public class DashboardFragment extends Fragment implements  ViewMain {
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
     }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -107,14 +104,14 @@ public class DashboardFragment extends Fragment implements  ViewMain {
         locationObject = new LocationObject();
         databaseLocation = new DatabaseLocation(getContext());
 
-        menuObjectArrayList.add(new MenuObject("Thiết lập lượng calories luyện tập", R.drawable.setup_calories));
-        menuObjectArrayList.add(new MenuObject("Lịch sử chạy", R.drawable.history));
-        menuObjectArrayList.add(new MenuObject("Thiết lập vùng nguy hiểm", R.drawable.timer));
-        menuObjectArrayList.add(new MenuObject("Tìm kiếm bạn bè", R.drawable.search_friends));
-        menuObjectArrayList.add(new MenuObject("Bắt đầu chạy", R.drawable.start_running));
+        menuObjectArrayList.add(new MenuObject("Thiết lập lượng calories luyện tập", R.drawable.ic_setup_calories));
+        menuObjectArrayList.add(new MenuObject("Lịch sử chạy", R.drawable.ic_history));
+        menuObjectArrayList.add(new MenuObject("Thiết lập vùng nguy hiểm", R.drawable.ic_stopwatch));
+        menuObjectArrayList.add(new MenuObject("Tìm kiếm bạn bè", R.drawable.ic_friends));
+        menuObjectArrayList.add(new MenuObject("Bắt đầu chạy", R.drawable.ic_running));
 
-        adapter = new MenuAdapter(getContext(), R.layout.item_dashboard, menuObjectArrayList);
-        lvItemMenu.setAdapter(adapter);
+       // adapter = new MenuAdapter(getContext(), R.layout.item_dashboard, menuObjectArrayList);
+      //  lvItemMenu.setAdapter(adapter);
         //Bat su kien click vao dong tren listview
         lvItemMenu.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -171,8 +168,8 @@ public class DashboardFragment extends Fragment implements  ViewMain {
                             Log.e(TAG, "N: "+arrayList.size());
 
                             if(arrayList.size() > 0){
-                                menuObjectArrayList.add(0,new MenuObject("Gợi ý thời tiết", R.drawable.setup_calories));
-                                adapter.notifyDataSetChanged();
+                   //             menuObjectArrayList.add(0,new MenuObject("Gợi ý thời tiết", R.drawable.setup_calories));
+                         //       adapter.notifyDataSetChanged();
                                 timer.cancel();
                             }
                         }
@@ -195,7 +192,6 @@ public class DashboardFragment extends Fragment implements  ViewMain {
         return rootView;*/
         return rootView;
     }
-
 
     //ham lay ra vi tri gan voi vi tri nguoi dung
     private ArrayList<DetailRunningObject> getListLocation() {

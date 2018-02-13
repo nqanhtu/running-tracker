@@ -1,8 +1,8 @@
 package runningtracker.ui.login;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
 
 import butterknife.ButterKnife;
@@ -12,8 +12,6 @@ import runningtracker.R;
 import runningtracker.model.modelrunning.Note;
 import runningtracker.model.modelrunning.NoteDao;
 import runningtracker.ui.dashboard.DashBoardActivity;
-import runningtracker.ui.home.HomeActivity;
-import runningtracker.view.main.MainActivityHome;
 import runningtracker.view.main.RegisterActivity;
 
 public class LoginActivity extends AppCompatActivity {
@@ -46,4 +44,6 @@ public class LoginActivity extends AppCompatActivity {
         Intent intent = new Intent(this, RegisterActivity.class);
         startActivity(intent);
     }
+
+
 }
