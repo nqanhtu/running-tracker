@@ -31,7 +31,7 @@ public class MainActivityHome extends AppCompatActivity implements ViewMain, Das
         main.buildLocationSettingsRequest();
         main.initialization();
         main.supPortWeather();
-/*      setContentView(R.layout.fragment_dashboard);
+/*      setContentView(R.gridview_dashboard_item.fragment_dashboard);
         Button startRunning = (Button) findViewById(R.id.bnRunning);
         startRunning.setOnClickListener(new View.OnClickListener() {
             @Override

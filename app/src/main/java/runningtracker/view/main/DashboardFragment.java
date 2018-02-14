@@ -97,7 +97,7 @@ public class DashboardFragment extends Fragment implements  ViewMain {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+        // Inflate the gridview_dashboard_item for this fragment
         View rootView = inflater.inflate(R.layout.fragment_dashboard, container, false);
         lvItemMenu = rootView.findViewById(R.id.lvItemMenu);
         menuObjectArrayList = new ArrayList<>();
@@ -110,7 +110,7 @@ public class DashboardFragment extends Fragment implements  ViewMain {
         menuObjectArrayList.add(new MenuObject("Tìm kiếm bạn bè", R.drawable.ic_friends));
         menuObjectArrayList.add(new MenuObject("Bắt đầu chạy", R.drawable.ic_running));
 
-       // adapter = new MenuAdapter(getContext(), R.layout.item_dashboard, menuObjectArrayList);
+       // adapter = new MenuAdapter(getContext(), R.gridview_dashboard_item.item_dashboard, menuObjectArrayList);
       //  lvItemMenu.setAdapter(adapter);
         //Bat su kien click vao dong tren listview
         lvItemMenu.setOnItemClickListener(new AdapterView.OnItemClickListener() {

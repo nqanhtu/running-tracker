@@ -150,7 +150,7 @@ public class ResultActivity extends AppCompatActivity implements ViewRunning {
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
-            // Inflate the layout for this fragment
+            // Inflate the gridview_dashboard_item for this fragment
             ViewGroup inflatedLayout = (ViewGroup) inflater.inflate(R.layout.activity_result_tab_stats, container, false);
             tabFragmentLayouts.add(inflatedLayout);
             getAllChildViews(inflatedLayout);
@@ -219,7 +219,7 @@ public class ResultActivity extends AppCompatActivity implements ViewRunning {
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
-            // Inflate the layout for this fragment
+            // Inflate the gridview_dashboard_item for this fragment
             View inflatedLayout = inflater.inflate(R.layout.activity_result_tab_map, container, false);
             tabFragmentLayouts.add((ViewGroup) inflatedLayout);
             return inflatedLayout;
