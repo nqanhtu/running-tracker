@@ -26,12 +26,15 @@ import runningtracker.Adapter.OptionAdapter;
 import runningtracker.R;
 import runningtracker.data.model.Option;
 import runningtracker.helper.BottomNavigationViewHelper;
+<<<<<<< HEAD
 import runningtracker.presenter.main.LogicMain;
 import runningtracker.ui.suggest_place.suggest_place;
 import runningtracker.view.main.MainActivityHome;
 import runningtracker.view.main.ViewMain;
 import runningtracker.view.running.MainActivity;
 import runningtracker.view.running.MainActivityOffline;
+=======
+>>>>>>> 1ea2e09fac4c9c8aee2662f77a2a2326b6de16ac
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -50,7 +53,10 @@ public class DashBoardActivity extends AppCompatActivity implements ViewMain, Da
     Double longitude = 106.684208;
     ArrayList<Option> options = new ArrayList<>();
     @BindView(R.id.gridview) GridView gridView;
+<<<<<<< HEAD
     LogicMain main;
+=======
+>>>>>>> 1ea2e09fac4c9c8aee2662f77a2a2326b6de16ac
 
     @Override
     public void setPresenter(@NonNull DashBoardContract.Presenter presenter) {
@@ -96,8 +102,11 @@ public class DashBoardActivity extends AppCompatActivity implements ViewMain, Da
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 switch (position){
+<<<<<<< HEAD
                     case 0:
                         break;
+=======
+>>>>>>> 1ea2e09fac4c9c8aee2662f77a2a2326b6de16ac
                     case 1:
                         break;
                     case 2:
@@ -105,11 +114,19 @@ public class DashBoardActivity extends AppCompatActivity implements ViewMain, Da
                     case 3:
                         break;
                     case 4:
+<<<<<<< HEAD
                         main.onNavigationActivity();
                         break;
                     case 5:
                         Intent intent = new Intent(DashBoardActivity.this, suggest_place.class);
                         startActivity(intent);
+=======
+                        break;
+                    case 5:
+                        break;
+
+                    case 6:
+>>>>>>> 1ea2e09fac4c9c8aee2662f77a2a2326b6de16ac
                         break;
                 }
             }
