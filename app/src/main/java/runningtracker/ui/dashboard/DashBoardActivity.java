@@ -1,6 +1,7 @@
 package runningtracker.ui.dashboard;
 
 import android.app.ActivityOptions;
+import android.content.Context;
 import android.content.Intent;
 import android.location.Address;
 import android.location.Geocoder;
@@ -25,6 +26,15 @@ import runningtracker.Adapter.OptionAdapter;
 import runningtracker.R;
 import runningtracker.data.model.Option;
 import runningtracker.helper.BottomNavigationViewHelper;
+<<<<<<< HEAD
+import runningtracker.presenter.main.LogicMain;
+import runningtracker.ui.suggest_place.suggest_place;
+import runningtracker.view.main.MainActivityHome;
+import runningtracker.view.main.ViewMain;
+import runningtracker.view.running.MainActivity;
+import runningtracker.view.running.MainActivityOffline;
+=======
+>>>>>>> 1ea2e09fac4c9c8aee2662f77a2a2326b6de16ac
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -32,7 +42,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * Created by Anh Tu on 2/3/2018.
  */
 
-public class DashBoardActivity extends AppCompatActivity implements DashBoardContract.View {
+public class DashBoardActivity extends AppCompatActivity implements ViewMain, DashBoardContract.View {
 
 
     @BindView(R.id.viewDashboard) View view;
@@ -43,6 +53,10 @@ public class DashBoardActivity extends AppCompatActivity implements DashBoardCon
     Double longitude = 106.684208;
     ArrayList<Option> options = new ArrayList<>();
     @BindView(R.id.gridview) GridView gridView;
+<<<<<<< HEAD
+    LogicMain main;
+=======
+>>>>>>> 1ea2e09fac4c9c8aee2662f77a2a2326b6de16ac
 
     @Override
     public void setPresenter(@NonNull DashBoardContract.Presenter presenter) {
@@ -55,6 +69,13 @@ public class DashBoardActivity extends AppCompatActivity implements DashBoardCon
         setContentView(R.layout.activity_dashboard);
         ButterKnife.bind(this);
         setupBottomNavigationView();
+        //
+        main = new LogicMain((ViewMain) this);
+        main.createLocationRequest();
+        main.buildLocationSettingsRequest();
+        main.initialization();
+        main.supPortWeather();
+
         geocoder = new Geocoder(this, Locale.getDefault());
         try {
             addresses = geocoder.getFromLocation(latitude, longitude,1);
@@ -81,6 +102,11 @@ public class DashBoardActivity extends AppCompatActivity implements DashBoardCon
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 switch (position){
+<<<<<<< HEAD
+                    case 0:
+                        break;
+=======
+>>>>>>> 1ea2e09fac4c9c8aee2662f77a2a2326b6de16ac
                     case 1:
                         break;
                     case 2:
@@ -88,11 +114,19 @@ public class DashBoardActivity extends AppCompatActivity implements DashBoardCon
                     case 3:
                         break;
                     case 4:
+<<<<<<< HEAD
+                        main.onNavigationActivity();
+                        break;
+                    case 5:
+                        Intent intent = new Intent(DashBoardActivity.this, suggest_place.class);
+                        startActivity(intent);
+=======
                         break;
                     case 5:
                         break;
 
                     case 6:
+>>>>>>> 1ea2e09fac4c9c8aee2662f77a2a2326b6de16ac
                         break;
                 }
             }
@@ -119,4 +153,20 @@ public class DashBoardActivity extends AppCompatActivity implements DashBoardCon
         startActivity(intent);
     }
 
+    @Override
+    public Context getMainActivity() {
+        return DashBoardActivity.this;
+    }
+
+    @Override
+    public void navigationRunning() {
+        Intent nextActivity = new Intent(DashBoardActivity.this, MainActivity.class);
+        startActivity(nextActivity);
+    }
+
+    @Override
+    public void navigationRunningOffline() {
+        Intent nextActivity = new Intent(DashBoardActivity.this, MainActivityOffline.class);
+        startActivity(nextActivity);
+    }
 }

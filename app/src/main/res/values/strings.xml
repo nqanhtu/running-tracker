@@ -28,4 +28,13 @@
     <string name="permission_denied_explanation">Permission was denied, but is needed for core
         functionality.</string>
     <string name="settings">Settings</string>
+
+    <string-array name="suggets_item">
+        <item>Co nhieu cay xanh</item>
+        <item>Ven song</item>
+        <item>Cong vien co nhieu cay xanh</item>
+        <item>Duong trong trai</item>
+        <item>Duong co nhieu nguoi chay</item>
+        <item>Dia diem dang to chuc cuoc thi chay bo</item>
+    </string-array>
 </resources>
