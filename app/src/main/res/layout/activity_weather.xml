@@ -35,7 +35,7 @@
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
             android:layout_marginBottom="44dp"
-            app:srcCompat="@drawable/start_running"
+            android:src="@drawable/ic_running"
             tools:ignore="MissingConstraints"
             tools:layout_editor_absoluteX="73dp"
             tools:layout_editor_absoluteY="397dp" />
