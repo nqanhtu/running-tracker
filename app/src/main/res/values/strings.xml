@@ -30,11 +30,20 @@
     <string name="settings">Settings</string>
 
     <string-array name="suggets_item">
-        <item>Co nhieu cay xanh</item>
-        <item>Ven song</item>
-        <item>Cong vien co nhieu cay xanh</item>
-        <item>Duong trong trai</item>
-        <item>Duong co nhieu nguoi chay</item>
-        <item>Dia diem dang to chuc cuoc thi chay bo</item>
+        <item>Có nhiều cây xanh</item>
+        <item>Ven sông</item>
+        <item>Công viên có nhiều cây xanh</item>
+        <item>Đường trống trải</item>
+        <item>Đường có nhiều người chạy</item>
+        <item>Địa điểm đang tổ chức cuộc thi chạy bộ</item>
     </string-array>
+
+    <string name="latitude_label">Latitude</string>
+    <string name="longitude_label">Longitude</string>
+
+    <string name="no_location_detected">
+        Bật vị trí để có thể lấy thông tin thời tiết.
+    </string>
+
+
 </resources>

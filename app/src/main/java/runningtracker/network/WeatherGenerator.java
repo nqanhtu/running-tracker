@@ -1,12 +1,15 @@
-package runningtracker.model;
+package runningtracker.network;
 
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+/**
+ * Created by Anh Tu on 2/21/2018.
+ */
 
-public class ServiceGenerator {
+public class WeatherGenerator {
     private static final String BASE_URL = "https://running-server-2903.herokuapp.com/";
 
     private static Retrofit.Builder builder =

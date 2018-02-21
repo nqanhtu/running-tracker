@@ -10,7 +10,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import runningtracker.R;
-import runningtracker.model.ServiceGenerator;
+import runningtracker.network.ServiceGenerator;
 import runningtracker.model.modelrunning.User;
 import runningtracker.model.service.UserService;
 
