@@ -11,7 +11,7 @@ import runningtracker.App;
 import runningtracker.R;
 import runningtracker.model.modelrunning.Note;
 import runningtracker.model.modelrunning.NoteDao;
-import runningtracker.ui.dashboard.DashBoardActivity;
+import runningtracker.ui.home.HomeActivity;
 import runningtracker.view.main.RegisterActivity;
 
 public class LoginActivity extends AppCompatActivity {
@@ -35,7 +35,7 @@ public class LoginActivity extends AppCompatActivity {
 
     @OnClick(R.id.buttonHome)
     public void startHomeActivity() {
-        Intent intent = new Intent(this, DashBoardActivity.class);
+        Intent intent = new Intent(this, HomeActivity.class);
         startActivity(intent);
     }
 

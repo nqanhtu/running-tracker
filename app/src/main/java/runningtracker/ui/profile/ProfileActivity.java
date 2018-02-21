@@ -3,7 +3,6 @@ package runningtracker.ui.profile;
 import android.app.ActivityOptions;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
@@ -14,9 +13,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import runningtracker.R;
 import runningtracker.helper.BottomNavigationViewHelper;
-import runningtracker.ui.dashboard.DashBoardActivity;
-import runningtracker.ui.home.HomeActivity;
-import runningtracker.ui.notification.NotificationActivity;
 
 /**
  * Created by Anh Tu on 2/3/2018.

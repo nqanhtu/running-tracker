@@ -1,52 +1,73 @@
 package runningtracker.ui.home;
 
-import android.content.Intent;
-import android.support.annotation.NonNull;
-import android.support.design.widget.BottomNavigationView;
-import android.support.v7.app.AppCompatActivity;
+import android.graphics.Color;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.support.v7.app.AppCompatActivity;
+
+import com.aurelhubert.ahbottomnavigation.AHBottomNavigation;
+import com.aurelhubert.ahbottomnavigation.AHBottomNavigationItem;
 
 import butterknife.ButterKnife;
 import runningtracker.R;
-import runningtracker.ui.dashboard.DashBoardActivity;
-import runningtracker.ui.notification.NotificationActivity;
-import runningtracker.ui.profile.ProfileActivity;
-import runningtracker.view.main.DashboardFragment;
+import runningtracker.ui.dashboard.DashboardFragment;
+import runningtracker.ui.notification.NotificationsFragment;
+import runningtracker.ui.profile.ProfileFragment;
 
-public class HomeActivity extends AppCompatActivity {
+public class HomeActivity extends AppCompatActivity{
+
+    AHBottomNavigation bottomNavigation;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
         ButterKnife.bind(this);
-        BottomNavigationView bottomNavigationView = (BottomNavigationView) findViewById(R.id.navigation);
-        Menu menu = bottomNavigationView.getMenu();
-        MenuItem menuItem = menu.getItem(0);
-        menuItem.setChecked(true);
-        bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+
+        bottomNavigation= (AHBottomNavigation) findViewById(R.id.navigation);
+        createNavItems();
+        // Default fragment
+        DashboardFragment dashboardFragment =new DashboardFragment();
+        getSupportFragmentManager().beginTransaction().replace(R.id.main_container,dashboardFragment).commit();
+
+        bottomNavigation.setOnTabSelectedListener(new AHBottomNavigation.OnTabSelectedListener() {
             @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                switch (item.getItemId()){
-                    case R.id.navigation_dashboard:
-                        Intent intent1 = new Intent(HomeActivity.this, DashBoardActivity.class);
-                        startActivity(intent1);
-                        break;
-                    case R.id.navigation_profile:
-                        Intent intent2 = new Intent(HomeActivity.this,ProfileActivity.class);
-                        startActivity(intent2);
-                        break;
-                    case R.id.navigation_notifications:
-                        Intent intent3 = new Intent(HomeActivity.this, NotificationActivity.class);
-                        startActivity(intent3);
-                        break;
+            public boolean onTabSelected(int position, boolean wasSelected) {
+                if (position==0)
+                {
+                    DashboardFragment dashboardFragment =new DashboardFragment();
+                    getSupportFragmentManager().beginTransaction().replace(R.id.main_container,dashboardFragment).commit();
+                }else  if (position==1)
+                {
+                    ProfileFragment profileFragment =new ProfileFragment();
+                    getSupportFragmentManager().beginTransaction().replace(R.id.main_container,profileFragment).commit();
+                }else  if (position==2)
+                {
+                    NotificationsFragment notificationsFragment =new NotificationsFragment();
+                    getSupportFragmentManager().beginTransaction().replace(R.id.main_container,notificationsFragment).commit();
                 }
-                return false;
+                return true;
             }
         });
     }
 
+    private void createNavItems()
+    {
+
+// Create items
+        AHBottomNavigationItem item1 = new AHBottomNavigationItem("Dashboard", R.drawable.ic_dashboard_black_24dp);
+        AHBottomNavigationItem item2 = new AHBottomNavigationItem("Profile", R.drawable.ic_profile_24dp);
+        AHBottomNavigationItem item3 = new AHBottomNavigationItem("Notifications", R.drawable.ic_notifications_black_24dp);
+// Add items
+        bottomNavigation.addItem(item1);
+        bottomNavigation.addItem(item2);
+        bottomNavigation.addItem(item3);
+
+        //set properties
+        bottomNavigation.setDefaultBackgroundColor(Color.parseColor("#FEFEFE"));
+
+        //set current item
+        bottomNavigation.setCurrentItem(0);
+
+    }
 
 }

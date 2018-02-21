@@ -10,15 +10,12 @@ import android.support.design.internal.BottomNavigationMenuView;
 import android.support.design.widget.BottomNavigationView;
 import android.util.Log;
 import android.view.MenuItem;
-import android.view.View;
 
 import java.lang.reflect.Field;
 
-import butterknife.BindView;
 import runningtracker.R;
-import runningtracker.ui.dashboard.DashBoardActivity;
+import runningtracker.ui.notification.NotificationsActivity;
 import runningtracker.ui.profile.ProfileActivity;
-import runningtracker.ui.notification.NotificationActivity;
 
 public class BottomNavigationViewHelper {
     @SuppressLint("RestrictedApi")
@@ -61,7 +58,7 @@ public class BottomNavigationViewHelper {
                         break;
 
                     case R.id.navigation_notifications:
-                        Intent intent3 = new Intent(context, NotificationActivity.class);//ACTIVITY_NUM = 2
+                        Intent intent3 = new Intent(context, NotificationsActivity.class);//ACTIVITY_NUM = 2
                         context.startActivity(intent3,options.toBundle());
                         break;
                 }

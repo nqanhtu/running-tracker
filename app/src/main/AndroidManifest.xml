@@ -35,10 +35,9 @@
             </intent-filter>
         </activity>
         <activity android:name=".view.main.RegisterActivity" />
-
-        <activity android:name=".ui.dashboard.DashBoardActivity"  />
+        <activity android:name=".ui.home.HomeActivity"  />
         <activity android:name=".ui.profile.ProfileActivity"   />
-        <activity android:name=".ui.notification.NotificationActivity"  />
+        <activity android:name=".ui.notification.NotificationsActivity"  />
         <service
             android:name=".locationaddress.FetchAddressIntentService"
             android:exported="false"/>
