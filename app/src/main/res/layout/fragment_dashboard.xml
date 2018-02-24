@@ -28,7 +28,7 @@
         android:orientation="vertical">
 
         <TextView
-            android:id="@+id/latitude_text"
+            android:id="@+id/weather"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
@@ -37,7 +37,7 @@
             android:textSize="@dimen/lat_long_text_size" />
 
         <TextView
-            android:id="@+id/longitude_text"
+            android:id="@+id/temp_c"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
@@ -45,6 +45,11 @@
             android:layout_marginTop="@dimen/text_margin"
             android:textIsSelectable="true"
             android:textSize="@dimen/lat_long_text_size" />
+
+        <ImageView
+            android:id="@+id/weatherIcon"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
     </LinearLayout>
 
     <GridView xmlns:android="http://schemas.android.com/apk/res/android"

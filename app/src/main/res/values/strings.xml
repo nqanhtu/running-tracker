@@ -44,6 +44,6 @@
     <string name="no_location_detected">
         Bật vị trí để có thể lấy thông tin thời tiết.
     </string>
-
+<string name="key_weather">ba283cc3f6ad524b</string>
 
 </resources>

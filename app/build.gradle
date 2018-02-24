@@ -52,11 +52,12 @@ dependencies {
     compile 'com.squareup.retrofit2:converter-gson:2.3.0'
     // loging res req
     compile 'com.squareup.okhttp3:logging-interceptor:3.8.0'
-    implementation 'com.squareup.picasso:picasso:2.4.0'
     compile 'org.greenrobot:greendao:3.2.2' // add library
     // Add Dagger dependencies
     compile 'com.google.dagger:dagger:2.8'
     annotationProcessor 'com.google.dagger:dagger-compiler:2.8'
     compile "com.google.guava:guava:24.0-android"
     compile 'com.aurelhubert:ahbottomnavigation:2.1.0'
+    implementation 'com.squareup.picasso:picasso:2.5.2'
+
 }

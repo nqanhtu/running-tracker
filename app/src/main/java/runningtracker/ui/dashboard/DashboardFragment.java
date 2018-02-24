@@ -4,8 +4,6 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.location.Address;
-import android.location.Geocoder;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
@@ -21,22 +19,28 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 import runningtracker.Adapter.OptionAdapter;
 import runningtracker.R;
 import runningtracker.data.model.Option;
+import runningtracker.data.model.weather.Weather;
+import runningtracker.data.service.WeatherService;
+import runningtracker.network.WeatherGenerator;
 import runningtracker.presenter.main.LogicMain;
 import runningtracker.ui.suggest_place.suggest_place;
 import runningtracker.view.running.MainActivity;
@@ -47,20 +51,21 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class DashboardFragment extends Fragment implements DashBoardContract.View {
 
     private DashBoardContract.Presenter mPresenter;
-    Geocoder geocoder;
-    List<Address> addresses;
-    Double latitude = 10.744806;
-    Double longitude = 106.684208;
+
     ArrayList<Option> options = new ArrayList<>();
     private FusedLocationProviderClient mFusedLocationClient;
     private static final String TAG = "ABC";
     protected Location mLastLocation;
 
+
+
     private String mLatitudeLabel;
     private String mLongitudeLabel;
-    @BindView(R.id.latitude_text) TextView mLatitudeText;
-    @BindView(R.id.longitude_text) TextView mLongitudeText;
+    @BindView(R.id.weather) TextView weatherText;
+    @BindView(R.id.temp_c) TextView tempcText;
     @BindView(R.id.main_activity_container) View container;
+    @BindView(R.id.weatherIcon)
+    ImageView weatherIcon;
     private static final int REQUEST_PERMISSIONS_REQUEST_CODE = 34;
     LogicMain main;
 
@@ -74,9 +79,9 @@ public class DashboardFragment extends Fragment implements DashBoardContract.Vie
         initGridView(view);
         mLatitudeLabel = getResources().getString(R.string.latitude_label);
         mLongitudeLabel = getResources().getString(R.string.longitude_label);
-
-
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(getActivity());
+
+
         return view;
     }
 
@@ -167,19 +172,44 @@ public class DashboardFragment extends Fragment implements DashBoardContract.Vie
                     public void onComplete(@NonNull Task<Location> task) {
                         if (task.isSuccessful() && task.getResult() != null) {
                             mLastLocation = task.getResult();
-
-                            mLatitudeText.setText(String.format(Locale.ENGLISH, "%s: %f",
-                                    mLatitudeLabel,
-                                    mLastLocation.getLatitude()));
-                            mLongitudeText.setText(String.format(Locale.ENGLISH, "%s: %f",
-                                    mLongitudeLabel,
-                                    mLastLocation.getLongitude()));
+                            getWeather(mLastLocation);
                         } else {
                             Log.w(TAG, "getLastLocation:exception", task.getException());
                             showSnackbar(getString(R.string.no_location_detected));
                         }
                     }
                 });
+    }
+
+    private void getWeather(Location mLastLocation) {
+        WeatherService weatherService = WeatherGenerator.createService(WeatherService.class);
+        String latlong = String.valueOf(mLastLocation.getLatitude())+"," +String.valueOf(mLastLocation.getLongitude());
+        Call<Weather> call = weatherService.getWeather(latlong);
+        call.enqueue(new Callback<Weather>() {
+            @Override
+            public void onResponse(Call<Weather> call, Response<Weather> response) {
+                if (response.isSuccessful()) {
+                    Log.d("res",response.body().toString());
+                    weatherText.setText(response.body().getCurrentObservation().getWeather());
+                    tempcText.setText(String.valueOf(response.body().getCurrentObservation().getTempC()));
+                    loadWeatherIcon(response.body().getCurrentObservation().getIconUrl());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Weather> call, Throwable t) {
+
+            }
+        });
+
+
+    }
+
+    private void loadWeatherIcon(String iconUrl) {
+        Picasso
+                .with(getActivity())
+                .load(iconUrl)
+                .into(weatherIcon);
     }
 
     /**

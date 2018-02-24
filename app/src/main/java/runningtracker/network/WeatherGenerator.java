@@ -10,7 +10,8 @@ import retrofit2.converter.gson.GsonConverterFactory;
  */
 
 public class WeatherGenerator {
-    private static final String BASE_URL = "https://running-server-2903.herokuapp.com/";
+
+    private static final String BASE_URL = "http://api.wunderground.com/";
 
     private static Retrofit.Builder builder =
             new Retrofit.Builder()
