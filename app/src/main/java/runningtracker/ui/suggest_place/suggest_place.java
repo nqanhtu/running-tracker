@@ -45,16 +45,11 @@ import runningtracker.ui.dashboard.DashBoardActivity;
 
 public class suggest_place extends AppCompatActivity implements OnMapReadyCallback, DirectionFinderListener {
     private GoogleMap mMap;
-    private Button btnFindPath;
-    private EditText etOrigin;
-    private EditText etDestination;
     private List<Marker> originMarkers = new ArrayList<>();
     private List<Marker> destinationMarkers = new ArrayList<>();
     private List<Polyline> polylinePaths = new ArrayList<>();
     private ProgressDialog progressDialog;
     //
-    Button mOrder;
-    TextView mItemSelected;
     String[] listItems;
     boolean[] checkedItems;
     ArrayList<Integer> mUserItems = new ArrayList<>();
@@ -129,6 +124,10 @@ public class suggest_place extends AppCompatActivity implements OnMapReadyCallba
         }
     }
 
+    /**
+     * @param: list route
+     * @return: view direction on map
+    * */
     @Override
     public void onDirectionFinderSuccess(List<Route> routes) {
         progressDialog.dismiss();
@@ -162,10 +161,11 @@ public class suggest_place extends AppCompatActivity implements OnMapReadyCallba
 
     /**
     * Create view list choice location
-    * @param: null
     * @return: list location
     */
-    public List<ItemSuggest> getListItem(){
+    public ArrayList<ItemSuggest> getListItem(){
+        final ArrayList<ItemSuggest> ListItemSuggests = new ArrayList<>();
+
         AlertDialog.Builder mBuilder = new AlertDialog.Builder(suggest_place.this);
         mBuilder.setTitle("Choice suggets location");
         mBuilder.setMultiChoiceItems(listItems, checkedItems, new DialogInterface.OnMultiChoiceClickListener() {
@@ -187,17 +187,19 @@ public class suggest_place extends AppCompatActivity implements OnMapReadyCallba
         });
 
         mBuilder.setCancelable(false);
+
         mBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int which) {
                 String item = "";
-                for (int i = 0; i < mUserItems.size(); i++) {
-                    item = item + listItems[mUserItems.get(i)];
-                    if (i != mUserItems.size() - 1) {
-                        item = item + ", ";
+                for (int i = 0; i < listItems.length; i++) {
+                    ItemSuggest itemSuggest = new ItemSuggest();
+                    if(checkedItems[i] == true) {
+                        itemSuggest.setPosition(i);
+                        ListItemSuggests.add(itemSuggest);
                     }
                 }
-                //mItemSelected.setText(item);
+
             }
         });
 
@@ -207,14 +209,13 @@ public class suggest_place extends AppCompatActivity implements OnMapReadyCallba
                 for (int i = 0; i < checkedItems.length; i++) {
                     checkedItems[i] = false;
                     mUserItems.clear();
-                    getListItem();
                 }
             }
         });
         AlertDialog mDialog = mBuilder.create();
         mDialog.show();
 
-        return null;
+        return ListItemSuggests;
     }
 }
 
