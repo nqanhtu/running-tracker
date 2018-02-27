@@ -11,7 +11,6 @@ import java.util.ArrayList;
 
 import runningtracker.R;
 import runningtracker.model.modelrunning.DatabaseWeather;
-import runningtracker.model.modelrunning.DetailRunningObject;
 import runningtracker.model.modelrunning.WeatherObject;
 
 public class WeatherSuggestion  extends AppCompatActivity{

@@ -1,7 +1,5 @@
 package runningtracker.navigation;
 
-import android.content.Intent;
-
 import javax.inject.Inject;
 import javax.inject.Singleton;
 

@@ -38,6 +38,11 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/editEmail" />
 
+    <TextView
+        android:id="@+id/status"
+        style="@style/ThemeOverlay.MyTextDetail"
+        android:text="@string/signed_out" />
+
     <Button
         android:id="@+id/buttonLogin"
         android:layout_width="wrap_content"
@@ -91,12 +96,4 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/buttonRegister" />
 
-    <Button
-        android:id="@+id/btnTest"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Test"
-        tools:layout_editor_absoluteX="278dp"
-        tools:layout_editor_absoluteY="469dp"
-        tools:ignore="MissingConstraints" />
 </android.support.constraint.ConstraintLayout>

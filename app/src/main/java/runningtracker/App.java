@@ -6,7 +6,6 @@ import java.util.Date;
 
 import runningtracker.model.modelrunning.DaoMaster;
 import runningtracker.model.modelrunning.DaoSession;
-import runningtracker.model.modelrunning.Note;
 import runningtracker.model.modelrunning.SuggestLocation;
 
 public class    App extends Application{

@@ -4,6 +4,8 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
@@ -28,7 +30,10 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.squareup.picasso.Picasso;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -63,6 +68,8 @@ public class DashboardFragment extends Fragment implements DashBoardContract.Vie
     private String mLongitudeLabel;
     @BindView(R.id.weather) TextView weatherText;
     @BindView(R.id.temp_c) TextView tempcText;
+    @BindView(R.id.locationTextView) TextView locationText;
+
     @BindView(R.id.main_activity_container) View container;
     @BindView(R.id.weatherIcon)
     ImageView weatherIcon;
@@ -185,13 +192,33 @@ public class DashboardFragment extends Fragment implements DashBoardContract.Vie
         WeatherService weatherService = WeatherGenerator.createService(WeatherService.class);
         String latlong = String.valueOf(mLastLocation.getLatitude())+"," +String.valueOf(mLastLocation.getLongitude());
         Call<Weather> call = weatherService.getWeather(latlong);
+
+        Geocoder geocoder = new Geocoder(getActivity(), Locale.getDefault());
+        String result = null;
+
+        try {
+            List<Address> addresses = geocoder.getFromLocation(mLastLocation.getLatitude(), mLastLocation.getLongitude(), 1);
+
+            String city = addresses.get(0).getLocality();
+            String state = addresses.get(0).getAdminArea();
+            String zip = addresses.get(0).getPostalCode();
+            String country = addresses.get(0).getCountryName();
+            locationText.setText(state +  " " + city);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         call.enqueue(new Callback<Weather>() {
             @Override
             public void onResponse(Call<Weather> call, Response<Weather> response) {
                 if (response.isSuccessful()) {
                     Log.d("res",response.body().toString());
+
                     weatherText.setText(response.body().getCurrentObservation().getWeather());
                     tempcText.setText(String.valueOf(response.body().getCurrentObservation().getTempC()));
+
+
+
                     loadWeatherIcon(response.body().getCurrentObservation().getIconUrl());
                 }
             }
