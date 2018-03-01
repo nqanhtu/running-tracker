@@ -47,6 +47,7 @@ import runningtracker.data.model.weather.Weather;
 import runningtracker.data.service.WeatherService;
 import runningtracker.network.WeatherGenerator;
 import runningtracker.presenter.main.LogicMain;
+import runningtracker.ui.friends.FriendsActivity;
 import runningtracker.ui.suggest_place.suggest_place;
 import runningtracker.view.running.MainActivity;
 import runningtracker.view.running.MainActivityOffline;
@@ -62,14 +63,9 @@ public class DashboardFragment extends Fragment implements DashBoardContract.Vie
     private static final String TAG = "ABC";
     protected Location mLastLocation;
 
-
-
-    private String mLatitudeLabel;
-    private String mLongitudeLabel;
     @BindView(R.id.weather) TextView weatherText;
     @BindView(R.id.temp_c) TextView tempcText;
     @BindView(R.id.locationTextView) TextView locationText;
-
     @BindView(R.id.main_activity_container) View container;
     @BindView(R.id.weatherIcon)
     ImageView weatherIcon;
@@ -84,8 +80,6 @@ public class DashboardFragment extends Fragment implements DashBoardContract.Vie
         ButterKnife.bind(this, view);
 
         initGridView(view);
-        mLatitudeLabel = getResources().getString(R.string.latitude_label);
-        mLongitudeLabel = getResources().getString(R.string.longitude_label);
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(getActivity());
 
 
@@ -125,6 +119,8 @@ public class DashboardFragment extends Fragment implements DashBoardContract.Vie
                     case 2:
                         break;
                     case 3:
+                        Intent intent3 = new Intent(getActivity(), FriendsActivity.class);
+                        startActivity(intent3);
                         break;
                     case 4:
                         main.onNavigationActivity();
