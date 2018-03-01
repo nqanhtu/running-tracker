@@ -1,8 +1,12 @@
 package runningtracker.presenter.suggest_place;
 
+import android.location.Location;
 import android.os.AsyncTask;
 
+import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -19,9 +23,14 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
+import runningtracker.App;
+import runningtracker.data.model.suggest_place.SuggestLocation;
+import runningtracker.model.modelrunning.DaoSession;
 import runningtracker.model.suggets_place.Distance;
 import runningtracker.model.suggets_place.Duration;
+import runningtracker.model.suggets_place.ItemSuggest;
 import runningtracker.model.suggets_place.Route;
+import runningtracker.presenter.common.DistanceTwoPoint;
 
 public class DirectionFinder {
     private static final String DIRECTION_URL_API = "https://maps.googleapis.com/maps/api/directions/json?";
@@ -34,6 +43,9 @@ public class DirectionFinder {
         this.listener = listener;
         this.origin = origin;
         this.destination = destination;
+    }
+
+    public DirectionFinder(){
     }
 
     public void execute() throws UnsupportedEncodingException {
@@ -152,5 +164,49 @@ public class DirectionFinder {
         }
 
         return decoded;
+    }
+
+    /**
+     * @param : list item chosen type
+     * @return : list location suggest
+    * */
+    public ArrayList<Location> getResultPlace(ArrayList<ItemSuggest> itemSuggestList){
+        ArrayList<Location> listLocation = new ArrayList<>();
+
+        for(int i = 1; i <= App.getDaoSession().getSuggestLocationDao().loadAll().size(); i++){
+            SuggestLocation suggestLocation = new SuggestLocation();
+            suggestLocation = App.getDaoSession().getSuggestLocationDao().load(Long.valueOf(i));
+            if((suggestLocation.getTypePlace()-1) == itemSuggestList.get(0).getPosition()){
+                Location location = new Location("A");
+                location.setLatitude(suggestLocation.getLatitudeValue());
+                location.setLongitude(suggestLocation.getLongitudeValue());
+                listLocation.add(location);
+            }
+        }
+        return listLocation;
+    }
+
+    /**
+     * @param : list item chosen, list location get list location suggest, Google map
+     * @return : list location suggest
+    * */
+    public ArrayList<Location> setMarkerLocation(ArrayList<ItemSuggest> itemSuggestList, GoogleMap mMap)
+    {
+        ArrayList<Location> lisLocation = new ArrayList<>();
+        lisLocation = getResultPlace(itemSuggestList);
+        for(int i = 0; i < lisLocation.size(); i++){
+            LatLng location = new LatLng(lisLocation.get(i).getLatitude(), lisLocation.get(i).getLongitude());
+            mMap.addMarker(new MarkerOptions().position(location).title("Suggest Location"));
+        }
+        return lisLocation;
+    }
+
+    public float locationDistanceMin(Location location, ArrayList<Location> listLocation){
+        DistanceTwoPoint distance = new DistanceTwoPoint();
+        float minDistance = distance.DistanceLocation(location,listLocation.get(0));
+        for(int i = 0; i < listLocation.size(); i++){
+            //if(distance.DistanceLocation(location, ))
+        }
+        return minDistance;
     }
 }

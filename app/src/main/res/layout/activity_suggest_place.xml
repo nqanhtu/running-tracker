@@ -13,7 +13,7 @@
         android:background="?attr/colorPrimary"
         android:minHeight="?attr/actionBarSize"
         android:theme="?attr/actionBarTheme"
-        app:title="Tên địa điểm chạy" />
+        app:title="" />
 
     <android.support.constraint.ConstraintLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
@@ -31,8 +31,6 @@
         <FrameLayout
             xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:app="http://schemas.android.com/apk/res-auto"
-            xmlns:android.support.v7.appcompat="http://schemas.android.com/apk/res-auto"
-            xmlns:tools="http://schemas.android.com/tools"
             android:layout_width="0dp"
             android:layout_height="0dp"
 
@@ -57,7 +55,12 @@
                 android:id="@+id/btnSuggets"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Goi Y Chay" />
+                android:text="Goi Y Chay"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                android:layout_marginBottom="40dp"
+                />
 
         </FrameLayout>
 
