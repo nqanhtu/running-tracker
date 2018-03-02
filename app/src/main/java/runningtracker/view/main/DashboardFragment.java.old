@@ -133,7 +133,7 @@ public class DashboardFragment extends Fragment implements  ViewMain {
                     case 4:
                         //
                         break;
-                    case 5:
+                    case 5:onStartRunning
                         mListener.onStartRunning();
                         break;
                     default :

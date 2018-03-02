@@ -81,7 +81,7 @@ public class DashboardFragment extends Fragment implements DashBoardContract.Vie
 
         initGridView(view);
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(getActivity());
-
+        main = new LogicMain();
 
         return view;
     }
@@ -138,7 +138,8 @@ public class DashboardFragment extends Fragment implements DashBoardContract.Vie
     @Override
     public Context getMainActivity() {
 
-            return getActivity();
+            //return getActivity();
+        return getContext();
     }
 
     @Override

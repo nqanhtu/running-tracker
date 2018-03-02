@@ -63,9 +63,13 @@ public class LogicMain implements Main {
 
     public LogicMain(ViewMain main) {
         this.main = main;
-        resAPICommon = new ResAPICommon();
-        weatherObject = new WeatherObject();
+     /*   resAPICommon = new ResAPICommon();
+        weatherObject = new WeatherObject();*/
     }
+     public LogicMain(){
+         resAPICommon = new ResAPICommon();
+         weatherObject = new WeatherObject();
+     }
 
     @Override
     public boolean isConnected(Context context) {
