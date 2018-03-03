@@ -11,9 +11,6 @@ import runningtracker.ui.base.BaseView;
 
 public interface DashBoardContract {
     interface View extends BaseView<Presenter> {
-        Context getMainActivity();
-        void navigationRunning();
-        void navigationRunningOffline();
 
     }
 

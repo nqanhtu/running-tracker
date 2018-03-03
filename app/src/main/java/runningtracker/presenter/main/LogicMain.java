@@ -42,7 +42,8 @@ import runningtracker.model.ResAPICommon;
 import runningtracker.model.modelrunning.DatabaseWeather;
 import runningtracker.model.modelrunning.LocationObject;
 import runningtracker.model.modelrunning.WeatherObject;
-import runningtracker.view.main.ViewMain;
+import runningtracker.ui.running.ViewMain;
+
 
 import static android.content.ContentValues.TAG;
 import static android.content.Context.LOCATION_SERVICE;
