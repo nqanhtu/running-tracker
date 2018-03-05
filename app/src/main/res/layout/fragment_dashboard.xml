@@ -1,23 +1,72 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:android.support.v7.appcompat="http://schemas.android.com/apk/res-auto"
-    tools:context=".view.main.MainActivityHome">
+    android:orientation="vertical"
+    tools:context="runningtracker.ui.dashboard.DashboardFragment">
 
-    <!-- TODO: Update blank fragment layout -->
     <LinearLayout
+        android:id="@+id/main_activity_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="150dp"
+        android:layout_marginBottom="2dp"
+        android:background="@color/colorBackgroundWhite"
         android:orientation="vertical">
 
-        <ListView
-            android:id="@+id/lvItemMenu"
-            style="@style/Widget.AppCompat.ListView"
+        <TextView
+            android:id="@+id/textView3"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-
+            android:layout_height="wrap_content"
+            android:text="TextView" />
     </LinearLayout>
 
-</FrameLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:layout_marginBottom="2dp"
+        android:background="@color/colorBackgroundWhite"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/locationTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/weather"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginStart="10dp"
+            android:textIsSelectable="true"
+            android:textSize="@dimen/lat_long_text_size" />
+
+        <TextView
+            android:id="@+id/temp_c"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="@dimen/text_margin"
+            android:textIsSelectable="true"
+            android:textSize="@dimen/lat_long_text_size" />
+
+        <ImageView
+            android:id="@+id/weatherIcon"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </LinearLayout>
+
+    <GridView xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/gridview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="2dp"
+        android:columnWidth="90dp"
+        android:gravity="center"
+        android:horizontalSpacing="2dp"
+        android:numColumns="3"
+        android:stretchMode="columnWidth"
+        android:verticalSpacing="2dp" />
+
+</LinearLayout>

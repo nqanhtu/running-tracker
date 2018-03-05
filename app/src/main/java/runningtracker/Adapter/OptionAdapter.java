@@ -52,7 +52,7 @@ public class OptionAdapter extends BaseAdapter {
         if (view==null){
             viewHolder = new ViewHolder();
             LayoutInflater inflater = LayoutInflater.from(mContext);
-            view = inflater.inflate(R.layout.layout,null);
+            view = inflater.inflate(R.layout.gridview_dashboard_item,null);
             viewHolder.imageView = (ImageView) view.findViewById(R.id.iconOption);
             viewHolder.textView = (TextView) view.findViewById(R.id.textViewOption);
             view.setTag(viewHolder);

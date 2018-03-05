@@ -1,8 +1,7 @@
-package runningtracker.view.main;
+package runningtracker.ui.running;
 
 
 import android.content.Context;
-import android.content.Intent;
 
 public interface ViewMain {
     Context getMainActivity();//lay man hinh MainActivityHome

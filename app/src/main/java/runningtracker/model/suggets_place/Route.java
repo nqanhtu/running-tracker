@@ -4,9 +4,6 @@ import com.google.android.gms.maps.model.LatLng;
 
 import java.util.List;
 
-import runningtracker.model.suggets_place.Distance;
-import runningtracker.model.suggets_place.Duration;
-
 
 public class Route {
     public Distance distance;

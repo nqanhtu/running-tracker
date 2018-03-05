@@ -12,4 +12,5 @@
     <color name="colorStopBtn">#EF5350</color>
     <color name="colorTextValue">#000000</color>
     <color name="colorTextDescription">#9e9e9e</color>
+    <color name="colorBackgroundWhite">#ffffff</color>
 </resources>

@@ -1,5 +1,7 @@
 package runningtracker.ui.dashboard;
 
+import android.content.Context;
+
 import runningtracker.ui.base.BasePresenter;
 import runningtracker.ui.base.BaseView;
 
@@ -9,7 +11,6 @@ import runningtracker.ui.base.BaseView;
 
 public interface DashBoardContract {
     interface View extends BaseView<Presenter> {
-        void setupBottomNavigationView();
 
     }
 

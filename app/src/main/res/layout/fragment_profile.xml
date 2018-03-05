@@ -2,13 +2,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.haite.runningassistant.ProfileFragment">
+    tools:context="runningtracker.ui.profile.ProfileFragment">
 
     <!-- TODO: Update blank fragment layout -->
 
-    <Button
-        android:id="@+id/bnProfile"
+    <EditText
+        android:id="@+id/editText2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Profile" />
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:text="Name" />
+
 </FrameLayout>
