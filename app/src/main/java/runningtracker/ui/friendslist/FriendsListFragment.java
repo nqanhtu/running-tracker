@@ -13,7 +13,6 @@ import android.view.ViewGroup;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -47,7 +46,7 @@ public class FriendsListFragment extends Fragment {
     public void showFriendsList(){
         db = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
-        FirebaseUser currentUser = mAuth.getCurrentUser();
+        //FirebaseUser currentUser = mAuth.getCurrentUser();
 
 
         // use this setting to improve performance if you know that changes
@@ -61,7 +60,7 @@ public class FriendsListFragment extends Fragment {
         // specify an adapter (see also next example)
 
 
-        db.collection("users").whereEqualTo("friends."+currentUser.getUid(),true)
+        db.collection("users").whereEqualTo("friends.YURw1KW4J3MbiOTtYGChXTojI042",true)
                 .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -70,7 +69,7 @@ public class FriendsListFragment extends Fragment {
                     mAdapter = new FriendsListAdapter(friends);
                     mRecyclerView.setAdapter(mAdapter);
 
-                    Log.d( "Show list: ", friends.get(1).getDisplayName() );
+
                 } else {
                     Log.d(TAG, "Error getting documents: ", task.getException());
                 }

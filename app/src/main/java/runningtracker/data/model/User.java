@@ -12,10 +12,10 @@ public class User {
     public User() {
     }
 
-    public User(String displayName, String email, String uid) {
-        this.displayName = displayName;
+    public User(String displayName, String email, String uid){
         this.email = email;
         this.uid = uid;
+
     }
 
     public String getDisplayName() {
@@ -41,4 +41,5 @@ public class User {
     public void setUid(String uid) {
         this.uid = uid;
     }
+
 }
