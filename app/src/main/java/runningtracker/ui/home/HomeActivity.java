@@ -1,5 +1,7 @@
 package runningtracker.ui.home;
 
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -9,19 +11,29 @@ import com.aurelhubert.ahbottomnavigation.AHBottomNavigationItem;
 
 import butterknife.ButterKnife;
 import runningtracker.R;
+import runningtracker.presenter.main.LogicMain;
 import runningtracker.ui.dashboard.DashboardFragment;
 import runningtracker.ui.notification.NotificationsFragment;
 import runningtracker.ui.profile.ProfileFragment;
+import runningtracker.ui.running.ViewMain;
+import runningtracker.view.running.MainActivity;
+import runningtracker.view.running.MainActivityOffline;
 
-public class HomeActivity extends AppCompatActivity{
+public class HomeActivity extends AppCompatActivity implements ViewMain, DashboardFragment.OnFragmentInteractionListener{
 
     AHBottomNavigation bottomNavigation;
+    LogicMain main;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
         ButterKnife.bind(this);
+
+        main = new LogicMain(this);
+        main.createLocationRequest();
+        main.buildLocationSettingsRequest();
+        main.initialization();
 
         bottomNavigation= (AHBottomNavigation) findViewById(R.id.navigation);
         createNavItems();
@@ -70,4 +82,25 @@ public class HomeActivity extends AppCompatActivity{
 
     }
 
+    @Override
+    public Context getMainActivity() {
+        return  HomeActivity.this;
+    }
+
+    @Override
+    public void navigationRunning() {
+        Intent nextActivity = new Intent(HomeActivity.this, MainActivity.class);
+        startActivity(nextActivity);
+    }
+
+    @Override
+    public void navigationRunningOffline() {
+        Intent nextActivity = new Intent(HomeActivity.this, MainActivityOffline.class);
+        startActivity(nextActivity);
+    }
+
+    @Override
+    public void onStartRunning() {
+        main.onNavigationActivity();
+    }
 }

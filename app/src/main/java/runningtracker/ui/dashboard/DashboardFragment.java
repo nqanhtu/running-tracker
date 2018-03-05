@@ -1,6 +1,7 @@
 package runningtracker.ui.dashboard;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -46,15 +47,12 @@ import runningtracker.data.model.Option;
 import runningtracker.data.model.weather.Weather;
 import runningtracker.data.service.WeatherService;
 import runningtracker.network.WeatherGenerator;
-import runningtracker.presenter.main.LogicMain;
 import runningtracker.ui.friends.FriendsActivity;
 import runningtracker.ui.suggest_place.suggest_place;
-import runningtracker.view.running.MainActivity;
-import runningtracker.view.running.MainActivityOffline;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-public class DashboardFragment extends Fragment implements DashBoardContract.View {
+public class DashboardFragment extends Fragment implements DashBoardContract.View{
 
     private DashBoardContract.Presenter mPresenter;
 
@@ -63,6 +61,8 @@ public class DashboardFragment extends Fragment implements DashBoardContract.Vie
     private static final String TAG = "ABC";
     protected Location mLastLocation;
 
+    OnFragmentInteractionListener mListener;
+
     @BindView(R.id.weather) TextView weatherText;
     @BindView(R.id.temp_c) TextView tempcText;
     @BindView(R.id.locationTextView) TextView locationText;
@@ -70,7 +70,6 @@ public class DashboardFragment extends Fragment implements DashBoardContract.Vie
     @BindView(R.id.weatherIcon)
     ImageView weatherIcon;
     private static final int REQUEST_PERMISSIONS_REQUEST_CODE = 34;
-    LogicMain main;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -79,10 +78,9 @@ public class DashboardFragment extends Fragment implements DashBoardContract.Vie
         View view = inflater.inflate(R.layout.fragment_dashboard, container, false);
         ButterKnife.bind(this, view);
 
+
         initGridView(view);
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(getActivity());
-
-
         return view;
     }
 
@@ -123,7 +121,7 @@ public class DashboardFragment extends Fragment implements DashBoardContract.Vie
                         startActivity(intent3);
                         break;
                     case 4:
-                        main.onNavigationActivity();
+                        mListener.onStartRunning();
                         break;
                     case 5:
                         Intent intent = new Intent(getActivity(), suggest_place.class);
@@ -133,24 +131,6 @@ public class DashboardFragment extends Fragment implements DashBoardContract.Vie
             }
         });
 
-    }
-
-    @Override
-    public Context getMainActivity() {
-
-            return getActivity();
-    }
-
-    @Override
-    public void navigationRunning() {
-        Intent nextActivity = new Intent(getActivity(), MainActivity.class);
-        startActivity(nextActivity);
-    }
-
-    @Override
-    public void navigationRunningOffline() {
-        Intent nextActivity = new Intent(getActivity(), MainActivityOffline.class);
-        startActivity(nextActivity);
     }
 
     @Override
@@ -348,5 +328,23 @@ public class DashboardFragment extends Fragment implements DashBoardContract.Vie
                         });
             }
         }
+    }
+
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        try {
+            mListener = (OnFragmentInteractionListener)getActivity();
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString());
+        }
+
+    }
+
+
+    public interface OnFragmentInteractionListener {
+        // TODO: Update argument type and name
+         public void onStartRunning();
     }
 }
