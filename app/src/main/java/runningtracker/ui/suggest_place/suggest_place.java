@@ -1,5 +1,6 @@
 package runningtracker.ui.suggest_place;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
