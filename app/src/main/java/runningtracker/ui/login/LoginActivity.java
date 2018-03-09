@@ -27,13 +27,17 @@ import runningtracker.ui.register.RegisterActivity;
 
 public class LoginActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
-    @BindView(R.id.editEmail) EditText mEmail;
-    @BindView(R.id.editPassword) EditText mPassword;
-    @BindView(R.id.status) TextView mStatusTextView;
+    @BindView(R.id.editEmail)
+    EditText mEmail;
+    @BindView(R.id.editPassword)
+    EditText mPassword;
+    @BindView(R.id.status)
+    TextView mStatusTextView;
 
     private static final String TAG = "EmailPassword";
 
-    @Override public void onCreate(Bundle savedInstanceState) {
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
@@ -42,25 +46,26 @@ public class LoginActivity extends AppCompatActivity {
         // [END initialize_auth]
 
 
-
-
     }
+
     // [START on_start_check_user]
     @Override
     public void onStart() {
         super.onStart();
         // Check if user is signed in (non-null) and update UI accordingly.
         FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (currentUser != null) {
+            startHomeActivity();
+        }
         updateUI(currentUser);
     }
-
 
 
     @OnClick(R.id.buttonLogin)
     public void signIn() {
         String email = mEmail.getText().toString();
         String password = mPassword.getText().toString();
-        
+
         Log.d(TAG, "signIn:" + email);
         if (!validateForm()) {
             return;
@@ -100,6 +105,7 @@ public class LoginActivity extends AppCompatActivity {
     private void updateUI(FirebaseUser user) {
         hideProgressDialog();
     }
+
     private boolean validateForm() {
         boolean valid = true;
 
