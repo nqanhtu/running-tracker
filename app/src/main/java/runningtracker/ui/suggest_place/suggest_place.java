@@ -42,6 +42,7 @@ import runningtracker.model.suggets_place.ItemSuggest;
 import runningtracker.model.suggets_place.Route;
 import runningtracker.presenter.suggest_place.DirectionFinder;
 import runningtracker.presenter.suggest_place.DirectionFinderListener;
+import runningtracker.presenter.suggest_place.SuggestCallback;
 
 
 public class suggest_place extends AppCompatActivity implements OnMapReadyCallback, DirectionFinderListener {
@@ -58,7 +59,7 @@ public class suggest_place extends AppCompatActivity implements OnMapReadyCallba
     DirectionFinder directionFinder;
     //
     private ArrayList<ItemSuggest> ListItemSuggests = new ArrayList<>();
-    private ArrayList<Location> listLocation = new ArrayList<>();
+    private List<Location> listLocation;
     Geocoder geocoder;
     List<Address> addresses;
 
@@ -68,6 +69,7 @@ public class suggest_place extends AppCompatActivity implements OnMapReadyCallba
         setContentView(R.layout.activity_suggest_place);
 
         directionFinder = new DirectionFinder();
+        listLocation = new ArrayList<>();
         toolbarTitle =  (Toolbar) findViewById(R.id.tlbLocationName);
 
         ButterKnife.bind(this);
@@ -227,7 +229,13 @@ public class suggest_place extends AppCompatActivity implements OnMapReadyCallba
                         ListItemSuggests.add(itemSuggest);
                     }
                 }
-                listLocation =  directionFinder.setMarkerLocation(ListItemSuggests, mMap);
+
+                directionFinder.setMarkerLocation(ListItemSuggests, mMap, new SuggestCallback() {
+                    @Override
+                    public void getListLocation(List<Location> locationList) {
+                        listLocation = locationList;    
+                    }
+                });
             }
         });
 

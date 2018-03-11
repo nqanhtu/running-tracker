@@ -2,11 +2,17 @@ package runningtracker.presenter.suggest_place;
 
 import android.location.Location;
 import android.os.AsyncTask;
+import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreSettings;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -22,10 +28,9 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
 
-import runningtracker.App;
 import runningtracker.data.model.suggest_place.SuggestLocation;
-import runningtracker.model.modelrunning.DaoSession;
 import runningtracker.model.suggets_place.Distance;
 import runningtracker.model.suggets_place.Duration;
 import runningtracker.model.suggets_place.ItemSuggest;
@@ -33,6 +38,8 @@ import runningtracker.model.suggets_place.Route;
 import runningtracker.presenter.common.DistanceTwoPoint;
 
 public class DirectionFinder {
+    private static final String TAG = "DirectionFinder" ;
+
     private static final String DIRECTION_URL_API = "https://maps.googleapis.com/maps/api/directions/json?";
     private static final String GOOGLE_API_KEY = "AIzaSyDnwLF2-WfK8cVZt9OoDYJ9Y8kspXhEHfI";
     private DirectionFinderListener listener;
@@ -170,12 +177,17 @@ public class DirectionFinder {
      * @param : list item chosen type
      * @return : list location suggest
     * */
-    public ArrayList<Location> getResultPlace(ArrayList<ItemSuggest> itemSuggestList){
-        ArrayList<Location> listLocation = new ArrayList<>();
+    public List<Location> getResultPlace(List<SuggestLocation> suggestLocationList, ArrayList<ItemSuggest> itemSuggestList){
+        List<Location> listLocation = new ArrayList<>();
+        Log.d(TAG,"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA: "+suggestLocationList.size());
+        Log.d(TAG,"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA: "+suggestLocationList.get(1).getTypePlace());
+        Log.d(TAG,"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA: "+suggestLocationList.get(1).getLatitudeValue());
 
-        for(int i = 1; i <= App.getDaoSession().getSuggestLocationDao().loadAll().size(); i++){
+        Log.d(TAG,"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA: "+itemSuggestList.get(0).getPosition());
+        for(int i = 0; i < suggestLocationList.size(); i++){
             SuggestLocation suggestLocation = new SuggestLocation();
-            suggestLocation = App.getDaoSession().getSuggestLocationDao().load(Long.valueOf(i));
+
+            suggestLocation = suggestLocationList.get(i);
             if((suggestLocation.getTypePlace()-1) == itemSuggestList.get(0).getPosition()){
                 Location location = new Location("A");
                 location.setLatitude(suggestLocation.getLatitudeValue());
@@ -183,6 +195,7 @@ public class DirectionFinder {
                 listLocation.add(location);
             }
         }
+        Log.d(TAG,"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA: "+listLocation.size());
         return listLocation;
     }
 
@@ -190,16 +203,58 @@ public class DirectionFinder {
      * @param : list item chosen, list location get list location suggest, Google map
      * @return : list location suggest
     * */
-    public ArrayList<Location> setMarkerLocation(ArrayList<ItemSuggest> itemSuggestList, GoogleMap mMap)
+    public List<Location> setMarkerLocation(final ArrayList<ItemSuggest> itemSuggestList, final GoogleMap mMap, final SuggestCallback suggestCallback)
     {
-        ArrayList<Location> lisLocation = new ArrayList<>();
-        lisLocation = getResultPlace(itemSuggestList);
-        for(int i = 0; i < lisLocation.size(); i++){
-            LatLng location = new LatLng(lisLocation.get(i).getLatitude(), lisLocation.get(i).getLongitude());
-            mMap.addMarker(new MarkerOptions().position(location).title("Suggest Location"));
-        }
-        return lisLocation;
+        final List<Location>[] listLocation = new ArrayList[1];
+
+        FirebaseFirestore db;
+        db = FirebaseFirestore.getInstance();
+        FirebaseFirestoreSettings settings = new FirebaseFirestoreSettings.Builder()
+                .setPersistenceEnabled(true)
+                .build();
+        db.setFirestoreSettings(settings);
+
+
+        db.collection("suggestlocations").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if(task.isSuccessful()){
+
+                    List<SuggestLocation> suggestLocationList = task.getResult().toObjects(SuggestLocation.class);
+                    Log.d(TAG,"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA: "+suggestLocationList.size());
+                    listLocation[0] = getResultPlace(suggestLocationList, itemSuggestList);
+
+                    Log.d(TAG,"BBBBBBBBBBBBBBBBBBBBBBB 1: "+ listLocation[0]);
+
+                    for(int i = 0; i < listLocation[0].size(); i++){
+                        LatLng location = new LatLng(listLocation[0].get(i).getLatitude(), listLocation[0].get(i).getLongitude());
+                        mMap.addMarker(new MarkerOptions().position(location).title("Suggest Location"));
+                    }
+
+                    suggestCallback.getListLocation( listLocation[0]);
+                }
+                else {
+                    Log.d(TAG,"Get an error abcdxyz");
+                }
+            }
+        });
+
+
+//        listLocation = getResultPlace(itemSuggestList);
+//        for(int i = 0; i < listLocation.size(); i++){
+//            LatLng location = new LatLng(listLocation.get(i).getLatitude(), listLocation.get(i).getLongitude());
+//            mMap.addMarker(new MarkerOptions().position(location).title("Suggest Location"));
+//        }
+        Log.d(TAG,"BBBBBBBBBBBBBBBBBBBB 2: "+ listLocation[0]);
+        return listLocation[0];
     }
+
+    public List<Location> aa(List<Location> lll){
+        List<Location> rrr = new ArrayList<>();
+        rrr = lll;
+        return rrr;
+    }
+
 
     public float locationDistanceMin(Location location, ArrayList<Location> listLocation){
         DistanceTwoPoint distance = new DistanceTwoPoint();
