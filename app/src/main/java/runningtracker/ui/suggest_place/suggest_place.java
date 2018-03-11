@@ -233,7 +233,7 @@ public class suggest_place extends AppCompatActivity implements OnMapReadyCallba
                 directionFinder.setMarkerLocation(ListItemSuggests, mMap, new SuggestCallback() {
                     @Override
                     public void getListLocation(List<Location> locationList) {
-                        listLocation = locationList;    
+                        listLocation = locationList;
                     }
                 });
             }
