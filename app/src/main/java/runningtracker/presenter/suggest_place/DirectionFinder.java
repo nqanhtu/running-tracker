@@ -31,11 +31,14 @@ import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
 import runningtracker.data.model.suggest_place.SuggestLocation;
+import runningtracker.model.DataCallback;
 import runningtracker.model.suggets_place.Distance;
 import runningtracker.model.suggets_place.Duration;
 import runningtracker.model.suggets_place.ItemSuggest;
 import runningtracker.model.suggets_place.Route;
 import runningtracker.presenter.common.DistanceTwoPoint;
+import runningtracker.repository.suggestlocation.SuggestRepository;
+import runningtracker.repository.suggestlocation.SuggetsCallback;
 
 public class DirectionFinder {
     private static final String TAG = "DirectionFinder" ;
@@ -45,6 +48,7 @@ public class DirectionFinder {
     private DirectionFinderListener listener;
     private String origin;
     private String destination;
+    private SuggestRepository suggestRepository = new SuggestRepository();
 
     public DirectionFinder(DirectionFinderListener listener, String origin, String destination) {
         this.listener = listener;
@@ -179,11 +183,6 @@ public class DirectionFinder {
     * */
     public List<Location> getResultPlace(List<SuggestLocation> suggestLocationList, ArrayList<ItemSuggest> itemSuggestList){
         List<Location> listLocation = new ArrayList<>();
-        Log.d(TAG,"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA: "+suggestLocationList.size());
-        Log.d(TAG,"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA: "+suggestLocationList.get(1).getTypePlace());
-        Log.d(TAG,"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA: "+suggestLocationList.get(1).getLatitudeValue());
-
-        Log.d(TAG,"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA: "+itemSuggestList.get(0).getPosition());
         for(int i = 0; i < suggestLocationList.size(); i++){
             SuggestLocation suggestLocation = new SuggestLocation();
 
@@ -195,7 +194,6 @@ public class DirectionFinder {
                 listLocation.add(location);
             }
         }
-        Log.d(TAG,"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA: "+listLocation.size());
         return listLocation;
     }
 
@@ -203,56 +201,20 @@ public class DirectionFinder {
      * @param : list item chosen, list location get list location suggest, Google map
      * @return : list location suggest
     * */
-    public List<Location> setMarkerLocation(final ArrayList<ItemSuggest> itemSuggestList, final GoogleMap mMap, final SuggestCallback suggestCallback)
+    public void setMarkerLocation(final ArrayList<ItemSuggest> itemSuggestList, final GoogleMap mMap, final SuggestCallback suggestCallback)
     {
-        final List<Location>[] listLocation = new ArrayList[1];
-
-        FirebaseFirestore db;
-        db = FirebaseFirestore.getInstance();
-        FirebaseFirestoreSettings settings = new FirebaseFirestoreSettings.Builder()
-                .setPersistenceEnabled(true)
-                .build();
-        db.setFirestoreSettings(settings);
-
-
-        db.collection("suggestlocations").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+         final List<Location>[] listLocation = new ArrayList[1];
+        suggestRepository.getAllSuggestLocation(new SuggetsCallback() {
             @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if(task.isSuccessful()){
-
-                    List<SuggestLocation> suggestLocationList = task.getResult().toObjects(SuggestLocation.class);
-                    Log.d(TAG,"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA: "+suggestLocationList.size());
-                    listLocation[0] = getResultPlace(suggestLocationList, itemSuggestList);
-
-                    Log.d(TAG,"BBBBBBBBBBBBBBBBBBBBBBB 1: "+ listLocation[0]);
-
-                    for(int i = 0; i < listLocation[0].size(); i++){
-                        LatLng location = new LatLng(listLocation[0].get(i).getLatitude(), listLocation[0].get(i).getLongitude());
-                        mMap.addMarker(new MarkerOptions().position(location).title("Suggest Location"));
-                    }
-
-                    suggestCallback.getListLocation( listLocation[0]);
+            public void onSuccess(List<SuggestLocation> suggestLocationList) {
+                listLocation[0] = getResultPlace(suggestLocationList, itemSuggestList);
+                for(int i = 0; i < listLocation[0].size(); i++){
+                    LatLng location = new LatLng(listLocation[0].get(i).getLatitude(), listLocation[0].get(i).getLongitude());
+                    mMap.addMarker(new MarkerOptions().position(location).title("Suggest Location"));
                 }
-                else {
-                    Log.d(TAG,"Get an error abcdxyz");
-                }
+                suggestCallback.getListLocation( listLocation[0]);
             }
         });
-
-
-//        listLocation = getResultPlace(itemSuggestList);
-//        for(int i = 0; i < listLocation.size(); i++){
-//            LatLng location = new LatLng(listLocation.get(i).getLatitude(), listLocation.get(i).getLongitude());
-//            mMap.addMarker(new MarkerOptions().position(location).title("Suggest Location"));
-//        }
-        Log.d(TAG,"BBBBBBBBBBBBBBBBBBBB 2: "+ listLocation[0]);
-        return listLocation[0];
-    }
-
-    public List<Location> aa(List<Location> lll){
-        List<Location> rrr = new ArrayList<>();
-        rrr = lll;
-        return rrr;
     }
 
 

@@ -38,11 +38,13 @@ import java.util.Locale;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import runningtracker.R;
+import runningtracker.data.model.suggest_place.SuggestLocation;
 import runningtracker.model.suggets_place.ItemSuggest;
 import runningtracker.model.suggets_place.Route;
 import runningtracker.presenter.suggest_place.DirectionFinder;
 import runningtracker.presenter.suggest_place.DirectionFinderListener;
 import runningtracker.presenter.suggest_place.SuggestCallback;
+import runningtracker.repository.suggestlocation.SuggestRepository;
 
 
 public class suggest_place extends AppCompatActivity implements OnMapReadyCallback, DirectionFinderListener {
@@ -106,6 +108,7 @@ public class suggest_place extends AppCompatActivity implements OnMapReadyCallba
         mMap.clear();
         String origin = getMyLocation().getLatitude()+","+getMyLocation().getLongitude();
         String destination = listLocation.get(0).getLatitude()+","+listLocation.get(0).getLongitude();
+        //SuggestRepository suggestRepository = new SuggestRepository();
         if (origin.isEmpty()) {
             Toast.makeText(this, "Please enter origin address!", Toast.LENGTH_SHORT).show();
             return;
