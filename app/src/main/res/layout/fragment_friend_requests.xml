@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="runningtracker.ui.friendslist.FriendsListFragment">
+    tools:context="runningtracker.friendslist.FriendsListFragment">
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/friends_recycler_view"
