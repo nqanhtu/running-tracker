@@ -16,6 +16,8 @@ import java.util.List;
 import java.util.Map;
 
 import runningtracker.data.model.User;
+import runningtracker.data.source.UsersDataSource;
+import runningtracker.data.source.UsersRepository;
 
 /**
  * Created by Anh Tu on 3/10/2018.
@@ -24,13 +26,13 @@ import runningtracker.data.model.User;
 public class AddFriendPresenter implements AddFriendContract.Presenter {
 
     private static final String TAG = "AddFriends";
+    private final UsersRepository mUsersRepository;
 
-    private FirebaseFirestore db;
     private final AddFriendContract.View mAddFriendView;
 
-    public AddFriendPresenter(FirebaseFirestore firestore, @NonNull AddFriendContract.View mAddFriendView) {
+    public AddFriendPresenter(UsersRepository mUsersRepository, @NonNull AddFriendContract.View mAddFriendView) {
+        this.mUsersRepository = mUsersRepository;
         this.mAddFriendView = mAddFriendView;
-        this.db = firestore;
     }
 
     @Override
@@ -39,47 +41,25 @@ public class AddFriendPresenter implements AddFriendContract.Presenter {
     }
 
     private void loadAddFriends() {
-        db.collection("users/"+getCurrentUserUid()+"/friendRequestsSent")
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            List<User> friends = task.getResult().toObjects(User.class);
-                            mAddFriendView.showFriendsList(friends);
-                        } else {
-                            Log.d(TAG, "Error getting documents: ", task.getException());
-                        }
-                    }
-                });
+
+        mUsersRepository.getFriendRequestsSent(getCurrentUserUid(), new UsersDataSource.LoadUsersCallback() {
+            @Override
+            public void onUsersLoaded(List<User> users) {
+                mAddFriendView.showFriendsList(users);
+            }
+
+            @Override
+            public void onDataNotAvailable() {
+
+            }
+        });
+
+
     }
 
     @Override
     public void addFriend(String email) {
-        db.collection("users").whereEqualTo("email", email)
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            for (DocumentSnapshot document : task.getResult()) {
-                                Log.d(TAG, document.getId() + " => " + document.getData());
-                                Map<String, Object> friend = new HashMap<>();
-                                friend.put("displayName", document.getData().get("displayName"));
-                                friend.put("email", document.getData().get("email"));
-                                db.collection("users/"+getCurrentUserUid()+"/friendRequestsSent").document(document.getId())
-                                        .set(friend).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void aVoid) {
-                                        loadAddFriends();
-                                    }
-                                });
-                            }
-                        } else {
-                            Log.d(TAG, "Error getting documents: ", task.getException());
-                        }
-                    }
-                });
+      
     }
 
     private String getCurrentUserUid(){
