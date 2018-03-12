@@ -1,16 +1,24 @@
 package runningtracker.suggest_place;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.Location;
+import android.location.LocationManager;
+import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
+import android.support.v7.widget.Toolbar;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
@@ -21,39 +29,51 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import runningtracker.R;
+import runningtracker.data.model.suggest_place.SuggestLocation;
 import runningtracker.model.suggets_place.ItemSuggest;
 import runningtracker.model.suggets_place.Route;
 import runningtracker.presenter.suggest_place.DirectionFinder;
 import runningtracker.presenter.suggest_place.DirectionFinderListener;
+import runningtracker.presenter.suggest_place.SuggestCallback;
+import runningtracker.repository.suggestlocation.SuggestRepository;
 
 
 public class suggest_place extends AppCompatActivity implements OnMapReadyCallback, DirectionFinderListener {
     private GoogleMap mMap;
-    private Button btnFindPath;
-    private EditText etOrigin;
-    private EditText etDestination;
     private List<Marker> originMarkers = new ArrayList<>();
     private List<Marker> destinationMarkers = new ArrayList<>();
     private List<Polyline> polylinePaths = new ArrayList<>();
     private ProgressDialog progressDialog;
+    private Toolbar toolbarTitle;
     //
-    Button mOrder;
-    TextView mItemSelected;
     String[] listItems;
     boolean[] checkedItems;
     ArrayList<Integer> mUserItems = new ArrayList<>();
+    DirectionFinder directionFinder;
+    //
+    private ArrayList<ItemSuggest> ListItemSuggests = new ArrayList<>();
+    private List<Location> listLocation;
+    Geocoder geocoder;
+    List<Address> addresses;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_suggest_place);
+
+        directionFinder = new DirectionFinder();
+        listLocation = new ArrayList<>();
+        toolbarTitle =  (Toolbar) findViewById(R.id.tlbLocationName);
+
         ButterKnife.bind(this);
         MapFragment mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
@@ -62,13 +82,20 @@ public class suggest_place extends AppCompatActivity implements OnMapReadyCallba
         getListItem();
 
     }
+
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        // Add a marker in Sydney and move the camera
-        LatLng sydney = new LatLng(-34, 151);
-        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) !=
+                PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) !=
+                        PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+        mMap.setMyLocationEnabled(true);
+        LatLng latLng = new LatLng(getMyLocation().getLatitude(), getMyLocation().getLongitude());
+        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 15);
+        mMap.animateCamera(cameraUpdate);
     }
 
     @OnClick(R.id.btnSuggets)
@@ -78,8 +105,10 @@ public class suggest_place extends AppCompatActivity implements OnMapReadyCallba
 
 
     private void sendRequest() {
-        String origin = "10.759722, 106.666902";
-        String destination = "10.736002,106.678582";
+        mMap.clear();
+        String origin = getMyLocation().getLatitude()+","+getMyLocation().getLongitude();
+        String destination = listLocation.get(0).getLatitude()+","+listLocation.get(0).getLongitude();
+        //SuggestRepository suggestRepository = new SuggestRepository();
         if (origin.isEmpty()) {
             Toast.makeText(this, "Please enter origin address!", Toast.LENGTH_SHORT).show();
             return;
@@ -120,6 +149,10 @@ public class suggest_place extends AppCompatActivity implements OnMapReadyCallba
         }
     }
 
+    /**
+     * @param: list route
+     * @return: view direction on map
+    * */
     @Override
     public void onDirectionFinderSuccess(List<Route> routes) {
         progressDialog.dismiss();
@@ -129,8 +162,18 @@ public class suggest_place extends AppCompatActivity implements OnMapReadyCallba
 
         for (Route route : routes) {
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(route.startLocation, 16));
-            //((TextView) findViewById(R.id.tvDuration)).setText(route.duration.text);
-            //((TextView) findViewById(R.id.tvDistance)).setText(route.distance.text);
+            geocoder = new Geocoder(this, Locale.getDefault());
+            try {
+                addresses = geocoder.getFromLocation(listLocation.get(0).getLatitude(),
+                        listLocation.get(0).getLongitude(),1);
+                String address = addresses.get(0).getFeatureName()+addresses.get(0).getPostalCode()+","+
+                        addresses.get(0).getSubAdminArea()+","+ addresses.get(0).getAdminArea();
+
+                setSupportActionBar(toolbarTitle);
+                getSupportActionBar().setTitle(address);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
 
             originMarkers.add(mMap.addMarker(new MarkerOptions()
                     .title(route.startAddress)
@@ -153,10 +196,9 @@ public class suggest_place extends AppCompatActivity implements OnMapReadyCallba
 
     /**
     * Create view list choice location
-    * @param: null
     * @return: list location
     */
-    public List<ItemSuggest> getListItem(){
+    public void getListItem(){
         AlertDialog.Builder mBuilder = new AlertDialog.Builder(suggest_place.this);
         mBuilder.setTitle("Choice suggets location");
         mBuilder.setMultiChoiceItems(listItems, checkedItems, new DialogInterface.OnMultiChoiceClickListener() {
@@ -178,17 +220,25 @@ public class suggest_place extends AppCompatActivity implements OnMapReadyCallba
         });
 
         mBuilder.setCancelable(false);
+
         mBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int which) {
                 String item = "";
-                for (int i = 0; i < mUserItems.size(); i++) {
-                    item = item + listItems[mUserItems.get(i)];
-                    if (i != mUserItems.size() - 1) {
-                        item = item + ", ";
+                for (int i = 0; i < listItems.length; i++) {
+                    ItemSuggest itemSuggest = new ItemSuggest();
+                    if(checkedItems[i] == true) {
+                        itemSuggest.setPosition(i);
+                        ListItemSuggests.add(itemSuggest);
                     }
                 }
-                //mItemSelected.setText(item);
+
+                directionFinder.setMarkerLocation(ListItemSuggests, mMap, new SuggestCallback() {
+                    @Override
+                    public void getListLocation(List<Location> locationList) {
+                        listLocation = locationList;
+                    }
+                });
             }
         });
 
@@ -198,14 +248,38 @@ public class suggest_place extends AppCompatActivity implements OnMapReadyCallba
                 for (int i = 0; i < checkedItems.length; i++) {
                     checkedItems[i] = false;
                     mUserItems.clear();
-                    getListItem();
                 }
             }
         });
         AlertDialog mDialog = mBuilder.create();
         mDialog.show();
-
-        return null;
     }
+
+    /**
+     *@return: Location of user
+    * */
+    public Location getMyLocation() {
+        LocationManager rLocationManager = (LocationManager) this.getSystemService(LOCATION_SERVICE);
+        List<String> providers = rLocationManager.getProviders(true);
+        Location bestLocation = null;
+        for (String provider : providers) {
+            if (ActivityCompat.checkSelfPermission( this, Manifest.permission.ACCESS_FINE_LOCATION) !=
+                    PackageManager.PERMISSION_GRANTED &&
+                    ActivityCompat.checkSelfPermission(
+                   this, Manifest.permission.ACCESS_COARSE_LOCATION) !=
+                            PackageManager.PERMISSION_GRANTED) {
+                return null;
+            }
+            Location myLocation = rLocationManager.getLastKnownLocation(provider);
+            if (myLocation == null) {
+                continue;
+            }
+            if (bestLocation == null || myLocation.getAccuracy() < bestLocation.getAccuracy()) {
+                bestLocation = myLocation;
+            }
+        }
+        return bestLocation;
+    }
+
 }
 

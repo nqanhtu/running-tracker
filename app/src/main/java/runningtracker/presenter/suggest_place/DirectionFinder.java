@@ -1,8 +1,18 @@
 package runningtracker.presenter.suggest_place;
 
+import android.location.Location;
 import android.os.AsyncTask;
+import android.support.annotation.NonNull;
+import android.util.Log;
 
+import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreSettings;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -18,22 +28,35 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
 
+import runningtracker.data.model.suggest_place.SuggestLocation;
+import runningtracker.model.DataCallback;
 import runningtracker.model.suggets_place.Distance;
 import runningtracker.model.suggets_place.Duration;
+import runningtracker.model.suggets_place.ItemSuggest;
 import runningtracker.model.suggets_place.Route;
+import runningtracker.presenter.common.DistanceTwoPoint;
+import runningtracker.repository.suggestlocation.SuggestRepository;
+import runningtracker.repository.suggestlocation.SuggetsCallback;
 
 public class DirectionFinder {
+    private static final String TAG = "DirectionFinder" ;
+
     private static final String DIRECTION_URL_API = "https://maps.googleapis.com/maps/api/directions/json?";
     private static final String GOOGLE_API_KEY = "AIzaSyDnwLF2-WfK8cVZt9OoDYJ9Y8kspXhEHfI";
     private DirectionFinderListener listener;
     private String origin;
     private String destination;
+    private SuggestRepository suggestRepository = new SuggestRepository();
 
     public DirectionFinder(DirectionFinderListener listener, String origin, String destination) {
         this.listener = listener;
         this.origin = origin;
         this.destination = destination;
+    }
+
+    public DirectionFinder(){
     }
 
     public void execute() throws UnsupportedEncodingException {
@@ -152,5 +175,55 @@ public class DirectionFinder {
         }
 
         return decoded;
+    }
+
+    /**
+     * @param : list item chosen type
+     * @return : list location suggest
+    * */
+    public List<Location> getResultPlace(List<SuggestLocation> suggestLocationList, ArrayList<ItemSuggest> itemSuggestList){
+        List<Location> listLocation = new ArrayList<>();
+        for(int i = 0; i < suggestLocationList.size(); i++){
+            SuggestLocation suggestLocation = new SuggestLocation();
+
+            suggestLocation = suggestLocationList.get(i);
+            if((suggestLocation.getTypePlace()-1) == itemSuggestList.get(0).getPosition()){
+                Location location = new Location("A");
+                location.setLatitude(suggestLocation.getLatitudeValue());
+                location.setLongitude(suggestLocation.getLongitudeValue());
+                listLocation.add(location);
+            }
+        }
+        return listLocation;
+    }
+
+    /**
+     * @param : list item chosen, list location get list location suggest, Google map
+     * @return : list location suggest
+    * */
+    public void setMarkerLocation(final ArrayList<ItemSuggest> itemSuggestList, final GoogleMap mMap, final SuggestCallback suggestCallback)
+    {
+         final List<Location>[] listLocation = new ArrayList[1];
+        suggestRepository.getAllSuggestLocation(new SuggetsCallback() {
+            @Override
+            public void onSuccess(List<SuggestLocation> suggestLocationList) {
+                listLocation[0] = getResultPlace(suggestLocationList, itemSuggestList);
+                for(int i = 0; i < listLocation[0].size(); i++){
+                    LatLng location = new LatLng(listLocation[0].get(i).getLatitude(), listLocation[0].get(i).getLongitude());
+                    mMap.addMarker(new MarkerOptions().position(location).title("Suggest Location"));
+                }
+                suggestCallback.getListLocation( listLocation[0]);
+            }
+        });
+    }
+
+
+    public float locationDistanceMin(Location location, ArrayList<Location> listLocation){
+        DistanceTwoPoint distance = new DistanceTwoPoint();
+        float minDistance = distance.DistanceLocation(location,listLocation.get(0));
+        for(int i = 0; i < listLocation.size(); i++){
+            //if(distance.DistanceLocation(location, ))
+        }
+        return minDistance;
     }
 }
