@@ -35,13 +35,14 @@ public class UsersRepository implements UsersDataSource {
 
     @Override
     public void getFriendRequests(@NonNull String uid, @NonNull final LoadUsersCallback callback) {
-        db.collection("users/"+uid+"/friendRequestsSent")
+        db.collection("users/"+uid+"/friendRequests")
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
                             List<User> friends = task.getResult().toObjects(User.class);
+                            Log.d("abcbjs",friends.toString());
                             callback.onUsersLoaded(friends);
                         } else {
                             callback.onDataNotAvailable();
@@ -59,6 +60,25 @@ public class UsersRepository implements UsersDataSource {
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
                             List<User> friends = task.getResult().toObjects(User.class);
+                            Log.d("abcbjs",friends.toString());
+                            callback.onUsersLoaded(friends);
+                        } else {
+                            callback.onDataNotAvailable();
+                        }
+                    }
+                });
+    }
+
+    @Override
+    public void getFriends(@NonNull String uid, @NonNull final LoadUsersCallback callback) {
+        db.collection("users/"+uid+"/friendRequestsSent")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            List<User> friends = task.getResult().toObjects(User.class);
+                            Log.d("abcbjs",friends.toString());
                             callback.onUsersLoaded(friends);
                         } else {
                             callback.onDataNotAvailable();

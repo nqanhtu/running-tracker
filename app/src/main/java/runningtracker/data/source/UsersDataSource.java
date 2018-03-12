@@ -27,4 +27,5 @@ public interface UsersDataSource {
 
     void getFriendRequests(@NonNull String uid, @NonNull LoadUsersCallback callback);
     void getFriendRequestsSent(@NonNull String uid, @NonNull LoadUsersCallback callback);
+    void getFriends(@NonNull String uid, @NonNull LoadUsersCallback callback);
 }
