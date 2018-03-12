@@ -23,25 +23,25 @@
         <activity android:name=".view.running.MainActivity" />
         <activity android:name=".view.running.MainActivityOffline" />
         <activity android:name=".view.main.WeatherSuggestion" />
-        <activity android:name=".ui.suggest_place.suggest_place" />
-        <activity android:name=".ui.login.LoginActivity">
+        <activity android:name=".suggest_place.suggest_place" />
+        <activity android:name=".login.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.register.RegisterActivity" />
-        <activity android:name=".ui.home.HomeActivity" />
-        <activity android:name=".ui.profile.ProfileActivity" />
-        <activity android:name=".ui.notification.NotificationsActivity" />
+        <activity android:name=".register.RegisterActivity" />
+        <activity android:name=".home.HomeActivity" />
+        <activity android:name=".profile.ProfileActivity" />
+        <activity android:name=".notification.NotificationsActivity" />
 
         <service
             android:name=".locationaddress.FetchAddressIntentService"
             android:exported="false" />
 
         <activity
-            android:name=".ui.friends.FriendsActivity"
+            android:name=".friends.FriendsActivity"
             android:label="@string/title_activity_friends"
             android:theme="@style/AppTheme" />
     </application>
