@@ -19,6 +19,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import runningtracker.Adapter.FriendsListAdapter;
 import runningtracker.R;
+import runningtracker.common.InitializationFirebase;
 import runningtracker.data.model.User;
 import runningtracker.data.source.UsersRepository;
 
@@ -30,6 +31,7 @@ public class AddFriendFragment extends Fragment implements AddFriendContract.Vie
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
     private AddFriendPresenter mAddFriendPresenter;
+    private InitializationFirebase initializationFirebase;
 
     @BindView(R.id.friend_email_edit_text)
     EditText friendEmailEditText;
@@ -41,14 +43,12 @@ public class AddFriendFragment extends Fragment implements AddFriendContract.Vie
         View view = inflater.inflate(R.layout.fragment_add_friend, container, false);
         ButterKnife.bind(this, view);
 
-        firestore = FirebaseFirestore.getInstance();
-        FirebaseFirestoreSettings settings = new FirebaseFirestoreSettings.Builder()
-                .setPersistenceEnabled(true)
-                .build();
-        firestore.setFirestoreSettings(settings);
-
-        mAddFriendPresenter = new AddFriendPresenter(UsersRepository.getInstance(firestore), this);
-        mAddFriendPresenter.start();
+        initializationFirebase = new InitializationFirebase();
+        firestore = initializationFirebase.createFirebase();
+        if(firestore != null) {
+            mAddFriendPresenter = new AddFriendPresenter(UsersRepository.getInstance(firestore), this);
+            mAddFriendPresenter.start();
+        }
 
         return view;
     }
