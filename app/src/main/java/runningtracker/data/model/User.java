@@ -1,5 +1,7 @@
 package runningtracker.data.model;
 
+import com.google.firebase.auth.FirebaseUser;
+
 /**
  * Created by Anh Tu on 2/27/2018.
  */
@@ -16,6 +18,12 @@ public class User {
         this.email = email;
         this.uid = uid;
 
+    }
+
+    public User(FirebaseUser firebaseUser){
+        displayName = firebaseUser.getDisplayName();
+        email = firebaseUser.getEmail();
+        uid = firebaseUser.getUid();
     }
 
     public String getDisplayName() {

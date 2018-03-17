@@ -1,4 +1,4 @@
-package runningtracker.data.source;
+package runningtracker.data.datasource;
 
 import android.support.annotation.NonNull;
 
@@ -26,5 +26,21 @@ public interface UsersDataSource {
     }
 
     void getFriendRequests(@NonNull String uid, @NonNull LoadUsersCallback callback);
+
     void getFriendRequestsSent(@NonNull String uid, @NonNull LoadUsersCallback callback);
+
+    void getFriends(@NonNull String uid, @NonNull LoadUsersCallback callback);
+
+    void getUserByEmail(@NonNull String email, @NonNull GetUserCallback callback);
+
+    void addFriendRequestSent(@NonNull User user, @NonNull String currentUid);
+
+    void addFriendRequest(@NonNull User currentUser, @NonNull String uid);
+
+    void deleteFriendRequestSent(@NonNull User user, @NonNull String currentUid);
+
+    void deleteFriendRequest(@NonNull User currentUser, @NonNull String uid);
+
+    void acceptFriendRequest(@NonNull User currentUser, @NonNull String uid);
+
 }
