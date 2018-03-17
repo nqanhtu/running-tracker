@@ -10,7 +10,6 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreSettings;
 
 import java.util.List;
 
@@ -21,7 +20,7 @@ import runningtracker.Adapter.FriendsListAdapter;
 import runningtracker.R;
 import runningtracker.common.InitializationFirebase;
 import runningtracker.data.model.User;
-import runningtracker.data.source.UsersRepository;
+import runningtracker.data.repository.UsersRepository;
 
 
 public class AddFriendFragment extends Fragment implements AddFriendContract.View {
@@ -45,7 +44,8 @@ public class AddFriendFragment extends Fragment implements AddFriendContract.Vie
 
         initializationFirebase = new InitializationFirebase();
         firestore = initializationFirebase.createFirebase();
-        if(firestore != null) {
+
+        if (firestore != null) {
             mAddFriendPresenter = new AddFriendPresenter(UsersRepository.getInstance(firestore), this);
             mAddFriendPresenter.start();
         }

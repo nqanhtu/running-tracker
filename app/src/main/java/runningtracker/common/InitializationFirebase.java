@@ -12,8 +12,8 @@ public class InitializationFirebase {
     /**
      * @Function: Create fire base method
      * @Param: Fire base method
-    * */
-    public FirebaseFirestore createFirebase(){
+     */
+    public FirebaseFirestore createFirebase() {
         FirebaseFirestore firestore;
 
         firestore = FirebaseFirestore.getInstance();
