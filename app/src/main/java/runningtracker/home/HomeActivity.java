@@ -37,6 +37,8 @@ public class HomeActivity extends AppCompatActivity implements ViewMain, Dashboa
 
         bottomNavigation= (AHBottomNavigation) findViewById(R.id.navigation);
         createNavItems();
+
+
         // Default fragment
         DashboardFragment dashboardFragment =new DashboardFragment();
         getSupportFragmentManager().beginTransaction().replace(R.id.main_container,dashboardFragment).commit();

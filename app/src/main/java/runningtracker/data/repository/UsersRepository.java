@@ -98,6 +98,21 @@ public class UsersRepository implements UsersDataSource {
         addUserToUser(user, uid, "friends");
     }
 
+    @Override
+    public void createAccount(@NonNull User user) {
+        db.collection("users").document(user.getUid()).set(user).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if(task.isSuccessful()){
+                    Log.d(TAG, "DocumentSnapshot successfully written!");
+                }
+                else {
+                    Log.w(TAG, "Error writing document");
+                }
+            }
+        });
+    }
+
     private void addUserToUser(@NonNull User user, @NonNull String uid, String collection) {
         db.collection("users").document(uid).collection(collection)
                 .document(user.getUid()).set(user)

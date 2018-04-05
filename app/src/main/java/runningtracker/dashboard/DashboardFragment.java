@@ -27,6 +27,7 @@ import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
@@ -69,6 +70,7 @@ public class DashboardFragment extends Fragment implements DashBoardContract.Vie
     @BindView(R.id.weatherIcon)
     ImageView weatherIcon;
     private static final int REQUEST_PERMISSIONS_REQUEST_CODE = 34;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

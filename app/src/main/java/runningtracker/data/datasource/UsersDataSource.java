@@ -43,4 +43,6 @@ public interface UsersDataSource {
 
     void acceptFriendRequest(@NonNull User currentUser, @NonNull String uid);
 
+    void createAccount(@NonNull User user);
+
 }
