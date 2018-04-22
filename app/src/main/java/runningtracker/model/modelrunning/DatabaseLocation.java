@@ -6,6 +6,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import java.util.ArrayList;
 
+import runningtracker.data.model.running.LocationObject;
+
 public class DatabaseLocation extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "dbRunning";
     private static final int DATABASE_VERSION = 1;

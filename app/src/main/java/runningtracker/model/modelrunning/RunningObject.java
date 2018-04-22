@@ -2,28 +2,27 @@ package runningtracker.model.modelrunning;
 
 public class RunningObject {
     public int RunningSessionID;
-    public int UserID;
     public String StartTimestamp;
     public String FinishTimestamp;
     public double DistanceInKm;
-    public int RoadGradient;
-    public int RunOnTreadmill;
+    public double maxPace;
+    public double avgPace;
+    public double duration;
     public int NetCalorieBurned;
     public int GrossCalorieBurned;
-    public int FlagStatus;
     public RunningObject(){}
 
-    public RunningObject(int runningSessionID, int userID, String startTimestamp, String finishTimestamp, double distanceInKm, int roadGradient, int runOnTreadmill, int netCalorieBurned, int grossCalorieBurned, int flagStatus) {
+    public RunningObject(int runningSessionID, String startTimestamp, String finishTimestamp, double distanceInKm, double maxPace,
+                         double avgPace, double duration, int netCalorieBurned, int grossCalorieBurned) {
         RunningSessionID = runningSessionID;
-        UserID = userID;
         StartTimestamp = startTimestamp;
         FinishTimestamp = finishTimestamp;
         DistanceInKm = distanceInKm;
-        RoadGradient = roadGradient;
-        RunOnTreadmill = runOnTreadmill;
+        this.maxPace = maxPace;
+        this.avgPace = avgPace;
+        this.duration = duration;
         NetCalorieBurned = netCalorieBurned;
         GrossCalorieBurned = grossCalorieBurned;
-        FlagStatus = flagStatus;
     }
 
     public int getRunningSessionID() {
@@ -32,14 +31,6 @@ public class RunningObject {
 
     public void setRunningSessionID(int runningSessionID) {
         RunningSessionID = runningSessionID;
-    }
-
-    public int getUserID() {
-        return UserID;
-    }
-
-    public void setUserID(int userID) {
-        UserID = userID;
     }
 
     public String getStartTimestamp() {
@@ -66,20 +57,28 @@ public class RunningObject {
         DistanceInKm = distanceInKm;
     }
 
-    public int getRoadGradient() {
-        return RoadGradient;
+    public double getMaxPace() {
+        return maxPace;
     }
 
-    public void setRoadGradient(int roadGradient) {
-        RoadGradient = roadGradient;
+    public void setMaxPace(double maxPace) {
+        this.maxPace = maxPace;
     }
 
-    public int getRunOnTreadmill() {
-        return RunOnTreadmill;
+    public double getAvgPace() {
+        return avgPace;
     }
 
-    public void setRunOnTreadmill(int runOnTreadmill) {
-        RunOnTreadmill = runOnTreadmill;
+    public void setAvgPace(double avgPace) {
+        this.avgPace = avgPace;
+    }
+
+    public double getDuration() {
+        return duration;
+    }
+
+    public void setDuration(double duration) {
+        this.duration = duration;
     }
 
     public int getNetCalorieBurned() {
@@ -96,13 +95,5 @@ public class RunningObject {
 
     public void setGrossCalorieBurned(int grossCalorieBurned) {
         GrossCalorieBurned = grossCalorieBurned;
-    }
-
-    public int getFlagStatus() {
-        return FlagStatus;
-    }
-
-    public void setFlagStatus(int flagStatus) {
-        FlagStatus = flagStatus;
     }
 }
