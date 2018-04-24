@@ -44,7 +44,6 @@ public class AddFriendPresenter implements AddFriendContract.Presenter {
             }
         });
 
-
     }
 
     @Override

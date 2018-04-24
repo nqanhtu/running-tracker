@@ -36,7 +36,7 @@ public class FriendsActivity extends AppCompatActivity {
 
         tabLayout.setupWithViewPager(viewPager);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_friend);
         setSupportActionBar(toolbar);
 
 

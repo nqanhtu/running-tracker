@@ -8,7 +8,7 @@
     android:paddingLeft="18dp"
     android:paddingRight="18dp"
     android:paddingTop="@dimen/activity_vertical_margin"
-    android:background="@drawable/new_login_gradients">
+    android:background="@drawable/gradient_background_offline">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -48,7 +48,7 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="#f9d7db"
+                android:background="#d7f9f3"
                 />
 
 
@@ -73,7 +73,7 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="#f9d7db"
+                android:background="#d7f9f3"
                 />
 
 
@@ -88,7 +88,7 @@
                 android:padding="16dp"
                 android:text="Đăng nhập"
                 android:textAllCaps="false"
-                android:textColor="#f16f7d"
+                android:textColor="#3ba6ff"
                 android:textSize="18sp"
                 android:textStyle="normal" />
 
