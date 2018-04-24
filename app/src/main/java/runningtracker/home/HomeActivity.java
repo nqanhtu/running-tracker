@@ -1,6 +1,5 @@
 package runningtracker.home;
 
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -11,29 +10,20 @@ import com.aurelhubert.ahbottomnavigation.AHBottomNavigationItem;
 
 import butterknife.ButterKnife;
 import runningtracker.R;
-import runningtracker.presenter.main.LogicMain;
 import runningtracker.dashboard.DashboardFragment;
 import runningtracker.notification.NotificationsFragment;
 import runningtracker.profile.ProfileFragment;
-import runningtracker.running.ViewMain;
-import runningtracker.view.running.MainActivity;
-import runningtracker.view.running.MainActivityOffline;
+import runningtracker.running.RunningActivity;
 
-public class HomeActivity extends AppCompatActivity implements ViewMain, DashboardFragment.OnFragmentInteractionListener{
+public class HomeActivity extends AppCompatActivity implements  DashboardFragment.OnFragmentInteractionListener{
 
     AHBottomNavigation bottomNavigation;
-    LogicMain main;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
         ButterKnife.bind(this);
-
-        main = new LogicMain(this);
-        main.createLocationRequest();
-        main.buildLocationSettingsRequest();
-        main.initialization();
 
         bottomNavigation= (AHBottomNavigation) findViewById(R.id.navigation);
         createNavItems();
@@ -66,12 +56,11 @@ public class HomeActivity extends AppCompatActivity implements ViewMain, Dashboa
 
     private void createNavItems()
     {
-
-// Create items
+        // Create items
         AHBottomNavigationItem item1 = new AHBottomNavigationItem("Dashboard", R.drawable.ic_dashboard_black_24dp);
         AHBottomNavigationItem item2 = new AHBottomNavigationItem("Profile", R.drawable.ic_profile_24dp);
         AHBottomNavigationItem item3 = new AHBottomNavigationItem("Notifications", R.drawable.ic_notifications_black_24dp);
-// Add items
+        // Add items
         bottomNavigation.addItem(item1);
         bottomNavigation.addItem(item2);
         bottomNavigation.addItem(item3);
@@ -85,24 +74,8 @@ public class HomeActivity extends AppCompatActivity implements ViewMain, Dashboa
     }
 
     @Override
-    public Context getMainActivity() {
-        return  HomeActivity.this;
-    }
-
-    @Override
-    public void navigationRunning() {
-        Intent nextActivity = new Intent(HomeActivity.this, MainActivity.class);
-        startActivity(nextActivity);
-    }
-
-    @Override
-    public void navigationRunningOffline() {
-        Intent nextActivity = new Intent(HomeActivity.this, MainActivityOffline.class);
-        startActivity(nextActivity);
-    }
-
-    @Override
     public void onStartRunning() {
-        main.onNavigationActivity();
+        Intent nextActivity = new Intent(HomeActivity.this, RunningActivity.class);
+        startActivity(nextActivity);
     }
 }

@@ -10,10 +10,10 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import org.json.JSONException;
 import org.json.JSONObject;
-import runningtracker.view.running.MainActivity;
+import runningtracker.running.RunningActivity;
 
 public class ResAPICommon extends AppCompatActivity {
-    private static final String TAG = MainActivity.class.getSimpleName();
+    private static final String TAG = RunningActivity.class.getSimpleName();
     //post data to server
     public void  RestPostClient(final Context context, String url, final JSONObject  para) throws JSONException {
 

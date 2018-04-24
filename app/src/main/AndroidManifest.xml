@@ -19,11 +19,9 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/map_api_key" />
 
-        <activity android:name=".view.running.ResultActivity" />
-        <activity android:name=".view.running.MainActivity" />
-        <activity android:name=".view.running.MainActivityOffline" />
-        <activity android:name=".view.main.WeatherSuggestion" />
-        <activity android:name=".suggest_place.suggest_place" />
+        <activity android:name=".running.ResultActivity" />
+        <activity android:name=".running.RunningActivity" />
+        <activity android:name=".suggestplace.SuggestPlaceActivity" />
         <activity android:name=".login.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

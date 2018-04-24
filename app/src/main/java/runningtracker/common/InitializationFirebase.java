@@ -1,6 +1,5 @@
 package runningtracker.common;
 
-
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreSettings;
 

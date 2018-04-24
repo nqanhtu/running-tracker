@@ -49,7 +49,7 @@ import runningtracker.data.model.weather.Weather;
 import runningtracker.data.service.WeatherService;
 import runningtracker.friends.FriendsActivity;
 import runningtracker.network.WeatherGenerator;
-import runningtracker.suggest_place.suggest_place;
+import runningtracker.suggestplace.SuggestPlaceActivity;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -126,7 +126,7 @@ public class DashboardFragment extends Fragment implements DashBoardContract.Vie
                         mListener.onStartRunning();
                         break;
                     case 5:
-                        Intent intent = new Intent(getActivity(), suggest_place.class);
+                        Intent intent = new Intent(getActivity(), SuggestPlaceActivity.class);
                         startActivity(intent);
                         break;
                 }
