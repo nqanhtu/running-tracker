@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/new_login_gradients"
-    tools:context="runningtracker.login.LoginActivity">
+    tools:context="runningtracker.register.RegisterActivity">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -17,12 +17,29 @@
             android:orientation="vertical">
 
             <EditText
-                android:id="@+id/editEmail"
+                android:id="@+id/editName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="70dp"
                 android:background="@android:color/transparent"
-                android:drawableLeft="@drawable/ic_person_white_24dp"
+                android:drawablePadding="12dp"
+                android:ems="10"
+                android:hint="Tên"
+                android:inputType="textPersonName"
+                android:maxLines="1"
+                android:padding="8dp"
+                android:textColorHint="#ffffff" />
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#f9d7db" />
+
+            <EditText
+                android:id="@+id/editEmail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:background="@android:color/transparent"
                 android:drawablePadding="12dp"
                 android:ems="10"
                 android:hint="Email"
@@ -44,7 +61,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
                 android:background="@android:color/transparent"
-                android:drawableLeft="@drawable/ic_lock_white_24dp"
                 android:drawablePadding="12dp"
                 android:ems="10"
                 android:hint="Password"
@@ -60,6 +76,83 @@
                 android:layout_height="1dp"
                 android:background="#f9d7db" />
 
+
+            <EditText
+                android:id="@+id/editBirthday"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:background="@android:color/transparent"
+                android:drawablePadding="12dp"
+                android:ems="10"
+                android:hint="Ngày sinh"
+                android:focusable="false"
+                android:inputType="date"
+                android:maxLines="1"
+                android:paddingBottom="8dp"
+                android:paddingLeft="8dp"
+                android:paddingRight="8dp"
+                android:paddingTop="8dp"
+                android:textColorHint="#ffffff" />
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#f9d7db" />
+
+
+            <EditText
+                android:id="@+id/editHeight"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:background="@android:color/transparent"
+                android:drawablePadding="12dp"
+                android:ems="10"
+                android:hint="Chiều cao (cm)"
+                android:inputType="number"
+                android:maxLines="1"
+                android:padding="8dp"
+                android:textColorHint="#ffffff" />
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#f9d7db" />
+
+            <EditText
+            android:id="@+id/editWeight"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@android:color/transparent"
+            android:drawablePadding="12dp"
+            android:ems="10"
+            android:hint="Cân nặng (kg)"
+            android:inputType="number"
+            android:maxLines="1"
+            android:padding="8dp"
+            android:textColorHint="#ffffff" />
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#f9d7db" />
+
+            <EditText
+                android:id="@+id/editHeartRate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:background="@android:color/transparent"
+                android:drawablePadding="12dp"
+                android:ems="10"
+                android:hint="Nhịp tim"
+                android:inputType="number"
+                android:maxLines="1"
+                android:padding="8dp"
+                android:textColorHint="#ffffff" />
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#f9d7db" />
             <Button
                 android:id="@+id/buttonRegister"
                 style="@style/Base.TextAppearance.AppCompat.Body1"

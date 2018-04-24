@@ -59,6 +59,10 @@ dependencies {
     implementation 'com.google.firebase:firebase-auth:15.0.0'
     implementation 'com.google.firebase:firebase-firestore:15.0.0'
     implementation 'com.google.firebase:firebase-messaging:15.0.0'
+    //
+    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.5'
+
+
 
 }
 apply plugin: 'com.google.gms.google-services'

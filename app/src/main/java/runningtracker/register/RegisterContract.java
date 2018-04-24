@@ -11,11 +11,16 @@ import runningtracker.data.model.User;
 
 public interface RegisterContract {
     interface View {
-        public void showProgressDialog();
-        public void hideProgressDialog();
+        void showProgressDialog();
+
+        void hideProgressDialog();
+
+        void makeToast(String text);
+
+        boolean validateForm();
     }
 
     interface Presenter extends BasePresenter {
-        void createAccount(String email, String password);
+        void createAccount(String displayName, String email, String password, String birthday, double height, double weight, double heartRate);
     }
 }
