@@ -15,7 +15,6 @@ import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.ResolvableApiException;
@@ -296,7 +295,6 @@ public class PresenterRunning {
                             case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
                                 String errorMessage = "Location settings are inadequate, and cannot be " +
                                         "fixed here. Fix in Settings.";
-                                Toast.makeText(runningContract.getMainActivity(), errorMessage, Toast.LENGTH_LONG).show();
                         }
                     }
                 });
@@ -404,14 +402,12 @@ public class PresenterRunning {
                     @Override
                     public void onSuccess(Void aVoid) {
                         Log.d(TAG, "DocumentSnapshot successfully written!");
-                        Toast.makeText(runningContract.getMainActivity(), "Luu Thanh Cong", Toast.LENGTH_LONG).show();
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         Log.w(TAG, "Error writing document", e);
-                        Toast.makeText(runningContract.getMainActivity(), "Luu Thanh loi", Toast.LENGTH_LONG).show();
                     }
                 });
 
@@ -430,14 +426,12 @@ public class PresenterRunning {
                     @Override
                     public void onSuccess(Void aVoid) {
                         Log.d(TAG, "DocumentSnapshot successfully written!");
-                        Toast.makeText(runningContract.getMainActivity(), "Luu Thanh Cong", Toast.LENGTH_LONG).show();
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         Log.w(TAG, "Error writing document", e);
-                        Toast.makeText(runningContract.getMainActivity(), "Luu loi", Toast.LENGTH_LONG).show();
                     }
                 });
     }

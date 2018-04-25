@@ -37,9 +37,13 @@ import runningtracker.model.modelrunning.DatabaseLocation;
 import runningtracker.fitnessstatistic.Calculator;
 
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.maps.CameraUpdate;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import org.json.JSONException;
@@ -47,12 +51,12 @@ import org.json.JSONException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
+
 
 
 public class RunningActivity extends AppCompatActivity implements RunningContract, OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks {
     private static final String TAG = RunningActivity.class.getSimpleName();
-    private GoogleMap mMap;
+    private GoogleMap mMap, mMapShareLocation;
     Date startCurrentTime, stopCurrentTime;
     float rGrossCalorie;
     TextView txtTimer;
@@ -277,8 +281,65 @@ public class RunningActivity extends AppCompatActivity implements RunningContrac
         actionBar.setTitle(R.string.RunningTitle);
         actionBar.setTitleTextColor(ContextCompat.getColor(this, R.color.textColorPrimary));
         setSupportActionBar(actionBar);
+        /**
+         * Create map tracking
+        * */
         MapFragment mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        /**
+         * Create map view location share of friends
+        * */
+        MapFragment mapFragmentShare = (MapFragment) getFragmentManager().findFragmentById(R.id.mapShareLocation);
+        //mapFragmentShare.getView().setVisibility(View.INVISIBLE);
+        mapFragmentShare.getMapAsync(new OnMapReadyCallback() {
+            @Override
+            public void onMapReady(GoogleMap googleMap) {
+                if (presenterRunning.checkPermissions()) {
+                    mMapShareLocation = googleMap;
+                    mMapShareLocation.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+                    if (ActivityCompat.checkSelfPermission(getMainActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getMainActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                        return;
+                    }
+                    mMapShareLocation.setMyLocationEnabled(true);
+                    mMapShareLocation.getUiSettings().setMyLocationButtonEnabled(false);
+
+                    /**
+                     * Create list location friends demo
+                     * */
+                    ArrayList<LocationObject> list = new ArrayList<>();
+                    list.add(new LocationObject(10.736096, 106.674790));
+                    list.add(new LocationObject(10.738214, 106.677853));
+                    list.add(new LocationObject(10.734489, 106.678814));
+                    list.add(new LocationObject(10.738797, 106.681894));
+
+                    /**
+                     * Move camera first friend
+                     * */
+                    CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(new LatLng(list.get(0).getLatitudeValue(), list.get(0).getLongitudeValue()), 15);
+                    mMapShareLocation.animateCamera(cameraUpdate);
+
+                    /**
+                     * Set marker friend on map
+                     * */
+                    for(int i = 0; i< list.size(); i++){
+                        mMapShareLocation.addMarker(new MarkerOptions().position(new LatLng(list.get(i).getLatitudeValue(), list.get(i).getLongitudeValue()))
+                                .title("Friend " + (i + 1)));
+                    }
+
+                    /**
+                     * Get touch event on map fragment
+                    * */
+                    mMapShareLocation.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
+                        @Override
+                        public void onMapLongClick(LatLng latLng) {
+                            Intent nextActivity = new Intent(RunningActivity.this, ViewFriendsActivity.class);
+                            startActivity(nextActivity);
+                        }
+                    });
+                }
+            }
+        });
     }
 
     //send data to ResultActivity
