@@ -40,7 +40,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import runningtracker.R;
 import runningtracker.common.InitializationFirebase;
-import runningtracker.data.source.UsersRepository;
+import runningtracker.data.repository.UsersRepository;
 import runningtracker.model.suggets_place.ItemSuggest;
 import runningtracker.model.suggets_place.Route;
 
