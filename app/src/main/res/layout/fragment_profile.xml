@@ -25,5 +25,5 @@
         android:id="@+id/buttonSendNoti"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Send Noti" />
+        android:text="Settings" />
 </LinearLayout>
