@@ -21,6 +21,7 @@
 
         <activity android:name=".running.ResultActivity" />
         <activity android:name=".running.RunningActivity" />
+        <activity android:name=".history.HistoryActivity" />
         <activity android:name=".suggestplace.SuggestPlaceActivity" />
         <activity android:name=".login.LoginActivity">
             <intent-filter>

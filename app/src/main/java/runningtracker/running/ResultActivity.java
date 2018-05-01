@@ -1,11 +1,7 @@
 package runningtracker.running;
-import android.Manifest;
-import android.content.Context;
+
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.location.Location;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -19,18 +15,25 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import runningtracker.R;
+import runningtracker.common.InitializationFirebase;
+import runningtracker.data.model.running.ResultObject;
 
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class ResultActivity extends AppCompatActivity {
 
     private static PresenterRunning presenterRunning;
     public static ArrayList<ViewGroup> tabFragmentLayouts;
     private static GoogleMap mMap;
+    public static String idDateHistory;
+    private static FirebaseFirestore firestore;
+
 
     public ResultActivity() {
         tabFragmentLayouts = new ArrayList<>();
@@ -45,6 +48,12 @@ public class ResultActivity extends AppCompatActivity {
         * */
         setContentView(R.layout.activity_result);
         initializeUI();
+        /**
+         * Create firebase and userID
+        * */
+        InitializationFirebase initializationFirebase = new InitializationFirebase();
+        firestore = initializationFirebase.createFirebase();
+
         StatsTabFragment.setStatsValue(getIntent());
 
 
@@ -105,9 +114,11 @@ public class ResultActivity extends AppCompatActivity {
     }
 
     public static class StatsTabFragment extends Fragment {
-        private static long mDuration;
+        private static String mDuration;
         private static float mAvgPace, mNetCalorie, mDistance, mMaxPace, mGrossCalorie;
-        private HashMap<Integer, View> childViews;
+        private static HashMap<Integer, View> childViews;
+        private static TextView txtDuration, txtDistance, txtAvgPace, txtMaxPace, txtAvgSpeed,
+                txtMaxSpeed, txtNetCalorie, txtGrossCalorie;
 
         public StatsTabFragment() {}
 
@@ -141,30 +152,49 @@ public class ResultActivity extends AppCompatActivity {
         }
 
         static void setStatsValue(Intent intent) {
-            mDuration = intent.getLongExtra("duration", 0);
-            mAvgPace = intent.getFloatExtra("avgPace", 0);
-            mNetCalorie = intent.getFloatExtra("netCalorie", 0);
-            mDistance = intent.getFloatExtra("distance", 0);
-            mMaxPace = intent.getFloatExtra("maxPace", 0);
-            mGrossCalorie = intent.getFloatExtra("grossCalorie", 0);
+            idDateHistory = intent.getStringExtra("idDate");
+            if(idDateHistory == null) {
+                mDuration = intent.getStringExtra("duration");
+                mAvgPace = intent.getFloatExtra("avgPace", 0);
+                mNetCalorie = intent.getFloatExtra("netCalorie", 0);
+                mDistance = intent.getFloatExtra("distance", 0);
+                mMaxPace = intent.getFloatExtra("maxPace", 0);
+                mGrossCalorie = intent.getFloatExtra("grossCalorie", 0);
+            }else{
+                presenterRunning.getTrackingHistory(idDateHistory, firestore, new TrackingHistoryCallback() {
+                    @Override
+                    public void onSuccessTrackingData(List<ResultObject> resultObject) {
+                        mDuration     =  resultObject.get(0).getDuration();
+                        mAvgPace      = resultObject.get(0).getPace();
+                        mNetCalorie   = resultObject.get(0).getNetCalorie();
+                        mDistance     = resultObject.get(0).getDistance();
+                        mMaxPace      = resultObject.get(0).getMaxPace();
+                        mGrossCalorie = resultObject.get(0).getGrossCalorie();
+                        /**
+                         * set value to view
+                        * */
+                        assignValueToView();
+                    }
+                });
+            }
         }
 
-        private void assignValueToView() {
-            long secs = (mDuration / 1000);
-            long mins = secs / 60;
-            long hour = mins /60;
-            secs = secs % 60;
+        private static void createView(){
+            txtDuration = ((TextView) childViews.get(R.id.textValueDuration));
+            txtDistance = ((TextView) childViews.get(R.id.textValueDistance));
+            txtAvgPace = ((TextView) childViews.get(R.id.textValueAveragePace));
+            txtMaxPace = ((TextView) childViews.get(R.id.textValueMaxPace));
+            txtAvgSpeed = ((TextView) childViews.get(R.id.textValueAverageSpeed));
+            txtMaxSpeed = ((TextView) childViews.get(R.id.textValueMaxSpeed));
+            txtNetCalorie = ((TextView) childViews.get(R.id.textValueNetCalorie));
+            txtGrossCalorie = ((TextView) childViews.get(R.id.textValueGrossCalorie));
+        }
 
-            TextView txtDuration = ((TextView) childViews.get(R.id.textValueDuration));
-            TextView txtDistance = ((TextView) childViews.get(R.id.textValueDistance));
-            TextView txtAvgPace = ((TextView) childViews.get(R.id.textValueAveragePace));
-            TextView txtMaxPace = ((TextView) childViews.get(R.id.textValueMaxPace));
-            TextView txtAvgSpeed = ((TextView) childViews.get(R.id.textValueAverageSpeed));
-            TextView txtMaxSpeed = ((TextView) childViews.get(R.id.textValueMaxSpeed));
-            TextView txtNetCalorie = ((TextView) childViews.get(R.id.textValueNetCalorie));
-            TextView txtGrossCalorie = ((TextView) childViews.get(R.id.textValueGrossCalorie));
+        private static void assignValueToView() {
 
-            txtDuration.setText("" + hour + ":" + String.format("%02d", mins) + ":" + String.format("%02d", secs));
+            createView();
+
+            txtDuration.setText(mDuration);
             txtDistance.setText(Float.toString(mDistance));
             txtAvgPace.setText(Float.toString(mAvgPace));
             txtMaxPace.setText(Float.toString(mMaxPace));

@@ -48,6 +48,7 @@ import runningtracker.data.model.Option;
 import runningtracker.data.model.weather.Weather;
 import runningtracker.data.service.WeatherService;
 import runningtracker.friends.FriendsActivity;
+import runningtracker.history.HistoryActivity;
 import runningtracker.network.WeatherGenerator;
 import runningtracker.suggestplace.SuggestPlaceActivity;
 
@@ -115,6 +116,8 @@ public class DashboardFragment extends Fragment implements DashBoardContract.Vie
                     case 0:
                         break;
                     case 1:
+                        Intent intent1 = new Intent(getActivity(), HistoryActivity.class);
+                        startActivity(intent1);
                         break;
                     case 2:
                         break;

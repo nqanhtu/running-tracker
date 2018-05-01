@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -23,6 +24,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import runningtracker.R;
@@ -37,9 +39,13 @@ import runningtracker.model.modelrunning.DatabaseLocation;
 import runningtracker.fitnessstatistic.Calculator;
 
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.maps.CameraUpdate;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import org.json.JSONException;
@@ -47,12 +53,12 @@ import org.json.JSONException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
+
 
 
 public class RunningActivity extends AppCompatActivity implements RunningContract, OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks {
     private static final String TAG = RunningActivity.class.getSimpleName();
-    private GoogleMap mMap;
+    private GoogleMap mMap, mMapShareLocation, mMapViewFullFriend;
     Date startCurrentTime, stopCurrentTime;
     float rGrossCalorie;
     TextView txtTimer;
@@ -277,12 +283,131 @@ public class RunningActivity extends AppCompatActivity implements RunningContrac
         actionBar.setTitle(R.string.RunningTitle);
         actionBar.setTitleTextColor(ContextCompat.getColor(this, R.color.textColorPrimary));
         setSupportActionBar(actionBar);
+
+        /**
+         * Create layout need set hide or show
+        * */
+        final ConstraintLayout aboveSecsionLayout = this.findViewById(R.id.aboveSectionLayout);
+        final ConstraintLayout belowSecsionLayout = this.findViewById(R.id.belowSectionLayout);
+        final LinearLayout mapViewFull = this.findViewById(R.id.mapViewFullLayout);
+        mapViewFull.setVisibility(LinearLayout.INVISIBLE);
+        /**
+         * Create map tracking
+        * */
         MapFragment mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        /**
+         * Create map view location share of friends
+        * */
+        MapFragment mapFragmentShare = (MapFragment) getFragmentManager().findFragmentById(R.id.mapShareLocation);
+        mapFragmentShare.getMapAsync(new OnMapReadyCallback() {
+            @Override
+            public void onMapReady(GoogleMap googleMap) {
+                if (presenterRunning.checkPermissions()) {
+                    mMapShareLocation = googleMap;
+                    mMapShareLocation.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+                    if (ActivityCompat.checkSelfPermission(getMainActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getMainActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                        return;
+                    }
+                    mMapShareLocation.setMyLocationEnabled(true);
+                    mMapShareLocation.getUiSettings().setMyLocationButtonEnabled(false);
+
+                    /**
+                     * Create list location friends demo
+                     * */
+                    ArrayList<LocationObject> list = new ArrayList<>();
+                    list.add(new LocationObject(10.736096, 106.674790));
+                    list.add(new LocationObject(10.738214, 106.677853));
+                    list.add(new LocationObject(10.734489, 106.678814));
+                    list.add(new LocationObject(10.738797, 106.681894));
+
+                    /**
+                     * Move camera first friend
+                     * */
+                    CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(new LatLng(list.get(0).getLatitudeValue(), list.get(0).getLongitudeValue()), 15);
+                    mMapShareLocation.animateCamera(cameraUpdate);
+
+                    /**
+                     * Set marker friend on map
+                     * */
+                    for(int i = 0; i< list.size(); i++){
+                        mMapShareLocation.addMarker(new MarkerOptions().position(new LatLng(list.get(i).getLatitudeValue(), list.get(i).getLongitudeValue()))
+                                .title("Friend " + (i + 1)));
+                    }
+
+                    /**
+                     * Get touch event on map fragment
+                    * */
+                    mMapShareLocation.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
+                        @Override
+                        public void onMapLongClick(LatLng latLng) {
+                            aboveSecsionLayout.setVisibility(ConstraintLayout.INVISIBLE);
+                            belowSecsionLayout.setVisibility(ConstraintLayout.INVISIBLE);
+                            mapViewFull.setVisibility(LinearLayout.VISIBLE);
+                        }
+                    });
+                }
+            }
+        });
+
+        /**
+         * Create fragment view full friends of user
+        * */
+        MapFragment mapFragmentViewShare = (MapFragment) getFragmentManager().findFragmentById(R.id.mapViewFull);
+        mapFragmentViewShare.getMapAsync(new OnMapReadyCallback() {
+            @Override
+            public void onMapReady(GoogleMap googleMap) {
+
+                if (presenterRunning.checkPermissions()) {
+                    mMapViewFullFriend = googleMap;
+                    if (ActivityCompat.checkSelfPermission(getMainActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getMainActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                        return;
+                    }
+                    mMapViewFullFriend.setMyLocationEnabled(true);
+                    mMapViewFullFriend.getUiSettings().setMyLocationButtonEnabled(false);
+
+                    /**
+                     * Create list location friends demo
+                     * */
+                    ArrayList<LocationObject> list = new ArrayList<>();
+                    list.add(new LocationObject(10.736096, 106.674790));
+                    list.add(new LocationObject(10.738214, 106.677853));
+                    list.add(new LocationObject(10.734489, 106.678814));
+                    list.add(new LocationObject(10.738797, 106.681894));
+
+                    /**
+                     * Move camera first friend
+                     * */
+                    CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(new LatLng(list.get(0).getLatitudeValue(), list.get(0).getLongitudeValue()), 15);
+                    mMapViewFullFriend.animateCamera(cameraUpdate);
+
+                    /**
+                     * Set marker friend on map
+                     * */
+                    for(int i = 0; i< list.size(); i++){
+                        mMapViewFullFriend.addMarker(new MarkerOptions().position(new LatLng(list.get(i).getLatitudeValue(), list.get(i).getLongitudeValue()))
+                                .title("Friend " + (i + 1)));
+                    }
+
+                    /**
+                     * Get touch event on map fragment
+                     * */
+                    mMapViewFullFriend.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
+                        @Override
+                        public void onMapLongClick(LatLng latLng) {
+                            aboveSecsionLayout.setVisibility(ConstraintLayout.VISIBLE);
+                            belowSecsionLayout.setVisibility(ConstraintLayout.VISIBLE);
+                            mapViewFull.setVisibility(LinearLayout.INVISIBLE);
+                        }
+                    });
+                }
+            }
+        });
     }
 
     //send data to ResultActivity
-    private void sendDataToResult() throws JSONException {
+    private void sendDataToResult(){
         //calculator grossCalorieBurned
         rGrossCalorie = 0;
         if(m_Bodily != null) {
@@ -290,7 +415,7 @@ public class RunningActivity extends AppCompatActivity implements RunningContrac
             rGrossCalorie = presenterRunning.RoundAvoid(rGrossCalorie, 2);
         }
         Intent nextActivity = new Intent(RunningActivity.this, ResultActivity.class);
-        nextActivity.putExtra("duration", rUpdateTime);
+        nextActivity.putExtra("duration", timeRunning);
         nextActivity.putExtra("distance", presenterRunning.RoundAvoid(presenterRunning.getDisaTance(),2));
         nextActivity.putExtra("avgPace", presenterRunning.RoundAvoid(presenterRunning.getPace(),2));
         nextActivity.putExtra("maxPace", presenterRunning.RoundAvoid(presenterRunning.getMaxPace(),2));
@@ -303,8 +428,11 @@ public class RunningActivity extends AppCompatActivity implements RunningContrac
 
     public void saveRunning(){
         ResultObject resultObject;
-        resultObject = new ResultObject(timeRunning, presenterRunning.getDisaTance(), presenterRunning.getPace(), presenterRunning.getMaxPace(),
-                presenterRunning.getCalories(), rGrossCalorie, Long.toString(System.currentTimeMillis()));
+        resultObject = new ResultObject(timeRunning, presenterRunning.RoundAvoid(presenterRunning.getDisaTance(), 2),
+                presenterRunning.RoundAvoid(presenterRunning.getPace(), 2),
+                presenterRunning.RoundAvoid(presenterRunning.getMaxPace(), 2),
+                presenterRunning.RoundAvoid(presenterRunning.getCalories(), 1),
+                presenterRunning.RoundAvoid(rGrossCalorie, 2));
         /**
          * push data to firebase
         * */

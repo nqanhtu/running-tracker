@@ -15,7 +15,6 @@ import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.ResolvableApiException;
@@ -71,7 +70,7 @@ public class PresenterRunning {
     private static final long UPDATE_INTERVAL_IN_MILLISECONDS = 3000;
     private static final long FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS =
             UPDATE_INTERVAL_IN_MILLISECONDS / 2;
-    private static String TAG = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA ";
+    private static String TAG = "Error ";
     private FusedLocationProviderClient mFusedLocationClient;
     private SettingsClient mSettingsClient;
     private LocationRequest mLocationRequest;
@@ -296,7 +295,6 @@ public class PresenterRunning {
                             case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
                                 String errorMessage = "Location settings are inadequate, and cannot be " +
                                         "fixed here. Fix in Settings.";
-                                Toast.makeText(runningContract.getMainActivity(), errorMessage, Toast.LENGTH_LONG).show();
                         }
                     }
                 });
@@ -404,18 +402,14 @@ public class PresenterRunning {
                     @Override
                     public void onSuccess(Void aVoid) {
                         Log.d(TAG, "DocumentSnapshot successfully written!");
-                        Toast.makeText(runningContract.getMainActivity(), "Luu Thanh Cong", Toast.LENGTH_LONG).show();
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         Log.w(TAG, "Error writing document", e);
-                        Toast.makeText(runningContract.getMainActivity(), "Luu Thanh loi", Toast.LENGTH_LONG).show();
                     }
                 });
-
-
     }
 
 
@@ -430,14 +424,12 @@ public class PresenterRunning {
                     @Override
                     public void onSuccess(Void aVoid) {
                         Log.d(TAG, "DocumentSnapshot successfully written!");
-                        Toast.makeText(runningContract.getMainActivity(), "Luu Thanh Cong", Toast.LENGTH_LONG).show();
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         Log.w(TAG, "Error writing document", e);
-                        Toast.makeText(runningContract.getMainActivity(), "Luu loi", Toast.LENGTH_LONG).show();
                     }
                 });
     }
@@ -445,7 +437,7 @@ public class PresenterRunning {
     /**
      * @function: Get id history nearer
     * */
-    public void getIdHistory(String id, final FirebaseFirestore firestore, final IdHistoryCallback idHistoryCallback){
+    public void getIdHistory(final FirebaseFirestore firestore, final IdHistoryCallback idHistoryCallback){
 
         final List<Map<String, Object>> histories = new ArrayList<>();
         firestore.collection("users")
@@ -460,8 +452,12 @@ public class PresenterRunning {
                         /**
                          * get information history nearer
                         * */
-                        histories.add(document.getData());
-                        idHistoryCallback.onSuccess(histories);
+                        try {
+                            histories.add(document.getData());
+                            idHistoryCallback.onSuccess(histories);
+                        }catch(Exception e){
+                            e.printStackTrace();
+                        }
                     }
                 } else {
                     Log.d(TAG, "Error getting documents: ", task.getException());
@@ -474,9 +470,9 @@ public class PresenterRunning {
      * @param:
      * @return:
      */
-    public void getDataLocation(String id, final FirebaseFirestore firestore, final LocationHistoryCallback locationCallback) {
+    public void getDataLocation(final FirebaseFirestore firestore, final LocationHistoryCallback locationCallback) {
 
-        getIdHistory(id, firestore, new IdHistoryCallback() {
+        getIdHistory(firestore, new IdHistoryCallback() {
             @Override
             public void onSuccess(List<Map<String, Object>> histories) {
                 Map<String, Object> lastHistory = histories.get(0);
@@ -492,13 +488,66 @@ public class PresenterRunning {
                             @Override
                             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                                 if (task.isSuccessful()) {
-                                    List<LocationObject> locationList = task.getResult().toObjects(LocationObject.class);
-                                    locationCallback.dataLocation(locationList);
+                                    try {
+                                        List<LocationObject> locationList = task.getResult().toObjects(LocationObject.class);
+                                        locationCallback.dataLocation(locationList);
+                                    }catch(Exception e){
+                                        e.printStackTrace();
+                                    }
                                 }
                             }
                         });
             }
         });
+    }
+    /**
+     * Get data tracking history of user
+    * */
+    public void getTrackingHistory(String id, final FirebaseFirestore firestore, final TrackingHistoryCallback trackingHistoryCallback) {
+
+        firestore.collection("users").
+                document(currentUser.getUid())
+                .collection("histories")
+                .document(id).collection("result")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            try {
+                                List<ResultObject> resultObject = task.getResult().toObjects(ResultObject.class);
+                                trackingHistoryCallback.onSuccessTrackingData(resultObject);
+                            }catch(Exception e){
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                });
+    }
+    /**
+     * Get list data location history of user
+    * */
+    public void getListLocationHistory(String id, final FirebaseFirestore firestore, final LocationHistoryCallback locationCallback) {
+
+        firestore.collection("users").
+                document(currentUser.getUid())
+                .collection("histories")
+                .document(id).collection("locations")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            try {
+                                List<LocationObject> locationList = task.getResult().toObjects(LocationObject.class);
+                                locationCallback.dataLocation(locationList);
+                            }
+                            catch (Exception e){
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                });
     }
 }
 
