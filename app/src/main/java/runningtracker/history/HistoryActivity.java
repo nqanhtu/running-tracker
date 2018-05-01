@@ -14,6 +14,8 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.google.android.gms.maps.CameraUpdate;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -135,6 +137,9 @@ public class HistoryActivity extends AppCompatActivity implements OnMapReadyCall
                             .icon(BitmapDescriptorFactory.fromResource(R.drawable.start_blue))
                             .title("Start Tracking")
                             .position(new LatLng(locationObject.get(0).getLatitudeValue(), locationObject.get(0).getLongitudeValue()))));
+                    CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(new LatLng(locationObject.get(0).getLatitudeValue(),
+                            locationObject.get(0).getLongitudeValue()), 15);
+                    googleMap.animateCamera(cameraUpdate);
 
                     for (int i = 0; i < locationObject.size() - 1; i++) {
 
