@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -23,6 +24,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import runningtracker.R;
@@ -56,7 +58,7 @@ import java.util.Date;
 
 public class RunningActivity extends AppCompatActivity implements RunningContract, OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks {
     private static final String TAG = RunningActivity.class.getSimpleName();
-    private GoogleMap mMap, mMapShareLocation;
+    private GoogleMap mMap, mMapShareLocation, mMapViewFullFriend;
     Date startCurrentTime, stopCurrentTime;
     float rGrossCalorie;
     TextView txtTimer;
@@ -281,6 +283,14 @@ public class RunningActivity extends AppCompatActivity implements RunningContrac
         actionBar.setTitle(R.string.RunningTitle);
         actionBar.setTitleTextColor(ContextCompat.getColor(this, R.color.textColorPrimary));
         setSupportActionBar(actionBar);
+
+        /**
+         * Create layout need set hide or show
+        * */
+        final ConstraintLayout aboveSecsionLayout = this.findViewById(R.id.aboveSectionLayout);
+        final ConstraintLayout belowSecsionLayout = this.findViewById(R.id.belowSectionLayout);
+        final LinearLayout mapViewFull = this.findViewById(R.id.mapViewFullLayout);
+        mapViewFull.setVisibility(LinearLayout.INVISIBLE);
         /**
          * Create map tracking
         * */
@@ -291,7 +301,6 @@ public class RunningActivity extends AppCompatActivity implements RunningContrac
          * Create map view location share of friends
         * */
         MapFragment mapFragmentShare = (MapFragment) getFragmentManager().findFragmentById(R.id.mapShareLocation);
-        //mapFragmentShare.getView().setVisibility(View.INVISIBLE);
         mapFragmentShare.getMapAsync(new OnMapReadyCallback() {
             @Override
             public void onMapReady(GoogleMap googleMap) {
@@ -333,8 +342,63 @@ public class RunningActivity extends AppCompatActivity implements RunningContrac
                     mMapShareLocation.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
                         @Override
                         public void onMapLongClick(LatLng latLng) {
-                            Intent nextActivity = new Intent(RunningActivity.this, ViewFriendsActivity.class);
-                            startActivity(nextActivity);
+                            aboveSecsionLayout.setVisibility(ConstraintLayout.INVISIBLE);
+                            belowSecsionLayout.setVisibility(ConstraintLayout.INVISIBLE);
+                            mapViewFull.setVisibility(LinearLayout.VISIBLE);
+                        }
+                    });
+                }
+            }
+        });
+
+        /**
+         * Create fragment view full friends of user
+        * */
+        MapFragment mapFragmentViewShare = (MapFragment) getFragmentManager().findFragmentById(R.id.mapViewFull);
+        mapFragmentViewShare.getMapAsync(new OnMapReadyCallback() {
+            @Override
+            public void onMapReady(GoogleMap googleMap) {
+
+                if (presenterRunning.checkPermissions()) {
+                    mMapViewFullFriend = googleMap;
+                    if (ActivityCompat.checkSelfPermission(getMainActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getMainActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                        return;
+                    }
+                    mMapViewFullFriend.setMyLocationEnabled(true);
+                    mMapViewFullFriend.getUiSettings().setMyLocationButtonEnabled(false);
+
+                    /**
+                     * Create list location friends demo
+                     * */
+                    ArrayList<LocationObject> list = new ArrayList<>();
+                    list.add(new LocationObject(10.736096, 106.674790));
+                    list.add(new LocationObject(10.738214, 106.677853));
+                    list.add(new LocationObject(10.734489, 106.678814));
+                    list.add(new LocationObject(10.738797, 106.681894));
+
+                    /**
+                     * Move camera first friend
+                     * */
+                    CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(new LatLng(list.get(0).getLatitudeValue(), list.get(0).getLongitudeValue()), 15);
+                    mMapViewFullFriend.animateCamera(cameraUpdate);
+
+                    /**
+                     * Set marker friend on map
+                     * */
+                    for(int i = 0; i< list.size(); i++){
+                        mMapViewFullFriend.addMarker(new MarkerOptions().position(new LatLng(list.get(i).getLatitudeValue(), list.get(i).getLongitudeValue()))
+                                .title("Friend " + (i + 1)));
+                    }
+
+                    /**
+                     * Get touch event on map fragment
+                     * */
+                    mMapViewFullFriend.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
+                        @Override
+                        public void onMapLongClick(LatLng latLng) {
+                            aboveSecsionLayout.setVisibility(ConstraintLayout.VISIBLE);
+                            belowSecsionLayout.setVisibility(ConstraintLayout.VISIBLE);
+                            mapViewFull.setVisibility(LinearLayout.INVISIBLE);
                         }
                     });
                 }
@@ -343,7 +407,7 @@ public class RunningActivity extends AppCompatActivity implements RunningContrac
     }
 
     //send data to ResultActivity
-    private void sendDataToResult() throws JSONException {
+    private void sendDataToResult(){
         //calculator grossCalorieBurned
         rGrossCalorie = 0;
         if(m_Bodily != null) {

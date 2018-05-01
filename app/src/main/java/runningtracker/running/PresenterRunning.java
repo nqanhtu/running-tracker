@@ -70,7 +70,7 @@ public class PresenterRunning {
     private static final long UPDATE_INTERVAL_IN_MILLISECONDS = 3000;
     private static final long FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS =
             UPDATE_INTERVAL_IN_MILLISECONDS / 2;
-    private static String TAG = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA ";
+    private static String TAG = "Error ";
     private FusedLocationProviderClient mFusedLocationClient;
     private SettingsClient mSettingsClient;
     private LocationRequest mLocationRequest;
@@ -493,6 +493,46 @@ public class PresenterRunning {
                         });
             }
         });
+    }
+    /**
+     * Get data tracking history of user
+    * */
+    public void getTrackingHistory(String id, final FirebaseFirestore firestore, final TrackingHistoryCallback trackingHistoryCallback) {
+
+        firestore.collection("users").
+                document(currentUser.getUid())
+                .collection("histories")
+                .document(id).collection("result")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            List<ResultObject> resultObject = task.getResult().toObjects(ResultObject.class);
+                            trackingHistoryCallback.onSuccessTrackingData(resultObject);
+                        }
+                    }
+                });
+    }
+    /**
+     * Get list data location history of user
+    * */
+    public void getListLocationHistory(String id, final FirebaseFirestore firestore, final LocationHistoryCallback locationCallback) {
+
+        firestore.collection("users").
+                document(currentUser.getUid())
+                .collection("histories")
+                .document(id).collection("locations")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            List<LocationObject> locationList = task.getResult().toObjects(LocationObject.class);
+                            locationCallback.dataLocation(locationList);
+                        }
+                    }
+                });
     }
 }
 

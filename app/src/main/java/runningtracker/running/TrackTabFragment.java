@@ -1,13 +1,9 @@
 package runningtracker.running;
 
-import android.Manifest;
-import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,6 +30,7 @@ import runningtracker.common.MyLocation;
 import runningtracker.data.model.running.IdHistory;
 import runningtracker.data.model.running.LocationObject;
 
+import static runningtracker.running.ResultActivity.idDateHistory;
 import static runningtracker.running.ResultActivity.tabFragmentLayouts;
 
 public class TrackTabFragment extends Fragment implements OnMapReadyCallback {
@@ -72,9 +69,6 @@ public class TrackTabFragment extends Fragment implements OnMapReadyCallback {
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-//        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-//            return;
-//        }
 //        mMap.setMyLocationEnabled(true);
         MyLocation myLocation = new MyLocation();
         Location L = myLocation.getMyLocation(getActivity());
@@ -94,35 +88,72 @@ public class TrackTabFragment extends Fragment implements OnMapReadyCallback {
         IdHistory idHistory = new IdHistory();
         InitializationFirebase initializationFirebase = new InitializationFirebase();
         FirebaseFirestore firestore  = initializationFirebase.createFirebase();
+        /**
+         * If value default
+        * */
+        if(idDateHistory == null) {
 
-        presenterRunning.getDataLocation(idHistory.id, firestore, new LocationHistoryCallback() {
-            @Override
-            public void dataLocation(List<LocationObject> locationObject) {
+            presenterRunning.getDataLocation(idHistory.id, firestore, new LocationHistoryCallback() {
+                @Override
+                public void dataLocation(List<LocationObject> locationObject) {
 
-                List<Marker> originMarkers = new ArrayList<>();
-                List<Marker> destinationMarkers = new ArrayList<>();
-                Polygon polygon;
+                    List<Marker> originMarkers = new ArrayList<>();
+                    List<Marker> destinationMarkers = new ArrayList<>();
+                    Polygon polygon;
 
-                originMarkers.add(mMap.addMarker(new MarkerOptions()
-                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.start_blue))
-                        .title("Start Tracking")
-                        .position(new LatLng(locationObject.get(0).getLatitudeValue(), locationObject.get(0).getLongitudeValue()))));
+                    originMarkers.add(mMap.addMarker(new MarkerOptions()
+                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.start_blue))
+                            .title("Start Tracking")
+                            .position(new LatLng(locationObject.get(0).getLatitudeValue(), locationObject.get(0).getLongitudeValue()))));
 
-                for(int i = 0; i < locationObject.size() - 1; i++) {
+                    for (int i = 0; i < locationObject.size() - 1; i++) {
 
-                    polygon = mMap.addPolygon(new PolygonOptions()
-                            .add(new LatLng(locationObject.get(i).getLatitudeValue(), locationObject.get(i).getLongitudeValue()),
-                                    new LatLng(locationObject.get(i + 1).getLatitudeValue(), locationObject.get(i + 1).getLongitudeValue()))
-                            .strokeColor(Color.BLUE)
-                            .fillColor(Color.BLACK));
+                        polygon = mMap.addPolygon(new PolygonOptions()
+                                .add(new LatLng(locationObject.get(i).getLatitudeValue(), locationObject.get(i).getLongitudeValue()),
+                                        new LatLng(locationObject.get(i + 1).getLatitudeValue(), locationObject.get(i + 1).getLongitudeValue()))
+                                .strokeColor(Color.BLUE)
+                                .fillColor(Color.BLACK));
+                    }
+
+                    destinationMarkers.add(mMap.addMarker(new MarkerOptions()
+                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.end_green))
+                            .title("End Tracking")
+                            .position(new LatLng(locationObject.get(locationObject.size() - 1).getLatitudeValue(), locationObject.get(locationObject.size() - 1).getLongitudeValue()))));
                 }
+            });
+            /**
+             * If user chose date history tracking
+            * */
+        }else{
+            presenterRunning.getListLocationHistory(idDateHistory, firestore, new LocationHistoryCallback() {
+                @Override
+                public void dataLocation(List<LocationObject> locationObject) {
 
-                destinationMarkers.add(mMap.addMarker(new MarkerOptions()
-                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.end_green))
-                        .title("End Tracking")
-                        .position(new LatLng(locationObject.get(locationObject.size() - 1).getLatitudeValue(), locationObject.get(locationObject.size() - 1).getLongitudeValue()))));
-            }
-        });
+                    List<Marker> originMarkers = new ArrayList<>();
+                    List<Marker> destinationMarkers = new ArrayList<>();
+                    Polygon polygon;
+
+                    originMarkers.add(mMap.addMarker(new MarkerOptions()
+                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.start_blue))
+                            .title("Start Tracking")
+                            .position(new LatLng(locationObject.get(0).getLatitudeValue(), locationObject.get(0).getLongitudeValue()))));
+
+                    for (int i = 0; i < locationObject.size() - 1; i++) {
+
+                        polygon = mMap.addPolygon(new PolygonOptions()
+                                .add(new LatLng(locationObject.get(i).getLatitudeValue(), locationObject.get(i).getLongitudeValue()),
+                                        new LatLng(locationObject.get(i + 1).getLatitudeValue(), locationObject.get(i + 1).getLongitudeValue()))
+                                .strokeColor(Color.BLUE)
+                                .fillColor(Color.BLACK));
+                    }
+
+                    destinationMarkers.add(mMap.addMarker(new MarkerOptions()
+                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.end_green))
+                            .title("End Tracking")
+                            .position(new LatLng(locationObject.get(locationObject.size() - 1).getLatitudeValue(), locationObject.get(locationObject.size() - 1).getLongitudeValue()))));
+                }
+            });
+        }
 
     }
 }

@@ -1,11 +1,7 @@
 package runningtracker.running;
-import android.Manifest;
-import android.content.Context;
+
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.location.Location;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -19,18 +15,24 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import runningtracker.R;
+import runningtracker.common.InitializationFirebase;
+import runningtracker.data.model.running.ResultObject;
 
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class ResultActivity extends AppCompatActivity {
 
     private static PresenterRunning presenterRunning;
     public static ArrayList<ViewGroup> tabFragmentLayouts;
     private static GoogleMap mMap;
+    public static String idDateHistory;
+    private static FirebaseFirestore firestore;
 
     public ResultActivity() {
         tabFragmentLayouts = new ArrayList<>();
@@ -45,6 +47,12 @@ public class ResultActivity extends AppCompatActivity {
         * */
         setContentView(R.layout.activity_result);
         initializeUI();
+        /**
+         * Create firebase and userID
+        * */
+        InitializationFirebase initializationFirebase = new InitializationFirebase();
+        firestore = initializationFirebase.createFirebase();
+
         StatsTabFragment.setStatsValue(getIntent());
 
 
@@ -107,7 +115,7 @@ public class ResultActivity extends AppCompatActivity {
     public static class StatsTabFragment extends Fragment {
         private static long mDuration;
         private static float mAvgPace, mNetCalorie, mDistance, mMaxPace, mGrossCalorie;
-        private HashMap<Integer, View> childViews;
+        private static HashMap<Integer, View> childViews;
 
         public StatsTabFragment() {}
 
@@ -123,7 +131,6 @@ public class ResultActivity extends AppCompatActivity {
             ViewGroup inflatedLayout = (ViewGroup) inflater.inflate(R.layout.activity_result_tab_stats, container, false);
             tabFragmentLayouts.add(inflatedLayout);
             getAllChildViews(inflatedLayout);
-            assignValueToView();
 
             return inflatedLayout;
         }
@@ -141,15 +148,38 @@ public class ResultActivity extends AppCompatActivity {
         }
 
         static void setStatsValue(Intent intent) {
-            mDuration = intent.getLongExtra("duration", 0);
-            mAvgPace = intent.getFloatExtra("avgPace", 0);
-            mNetCalorie = intent.getFloatExtra("netCalorie", 0);
-            mDistance = intent.getFloatExtra("distance", 0);
-            mMaxPace = intent.getFloatExtra("maxPace", 0);
-            mGrossCalorie = intent.getFloatExtra("grossCalorie", 0);
+            idDateHistory = intent.getStringExtra("idDate");
+            if(idDateHistory == null) {
+                mDuration = intent.getLongExtra("duration", 0);
+                mAvgPace = intent.getFloatExtra("avgPace", 0);
+                mNetCalorie = intent.getFloatExtra("netCalorie", 0);
+                mDistance = intent.getFloatExtra("distance", 0);
+                mMaxPace = intent.getFloatExtra("maxPace", 0);
+                mGrossCalorie = intent.getFloatExtra("grossCalorie", 0);
+                /**
+                 * set value to view
+                 * */
+                assignValueToView();
+            }else{
+                presenterRunning.getTrackingHistory(idDateHistory, firestore, new TrackingHistoryCallback() {
+                    @Override
+                    public void onSuccessTrackingData(List<ResultObject> resultObject) {
+                        mDuration     = 1525050137;
+                        mAvgPace      = resultObject.get(0).getPace();
+                        mNetCalorie   = resultObject.get(0).getNetCalorie();
+                        mDistance     = resultObject.get(0).getDistance();
+                        mMaxPace      = resultObject.get(0).getMaxPace();
+                        mGrossCalorie = resultObject.get(0).getGrossCalorie();
+                        /**
+                         * set value to view
+                        * */
+                        assignValueToView();
+                    }
+                });
+            }
         }
 
-        private void assignValueToView() {
+        private static void assignValueToView() {
             long secs = (mDuration / 1000);
             long mins = secs / 60;
             long hour = mins /60;
