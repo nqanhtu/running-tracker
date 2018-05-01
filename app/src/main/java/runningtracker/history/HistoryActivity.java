@@ -7,13 +7,13 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
-import com.google.android.gms.maps.CameraUpdate;
-import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -39,7 +39,6 @@ import runningtracker.data.model.running.LocationObject;
 import runningtracker.running.IdHistoryCallback;
 import runningtracker.running.LocationHistoryCallback;
 import runningtracker.running.ResultActivity;
-import runningtracker.running.RunningActivity;
 
 public class HistoryActivity extends AppCompatActivity implements OnMapReadyCallback, AdapterView.OnItemClickListener{
 
@@ -59,6 +58,8 @@ public class HistoryActivity extends AppCompatActivity implements OnMapReadyCall
         InitializationFirebase initializationFirebase = new InitializationFirebase();
         firestore = initializationFirebase.createFirebase();
 
+        createView();
+
         /**
          * Create map history
          * */
@@ -70,8 +71,16 @@ public class HistoryActivity extends AppCompatActivity implements OnMapReadyCall
 
         mapAdapter();
         lvDateTimeHistory.setOnItemClickListener(this);
+    }
 
-
+    /**
+     * Create view toolbar
+    * */
+    private void createView(){
+        Toolbar actionBar = findViewById(R.id.actionbarHistory);
+        actionBar.setTitle(R.string.HistoryTitle);
+        actionBar.setTitleTextColor(ContextCompat.getColor(this, R.color.textColorPrimary));
+        setSupportActionBar(actionBar);
     }
 
     private Context getMainActivity(){

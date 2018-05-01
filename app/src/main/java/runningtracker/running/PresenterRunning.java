@@ -410,8 +410,6 @@ public class PresenterRunning {
                         Log.w(TAG, "Error writing document", e);
                     }
                 });
-
-
     }
 
 
@@ -439,7 +437,7 @@ public class PresenterRunning {
     /**
      * @function: Get id history nearer
     * */
-    public void getIdHistory(String id, final FirebaseFirestore firestore, final IdHistoryCallback idHistoryCallback){
+    public void getIdHistory(final FirebaseFirestore firestore, final IdHistoryCallback idHistoryCallback){
 
         final List<Map<String, Object>> histories = new ArrayList<>();
         firestore.collection("users")
@@ -454,8 +452,12 @@ public class PresenterRunning {
                         /**
                          * get information history nearer
                         * */
-                        histories.add(document.getData());
-                        idHistoryCallback.onSuccess(histories);
+                        try {
+                            histories.add(document.getData());
+                            idHistoryCallback.onSuccess(histories);
+                        }catch(Exception e){
+                            e.printStackTrace();
+                        }
                     }
                 } else {
                     Log.d(TAG, "Error getting documents: ", task.getException());
@@ -468,9 +470,9 @@ public class PresenterRunning {
      * @param:
      * @return:
      */
-    public void getDataLocation(String id, final FirebaseFirestore firestore, final LocationHistoryCallback locationCallback) {
+    public void getDataLocation(final FirebaseFirestore firestore, final LocationHistoryCallback locationCallback) {
 
-        getIdHistory(id, firestore, new IdHistoryCallback() {
+        getIdHistory(firestore, new IdHistoryCallback() {
             @Override
             public void onSuccess(List<Map<String, Object>> histories) {
                 Map<String, Object> lastHistory = histories.get(0);
@@ -486,8 +488,12 @@ public class PresenterRunning {
                             @Override
                             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                                 if (task.isSuccessful()) {
-                                    List<LocationObject> locationList = task.getResult().toObjects(LocationObject.class);
-                                    locationCallback.dataLocation(locationList);
+                                    try {
+                                        List<LocationObject> locationList = task.getResult().toObjects(LocationObject.class);
+                                        locationCallback.dataLocation(locationList);
+                                    }catch(Exception e){
+                                        e.printStackTrace();
+                                    }
                                 }
                             }
                         });
@@ -508,8 +514,12 @@ public class PresenterRunning {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
-                            List<ResultObject> resultObject = task.getResult().toObjects(ResultObject.class);
-                            trackingHistoryCallback.onSuccessTrackingData(resultObject);
+                            try {
+                                List<ResultObject> resultObject = task.getResult().toObjects(ResultObject.class);
+                                trackingHistoryCallback.onSuccessTrackingData(resultObject);
+                            }catch(Exception e){
+                                e.printStackTrace();
+                            }
                         }
                     }
                 });
@@ -528,8 +538,13 @@ public class PresenterRunning {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
-                            List<LocationObject> locationList = task.getResult().toObjects(LocationObject.class);
-                            locationCallback.dataLocation(locationList);
+                            try {
+                                List<LocationObject> locationList = task.getResult().toObjects(LocationObject.class);
+                                locationCallback.dataLocation(locationList);
+                            }
+                            catch (Exception e){
+                                e.printStackTrace();
+                            }
                         }
                     }
                 });

@@ -93,32 +93,33 @@ public class TrackTabFragment extends Fragment implements OnMapReadyCallback {
         * */
         if(idDateHistory == null) {
 
-            presenterRunning.getDataLocation(idHistory.id, firestore, new LocationHistoryCallback() {
+            presenterRunning.getDataLocation(firestore, new LocationHistoryCallback() {
                 @Override
                 public void dataLocation(List<LocationObject> locationObject) {
+                    if (locationObject.size() > 1) {
+                        List<Marker> originMarkers = new ArrayList<>();
+                        List<Marker> destinationMarkers = new ArrayList<>();
+                        Polygon polygon;
 
-                    List<Marker> originMarkers = new ArrayList<>();
-                    List<Marker> destinationMarkers = new ArrayList<>();
-                    Polygon polygon;
+                        originMarkers.add(mMap.addMarker(new MarkerOptions()
+                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.start_blue))
+                                .title("Start Tracking")
+                                .position(new LatLng(locationObject.get(0).getLatitudeValue(), locationObject.get(0).getLongitudeValue()))));
 
-                    originMarkers.add(mMap.addMarker(new MarkerOptions()
-                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.start_blue))
-                            .title("Start Tracking")
-                            .position(new LatLng(locationObject.get(0).getLatitudeValue(), locationObject.get(0).getLongitudeValue()))));
+                        for (int i = 0; i < locationObject.size() - 1; i++) {
 
-                    for (int i = 0; i < locationObject.size() - 1; i++) {
+                            polygon = mMap.addPolygon(new PolygonOptions()
+                                    .add(new LatLng(locationObject.get(i).getLatitudeValue(), locationObject.get(i).getLongitudeValue()),
+                                            new LatLng(locationObject.get(i + 1).getLatitudeValue(), locationObject.get(i + 1).getLongitudeValue()))
+                                    .strokeColor(Color.BLUE)
+                                    .fillColor(Color.BLACK));
+                        }
 
-                        polygon = mMap.addPolygon(new PolygonOptions()
-                                .add(new LatLng(locationObject.get(i).getLatitudeValue(), locationObject.get(i).getLongitudeValue()),
-                                        new LatLng(locationObject.get(i + 1).getLatitudeValue(), locationObject.get(i + 1).getLongitudeValue()))
-                                .strokeColor(Color.BLUE)
-                                .fillColor(Color.BLACK));
+                        destinationMarkers.add(mMap.addMarker(new MarkerOptions()
+                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.end_green))
+                                .title("End Tracking")
+                                .position(new LatLng(locationObject.get(locationObject.size() - 1).getLatitudeValue(), locationObject.get(locationObject.size() - 1).getLongitudeValue()))));
                     }
-
-                    destinationMarkers.add(mMap.addMarker(new MarkerOptions()
-                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.end_green))
-                            .title("End Tracking")
-                            .position(new LatLng(locationObject.get(locationObject.size() - 1).getLatitudeValue(), locationObject.get(locationObject.size() - 1).getLongitudeValue()))));
                 }
             });
             /**

@@ -415,7 +415,7 @@ public class RunningActivity extends AppCompatActivity implements RunningContrac
             rGrossCalorie = presenterRunning.RoundAvoid(rGrossCalorie, 2);
         }
         Intent nextActivity = new Intent(RunningActivity.this, ResultActivity.class);
-        nextActivity.putExtra("duration", rUpdateTime);
+        nextActivity.putExtra("duration", timeRunning);
         nextActivity.putExtra("distance", presenterRunning.RoundAvoid(presenterRunning.getDisaTance(),2));
         nextActivity.putExtra("avgPace", presenterRunning.RoundAvoid(presenterRunning.getPace(),2));
         nextActivity.putExtra("maxPace", presenterRunning.RoundAvoid(presenterRunning.getMaxPace(),2));
@@ -428,8 +428,11 @@ public class RunningActivity extends AppCompatActivity implements RunningContrac
 
     public void saveRunning(){
         ResultObject resultObject;
-        resultObject = new ResultObject(timeRunning, presenterRunning.getDisaTance(), presenterRunning.getPace(), presenterRunning.getMaxPace(),
-                presenterRunning.getCalories(), rGrossCalorie, Long.toString(System.currentTimeMillis()));
+        resultObject = new ResultObject(timeRunning, presenterRunning.RoundAvoid(presenterRunning.getDisaTance(), 2),
+                presenterRunning.RoundAvoid(presenterRunning.getPace(), 2),
+                presenterRunning.RoundAvoid(presenterRunning.getMaxPace(), 2),
+                presenterRunning.RoundAvoid(presenterRunning.getCalories(), 1),
+                presenterRunning.RoundAvoid(rGrossCalorie, 2));
         /**
          * push data to firebase
         * */

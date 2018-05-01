@@ -51,8 +51,12 @@ public class HistoryPresenter {
                         /**
                          * get information history nearer
                          * */
-                        histories.add(document.getData());
-                        idHistoryCallback.onSuccess(histories);
+                        try {
+                            histories.add(document.getData());
+                            idHistoryCallback.onSuccess(histories);
+                        }catch(Exception e){
+                            e.printStackTrace();
+                        }
                     }
                 } else {
                     Log.d(TAG, "Error getting documents: ", task.getException());
@@ -79,8 +83,12 @@ public class HistoryPresenter {
                         /**
                          * get list information history
                          * */
-                        histories.add(document.getData());
-                        idHistoryCallback.onSuccess(histories);
+                        try {
+                            histories.add(document.getData());
+                            idHistoryCallback.onSuccess(histories);
+                        }catch(Exception e){
+                            e.printStackTrace();
+                        }
                     }
                 } else {
                     Log.d(TAG, "Error getting documents: ", task.getException());
@@ -109,8 +117,12 @@ public class HistoryPresenter {
                             @Override
                             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                                 if (task.isSuccessful()) {
-                                    List<LocationObject> locationList = task.getResult().toObjects(LocationObject.class);
-                                    locationCallback.dataLocation(locationList);
+                                    try {
+                                        List<LocationObject> locationList = task.getResult().toObjects(LocationObject.class);
+                                        locationCallback.dataLocation(locationList);
+                                    }catch(Exception e){
+                                        e.printStackTrace();
+                                    }
                                 }
                             }
                         });

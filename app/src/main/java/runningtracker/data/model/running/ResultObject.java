@@ -12,19 +12,17 @@ public class ResultObject {
     private float maxPace;
     private float netCalorie;
     private float grossCalorie;
-    private String dateTime;
 
     public ResultObject() {
     }
 
-    public ResultObject(String duration, float distance, float pace, float maxPace, float netCalorie, float grossCalorie, String dateTime) {
+    public ResultObject(String duration, float distance, float pace, float maxPace, float netCalorie, float grossCalorie) {
         this.duration = duration;
         this.distance = distance;
         this.pace = pace;
         this.maxPace = maxPace;
         this.netCalorie = netCalorie;
         this.grossCalorie = grossCalorie;
-        this.dateTime = dateTime;
     }
 
     public String getDuration() {
@@ -73,13 +71,5 @@ public class ResultObject {
 
     public void setGrossCalorie(float grossCalorie) {
         this.grossCalorie = grossCalorie;
-    }
-
-    public String getDateTime() {
-        return dateTime;
-    }
-
-    public void setDateTime(String dateTime) {
-        this.dateTime = dateTime;
     }
 }

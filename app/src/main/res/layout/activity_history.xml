@@ -20,7 +20,7 @@
         android:paddingBottom="10dp">
 
         <android.support.v7.widget.Toolbar
-            android:id="@+id/actionbar"
+            android:id="@+id/actionbarHistory"
             style="@style/Toolbar"
             android.support.v7.appcompat:navigationIcon="@drawable/ic_menu_white_24dp"
             app:layout_constraintLeft_toLeftOf="parent"
