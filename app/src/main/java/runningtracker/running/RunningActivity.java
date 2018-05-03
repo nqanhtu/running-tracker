@@ -2,6 +2,7 @@ package runningtracker.running;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -14,14 +15,17 @@ import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -53,7 +57,6 @@ import org.json.JSONException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-
 
 
 public class RunningActivity extends AppCompatActivity implements RunningContract, OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks {
@@ -98,6 +101,12 @@ public class RunningActivity extends AppCompatActivity implements RunningContrac
     //private String id;
     private IdHistory idHistory;
     private FirebaseFirestore firestore;
+
+    /**
+     * create method set value calories
+    * */
+    int checkedItems = -1;
+    public static int  setupCalories = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -260,6 +269,9 @@ public class RunningActivity extends AppCompatActivity implements RunningContrac
         }
     }
 
+    /**
+     * Create menu setting item
+    * */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate navigation menu from the resources by using the menu inflater.
@@ -271,6 +283,7 @@ public class RunningActivity extends AppCompatActivity implements RunningContrac
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
             case R.id.setting:
+                createDialogCalories();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -440,6 +453,7 @@ public class RunningActivity extends AppCompatActivity implements RunningContrac
     }
 
     public void onClickStartButton(View startButton) {
+
         // Perform animation
         ImageButton pauseButton = (ImageButton) findViewById(R.id.pauseButton);
         ImageButton stopButton = (ImageButton) findViewById(R.id.stopButton);
@@ -452,7 +466,6 @@ public class RunningActivity extends AppCompatActivity implements RunningContrac
         startButton.setVisibility(View.INVISIBLE);
         pauseButton.setVisibility(View.VISIBLE);
         stopButton.setVisibility(View.VISIBLE);
-        pauseButton.startAnimation(pauseButtonAnimation);
         stopButton.startAnimation(stopButtonAnimation);
 
         startTime();
@@ -532,5 +545,64 @@ public class RunningActivity extends AppCompatActivity implements RunningContrac
         stopTime();
         stopCurrentTime = Calendar.getInstance().getTime();
         sendDataToResult();
+    }
+    /**
+     * Create dialog setting calories before tracking of user
+    * */
+    private void createDialogCalories(){
+
+        final AlertDialog.Builder mBuilder = new AlertDialog.Builder(this);
+        final String[] arrayAdater =  {"1000", "2000"};
+
+        mBuilder.setTitle("Thiết Lập Calories");
+        LayoutInflater inflater = this.getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.dialog_chose_calories, null);
+        mBuilder.setView(dialogView);
+        final EditText editTextCalories = dialogView.findViewById(R.id.edtSetupCalories);
+
+        mBuilder.setSingleChoiceItems( arrayAdater, -1, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                checkedItems = i;
+            }
+        });
+        mBuilder.setCancelable(false);
+
+        mBuilder.setPositiveButton("Đồng ý", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int which) {
+                /**
+                 * check condition setup calories from dialog
+                 * */
+                //mBuilder.set(R.layout.dialog_chose_calories);
+                String temp = String.valueOf(editTextCalories.getText());
+                int calories = -1;
+                if(!temp.equals("")) {
+                    calories = Integer.parseInt(temp);
+                }
+
+                if(checkedItems >= 0 && calories > 0){
+                    setupCalories = calories;
+                }else if(checkedItems >= 0){
+                    int tempCalories = Integer.parseInt(arrayAdater[checkedItems]);
+                    setupCalories = tempCalories;
+                }else if(calories > 0){
+                    setupCalories = calories;
+                }else{
+                    setupCalories = 0;
+
+                }
+            }
+        });
+
+        mBuilder.setNeutralButton("Hủy", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int which) {
+                dialogInterface.cancel();
+            }
+        });
+
+        AlertDialog mDialog = mBuilder.create();
+        mDialog.show();
     }
 }
