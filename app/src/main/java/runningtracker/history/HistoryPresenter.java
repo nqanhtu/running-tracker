@@ -113,6 +113,7 @@ public class HistoryPresenter {
                         .collection("histories")
                         .document(historyID).collection("locations")
                         .get()
+
                         .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                             @Override
                             public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -128,21 +129,5 @@ public class HistoryPresenter {
                         });
             }
         });
-    }
-
-    /**
-     * Function convert string date to date long miliseconds
-     * @param : String date need convert
-     * */
-    public long convertStringToLong(String date){
-        long dateFomate = 0;
-        SimpleDateFormat f = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss Z");
-        try {
-            Date d = f.parse(date);
-            dateFomate = d.getTime();
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        return dateFomate;
     }
 }
