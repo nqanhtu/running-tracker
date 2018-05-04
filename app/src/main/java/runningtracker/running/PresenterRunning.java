@@ -63,6 +63,8 @@ import runningtracker.model.modelrunning.DatabaseLocation;
 import runningtracker.data.model.running.LocationObject;
 import runningtracker.fitnessstatistic.Calculator;
 
+import static runningtracker.running.RunningActivity.setupCalories;
+
 
 public class PresenterRunning {
     private static final int REQUEST_FINE_LOCATION = 0;
@@ -89,6 +91,7 @@ public class PresenterRunning {
     float rCalories, rPace, maxPace;
     private MediaPlayer ring;
     private FirebaseUser currentUser;
+    private int countNotification = 0;
 
     BodilyCharacteristicObject m_Bodily;
 
@@ -156,8 +159,13 @@ public class PresenterRunning {
                     @Override
                     public void onLocationResult(LocationResult locationResult) {
                         super.onLocationResult(locationResult);
-                        if (objectCommon.getMaxCalores() < rCalories)
-                            ring.start();
+                        if(setupCalories > 0) {
+                            Log.d("AAAAAAAAAAAA", ""+setupCalories);
+                            if (setupCalories < rCalories && countNotification < 3) {
+                                ring.start();
+                                countNotification += 1;
+                            }
+                        }
                         onLocationChanged(locationResult.getLastLocation(), ID, firestore);
                     }
                 };
