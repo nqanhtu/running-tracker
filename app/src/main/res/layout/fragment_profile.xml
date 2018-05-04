@@ -26,4 +26,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Settings" />
+
+    <!--<CheckedTextView-->
+        <!--android:id="@+id/checkedTextView"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:checkMark="@drawable/ic_check_mark"-->
+        <!--android:checkMarkTint="@drawable/ic_uncheck_mark"-->
+        <!--android:text="CheckedTextView" />-->
 </LinearLayout>

@@ -9,6 +9,7 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckedTextView;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -49,10 +50,9 @@ public class ProfileFragment extends Fragment implements ProfileContract.View {
 
 
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
-
         String mess = Boolean.toString(sharedPref.getBoolean("switch_preference_1", true));
 
-
+        //CheckedTextView simpleCheckedTextView = (CheckedTextView) view.findViewById(R.id.checkedTextView);
 
         Toast.makeText(getActivity(),mess,Toast.LENGTH_SHORT ).show();
         return view;
