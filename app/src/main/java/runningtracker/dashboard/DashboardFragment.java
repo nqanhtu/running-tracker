@@ -50,6 +50,7 @@ import runningtracker.data.service.WeatherService;
 import runningtracker.friends.FriendsActivity;
 import runningtracker.history.HistoryActivity;
 import runningtracker.network.WeatherGenerator;
+import runningtracker.settings.SettingDashBoardActivity;
 import runningtracker.suggestplace.SuggestPlaceActivity;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -100,7 +101,7 @@ public class DashboardFragment extends Fragment implements DashBoardContract.Vie
 
     private void initGridView(View view) {
         GridView gridView = (GridView) view.findViewById(R.id.gridview);
-        options.add(new Option("Calories", R.drawable.ic_setup_calories));
+        options.add(new Option("Cài đặt", R.drawable.ic_setup_calories));
         options.add(new Option("Lịch sử chạy", R.drawable.ic_history));
         options.add(new Option("Khu vực nguy hiểm", R.drawable.ic_stopwatch));
         options.add(new Option("Bạn bè", R.drawable.ic_friends));
@@ -114,6 +115,8 @@ public class DashboardFragment extends Fragment implements DashBoardContract.Vie
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 switch (position){
                     case 0:
+                        Intent intent0 = new Intent(getActivity(), SettingDashBoardActivity.class);
+                        startActivity(intent0);
                         break;
                     case 1:
                         Intent intent1 = new Intent(getActivity(), HistoryActivity.class);

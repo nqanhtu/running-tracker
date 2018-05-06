@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
 
 import runningtracker.R;
 import runningtracker.notificationfriends.NotificationFriendsActivity;
@@ -38,8 +37,13 @@ public class SettingsActivity extends Activity{
                     Intent intent = new Intent(getActivity(), NotificationFriendsActivity.class);
                     startActivity(intent);
                     return false;
+
                 }
             });
+
+            /**
+             * Create preferences setting  share location  of user
+            * */
         }
 
     }
