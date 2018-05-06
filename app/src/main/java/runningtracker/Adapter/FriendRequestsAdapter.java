@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +16,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -33,6 +35,7 @@ import runningtracker.data.model.User;
  */
 
 public class FriendRequestsAdapter extends RecyclerView.Adapter<FriendRequestsAdapter.MyViewHolder> {
+    private static final String TAG = "FriendRequestsAdapter";
     private List<User> mFriendsList;
     private Dialog mDialog;
     private Context mContext;
@@ -97,6 +100,46 @@ public class FriendRequestsAdapter extends RecyclerView.Adapter<FriendRequestsAd
                                     public void onSuccess(Void aVoid) {
                                         Toast.makeText(mContext, "Đã đồng ý lời mời kết bạn", Toast.LENGTH_SHORT).show();
 
+
+                                    }
+                                });
+
+                        db.collection("users").document(friend.getUid())
+                                .collection("friends").document(currentUser.getUid()).set(currentUser)
+                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void aVoid) {
+
+
+                                    }
+                                });
+                        db.collection("users").document(currentUser.getUid())
+                                .collection("friendRequests").document(friend.getUid()).delete()
+                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void aVoid) {
+                                        Log.d(TAG, "DocumentSnapshot successfully deleted!");
+                                    }
+                                })
+                                .addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        Log.w(TAG, "Error deleting document", e);
+                                    }
+                                });
+
+                        db.collection("users").document(friend.getUid())
+                                .collection("friends").document(currentUser.getUid()).delete()
+                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void aVoid) {
+                                        Log.d(TAG, "DocumentSnapshot successfully deleted!");
+                                    }
+                                })
+                                .addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        Log.w(TAG, "Error deleting document", e);
                                     }
                                 });
 

@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -19,6 +20,7 @@ import butterknife.OnClick;
 import runningtracker.Adapter.FriendsListAdapter;
 import runningtracker.R;
 import runningtracker.common.InitializationFirebase;
+import runningtracker.data.model.Friend;
 import runningtracker.data.model.User;
 import runningtracker.data.repository.UsersRepository;
 
@@ -56,11 +58,12 @@ public class AddFriendFragment extends Fragment implements AddFriendContract.Vie
     @OnClick(R.id.add_friend_button)
     public void addFriend() {
         mAddFriendPresenter.addFriend(friendEmailEditText.getText().toString());
+        Toast.makeText(getContext(),"Đã gửi lời mời kết bạn",Toast.LENGTH_SHORT).show();
     }
 
 
     @Override
-    public void showFriendsList(List<User> friends) {
+    public void showFriendsList(List<Friend> friends) {
         mRecyclerView.setHasFixedSize(true);
         // use a linear layout manager
         mLayoutManager = new LinearLayoutManager(getActivity());

@@ -3,6 +3,7 @@ package runningtracker.addfriend;
 import java.util.List;
 
 import runningtracker.base.BasePresenter;
+import runningtracker.data.model.Friend;
 import runningtracker.data.model.User;
 
 /**
@@ -11,7 +12,7 @@ import runningtracker.data.model.User;
 
 public interface AddFriendContract {
     interface View {
-        void showFriendsList(List<User> friends);
+        void showFriendsList(List<Friend> friends);
     }
 
     interface Presenter extends BasePresenter {

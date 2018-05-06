@@ -11,6 +11,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import runningtracker.R;
+import runningtracker.data.model.Friend;
 import runningtracker.data.model.User;
 
 /**
@@ -18,7 +19,7 @@ import runningtracker.data.model.User;
  */
 
 public class FriendsListAdapter extends RecyclerView.Adapter<FriendsListAdapter.ViewHolder> {
-    private List<User> mFriendsList;
+    private List<Friend> mFriendsList;
 
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
@@ -34,7 +35,7 @@ public class FriendsListAdapter extends RecyclerView.Adapter<FriendsListAdapter.
         }
     }
 
-    public FriendsListAdapter(List<User> mFriendsList) {
+    public FriendsListAdapter(List<Friend> mFriendsList) {
         this.mFriendsList = mFriendsList;
     }
 

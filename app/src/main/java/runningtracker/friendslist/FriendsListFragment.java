@@ -22,12 +22,14 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import runningtracker.Adapter.FriendsListAdapter;
 import runningtracker.R;
+import runningtracker.data.model.Friend;
 import runningtracker.data.model.User;
 
 
 public class FriendsListFragment extends Fragment {
-    @BindView(R.id.friends_recycler_view) RecyclerView mRecyclerView;
-    private static final String TAG = "Friends" ;
+    @BindView(R.id.friends_recycler_view)
+    RecyclerView mRecyclerView;
+    private static final String TAG = "Friends";
     FirebaseFirestore db;
     private FirebaseAuth mAuth;
     private RecyclerView.Adapter mAdapter;
@@ -43,7 +45,7 @@ public class FriendsListFragment extends Fragment {
         return view;
     }
 
-    public void showFriendsList(){
+    public void showFriendsList() {
         db = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
         //FirebaseUser currentUser = mAuth.getCurrentUser();
@@ -60,22 +62,21 @@ public class FriendsListFragment extends Fragment {
         // specify an adapter (see also next example)
 
 
-        db.collection("users").whereEqualTo("friends.YURw1KW4J3MbiOTtYGChXTojI042",true)
-                .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()) {
-                    List<User> friends = task.getResult().toObjects(User.class);
-                    mAdapter = new FriendsListAdapter(friends);
-                    mRecyclerView.setAdapter(mAdapter);
+        db.collection("users").document(mAuth.getUid()).collection("friends")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            List<Friend> friends = task.getResult().toObjects(Friend.class);
+                            mAdapter = new FriendsListAdapter(friends);
+                            mRecyclerView.setAdapter(mAdapter);
+                        } else {
+                            Log.d(TAG, "Error getting documents: ", task.getException());
+                        }
 
-
-                } else {
-                    Log.d(TAG, "Error getting documents: ", task.getException());
-                }
-
-            }
-        });
+                    }
+                });
     }
 
 
