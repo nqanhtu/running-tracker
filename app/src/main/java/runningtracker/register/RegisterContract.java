@@ -18,6 +18,8 @@ public interface RegisterContract {
         void makeToast(String text);
 
         boolean validateForm();
+
+        void startHome();
     }
 
     interface Presenter extends BasePresenter {

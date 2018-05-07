@@ -16,18 +16,23 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import runningtracker.R;
+import runningtracker.data.model.Friend;
 import runningtracker.data.model.User;
 
 /**
@@ -73,6 +78,8 @@ public class FriendRequestsAdapter extends RecyclerView.Adapter<FriendRequestsAd
         final MyViewHolder viewHolder = new MyViewHolder(v);
         db = FirebaseFirestore.getInstance();
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
+
+
         mDialog = new Dialog(mContext);
         mDialog.setContentView(R.layout.dialog);
         Objects.requireNonNull(mDialog.getWindow()).setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
@@ -87,6 +94,8 @@ public class FriendRequestsAdapter extends RecyclerView.Adapter<FriendRequestsAd
                 Button buttonReject = mDialog.findViewById(R.id.reject_button);
 
                 final User friend = mFriendsList.get(viewHolder.getAdapterPosition());
+
+
                 dialogName.setText(friend.getDisplayName());
                 dialogEmail.setText(friend.getEmail());
                 mDialog.show();
@@ -104,15 +113,34 @@ public class FriendRequestsAdapter extends RecyclerView.Adapter<FriendRequestsAd
                                     }
                                 });
 
+
+                        //Get current user firestore
+                        db.collection("users").document(currentUser.getUid()).get()
+                                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                        if (task.isSuccessful()) {
+                                            Map<String, Object> mapUser = task.getResult().getData();
+                                            String displayName = mapUser.get("displayName").toString();
+                                            Friend friend1 = new Friend();
+
+
+                                        }
+                                    }
+                                });
+
+
                         db.collection("users").document(friend.getUid())
                                 .collection("friends").document(currentUser.getUid()).set(currentUser)
                                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override
                                     public void onSuccess(Void aVoid) {
 
-
+                                        Log.d(TAG, "DocumentSnapshot successfully writed!");
                                     }
                                 });
+
+
                         db.collection("users").document(currentUser.getUid())
                                 .collection("friendRequests").document(friend.getUid()).delete()
                                 .addOnSuccessListener(new OnSuccessListener<Void>() {

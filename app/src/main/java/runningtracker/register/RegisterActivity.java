@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.VisibleForTesting;
@@ -34,6 +35,7 @@ import butterknife.OnTouch;
 import runningtracker.R;
 import runningtracker.common.InitializationFirebase;
 import runningtracker.data.repository.UsersRepository;
+import runningtracker.home.HomeActivity;
 
 /**
  * Created by Anh Tu on 2/27/2018.
@@ -142,6 +144,12 @@ public class RegisterActivity extends AppCompatActivity implements RegisterContr
         }
 
         return valid;
+    }
+
+    @Override
+    public void startHome() {
+        Intent intent = new Intent(this, HomeActivity.class);
+        startActivity(intent);
     }
 
     private void setDateTimeField() {
