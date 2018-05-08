@@ -51,9 +51,9 @@ public class FriendRequestsAdapter extends RecyclerView.Adapter<FriendRequestsAd
         // each data item is just a string in this case
         @BindView(R.id.item_friend)
         RelativeLayout item;
-        @BindView(R.id.display_name_text_view)
+        @BindView(R.id.displayNameTextView)
         TextView displayName;
-        @BindView(R.id.email_text_view)
+        @BindView(R.id.emailTextView)
         TextView email;
 
         MyViewHolder(View v) {

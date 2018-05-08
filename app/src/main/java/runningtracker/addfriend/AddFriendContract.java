@@ -12,7 +12,7 @@ import runningtracker.data.model.User;
 
 public interface AddFriendContract {
     interface View {
-        void showFriendsList(List<Friend> friends);
+        void showFriendsList();
     }
 
     interface Presenter extends BasePresenter {

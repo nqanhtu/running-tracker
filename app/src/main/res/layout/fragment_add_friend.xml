@@ -18,8 +18,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:ems="10"
-            android:inputType="textPersonName"
-            android:text="Name" />
+            android:hint="Email"
+            android:inputType="textPersonName" />
 
         <Button
             android:id="@+id/add_friend_button"

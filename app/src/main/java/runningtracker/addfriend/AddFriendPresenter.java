@@ -4,14 +4,16 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.List;
 
-import runningtracker.Adapter.FriendsListAdapter;
 import runningtracker.data.model.Friend;
 import runningtracker.data.model.User;
 import runningtracker.data.datasource.UsersDataSource;
@@ -33,6 +35,7 @@ public class AddFriendPresenter implements AddFriendContract.Presenter {
     public AddFriendPresenter(UsersRepository mUsersRepository, @NonNull AddFriendContract.View mAddFriendView) {
         this.mUsersRepository = mUsersRepository;
         this.mAddFriendView = mAddFriendView;
+        db = FirebaseFirestore.getInstance();
     }
 
     @Override
@@ -41,10 +44,16 @@ public class AddFriendPresenter implements AddFriendContract.Presenter {
     }
 
     private void loadAddFriends() {
-//        mUsersRepository.getFriendRequestsSent(currentUser.getUid(), new UsersDataSource.LoadUsersCallback() {
+
+    }
+
+    @Override
+    public void addFriend(String email) {
+//        mUsersRepository.getUserByEmail(email, new UsersDataSource.GetUserCallback() {
 //            @Override
-//            public void onUsersLoaded(List<Friend> friends) {
-//                mAddFriendView.showFriendsList(friends);
+//            public void onUserLoaded(User user) {
+//                mUsersRepository.addFriendRequest(currentUser, user.getUid());
+//                mUsersRepository.addFriendRequestSent(user, currentUser.getUid());
 //            }
 //
 //            @Override
@@ -52,41 +61,35 @@ public class AddFriendPresenter implements AddFriendContract.Presenter {
 //
 //            }
 //        });
-        db = FirebaseFirestore.getInstance();
-        db.collection("users").document(currentUser.getUid()).collection("friendRequests")
+        db.collection("users").whereEqualTo("email", email)
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
-                            List<Friend> friends = task.getResult().toObjects(Friend.class);
+                            List<Friend> users = task.getResult().toObjects(Friend.class);
 
-                            mAddFriendView.showFriendsList(friends);
+                            if (!users.isEmpty()) {
+                                final Friend user = users.get(0);
 
-                        } else {
-                            Log.d(TAG, "Error getting documents: ", task.getException());
+                                db.collection("users").document(currentUser.getUid())
+                                        .collection("friendRequestsSent").document(user.getUid()).set(user);
+
+                                db.collection("users").document(currentUser.getUid()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                    @Override
+                                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                        db.collection("users").document(user.getUid())
+                                                .collection("friendRequests").document(currentUser.getUid()).set(documentSnapshot.getData());
+                                    }
+                                });
+
+
+                            }
+
+
                         }
-
                     }
                 });
-
-    }
-
-    @Override
-    public void addFriend(String email) {
-        mUsersRepository.getUserByEmail(email, new UsersDataSource.GetUserCallback() {
-            @Override
-            public void onUserLoaded(User user) {
-                mUsersRepository.addFriendRequest(currentUser, user.getUid());
-                mUsersRepository.addFriendRequestSent(user, currentUser.getUid());
-            }
-
-            @Override
-            public void onDataNotAvailable() {
-
-            }
-        });
-
     }
 
 }

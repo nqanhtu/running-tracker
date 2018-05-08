@@ -29,22 +29,9 @@ public class FriendRequestsPresenter implements FriendRequestsContract.Presenter
 
     @Override
     public void start() {
-        loadFriendRequests();
-    }
-
-    private void loadFriendRequests() {
-        mUsersRepository.getFriendRequests(currentUser.getUid(), new UsersDataSource.LoadUsersCallback() {
-            @Override
-            public void onUsersLoaded(List<User> users) {
-                mFriendRequestsView.showFriendRequests(users);
-            }
-
-            @Override
-            public void onDataNotAvailable() {
-
-            }
-        });
 
     }
+
+
 
 }

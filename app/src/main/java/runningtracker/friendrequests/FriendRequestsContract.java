@@ -11,7 +11,7 @@ import runningtracker.data.model.User;
 
 public interface FriendRequestsContract {
     interface View{
-        void showFriendRequests(List<User> friends);
+       // void showFriendRequests(List<User> friends);
     }
     interface Presenter extends BasePresenter {
 
