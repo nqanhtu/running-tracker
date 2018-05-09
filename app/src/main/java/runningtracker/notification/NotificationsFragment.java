@@ -22,4 +22,6 @@ public class NotificationsFragment extends Fragment {
         return view;
     }
 
+    
+
 }

@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -95,7 +96,6 @@ public class FriendRequestsFragment extends Fragment implements FriendRequestsCo
             protected void onBindViewHolder(@NonNull FriendsHolder holder, int position, @NonNull Friend friend) {
                 holder.displayNameTextView.setText(friend.getDisplayName());
                 holder.emailTextView.setText(friend.getEmail());
-                Log.d(TAG,friend.getDisplayName());
                 holder.friend = friend;
             }
 
@@ -222,7 +222,7 @@ public class FriendRequestsFragment extends Fragment implements FriendRequestsCo
     public class FriendsHolder extends RecyclerView.ViewHolder {
 
         @BindView(R.id.item_friend)
-        RelativeLayout item;
+        ConstraintLayout item;
         @BindView(R.id.displayNameTextView)
         TextView displayNameTextView;
         @BindView(R.id.userImg)
