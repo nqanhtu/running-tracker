@@ -1,4 +1,4 @@
-package runningtracker.running;
+package runningtracker.running.model;
 
 public interface CheckShareCallback {
 
