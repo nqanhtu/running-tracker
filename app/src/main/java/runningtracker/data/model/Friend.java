@@ -17,6 +17,15 @@ public class Friend {
         this.blockNotify = blockNotify;
     }
 
+
+    public Friend(String displayName, String email, String uid) {
+        this.displayName = displayName;
+        this.email = email;
+        this.uid = uid;
+        this.notify = true;
+        this.blockNotify = false;
+    }
+
     public String getDisplayName() {
         return displayName;
     }
