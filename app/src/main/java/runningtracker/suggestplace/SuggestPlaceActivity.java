@@ -11,7 +11,6 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -28,9 +27,6 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,8 +35,6 @@ import java.util.Locale;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import runningtracker.R;
-import runningtracker.common.InitializationFirebase;
-import runningtracker.data.repository.UsersRepository;
 import runningtracker.model.suggets_place.ItemSuggest;
 import runningtracker.model.suggets_place.Route;
 
@@ -54,11 +48,11 @@ public class SuggestPlaceActivity extends AppCompatActivity implements OnMapRead
     private Toolbar toolbarTitle;
 
     private String[] listItems;
-    boolean[] checkedItems;
+    int checkedItems = -1;
     private ArrayList<Integer> mUserItems = new ArrayList<>();
     private DirectionFinderPresenter suggestPre;
 
-    private ArrayList<ItemSuggest> ListItemSuggests = new ArrayList<>();
+    private ArrayList<ItemSuggest> ListItemSuggests;
     private List<Location> listLocation;
     private Geocoder geocoder;
     private List<Address> addresses;
@@ -70,7 +64,7 @@ public class SuggestPlaceActivity extends AppCompatActivity implements OnMapRead
         setContentView(R.layout.activity_suggest_place);
 
         suggestPre = new DirectionFinderPresenter();
-        listLocation = new ArrayList<>();
+
         toolbarTitle =  (Toolbar) findViewById(R.id.actName);
 
         ButterKnife.bind(this);
@@ -79,35 +73,10 @@ public class SuggestPlaceActivity extends AppCompatActivity implements OnMapRead
         mapFragment.getMapAsync(this);
 
         listItems = getResources().getStringArray(R.array.suggets_item);
-        checkedItems = new boolean[listItems.length];
         myLocation = getMyLocation();
-        pushDataRealtime();
         getListItem();
     }
 
-    /**
-     * test realtime datatbase
-    * */
-    public void pushDataRealtime(){
-
-        demo aaaa = new demo(456789);
-        InitializationFirebase aa = new InitializationFirebase();
-        FirebaseFirestore firestore = aa.createFirebase();
-        UsersRepository usersRepository  = UsersRepository.getInstance(firestore);
-
-        firestore.collection("testrealtime  ").document().set(aaaa)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Toast.makeText(SuggestPlaceActivity.this, "Luu Thanh Cong", Toast.LENGTH_LONG).show();
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(SuggestPlaceActivity.this, "Luu That  Bai", Toast.LENGTH_LONG).show();
-                    }
-                });
-    }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
@@ -135,6 +104,7 @@ public class SuggestPlaceActivity extends AppCompatActivity implements OnMapRead
     }
 
     private void sendRequest() {
+
         mMap.clear();
         String origin = "";
         String destination = "";
@@ -237,23 +207,17 @@ public class SuggestPlaceActivity extends AppCompatActivity implements OnMapRead
     * @return: list location
     */
     public void getListItem(){
+
+        listLocation = new ArrayList<>();
+        ListItemSuggests = new ArrayList<>();
+
         AlertDialog.Builder mBuilder = new AlertDialog.Builder(SuggestPlaceActivity.this);
         mBuilder.setTitle("Chọn gợi ý");
-        mBuilder.setMultiChoiceItems(listItems, checkedItems, new DialogInterface.OnMultiChoiceClickListener() {
+        mBuilder.setSingleChoiceItems(listItems, -1, new DialogInterface.OnClickListener() {
             @Override
-            public void onClick(DialogInterface dialogInterface, int position, boolean isChecked) {
-                if (isChecked) {
-                    if (!mUserItems.contains(position)) {
-                        mUserItems.add(position);
-                    }
-                } else if (mUserItems.contains(position)) {
-                    mUserItems.remove(position);
-                }
-                if(isChecked){
-                    mUserItems.add(position);
-                }else{
-                    mUserItems.remove((Integer.valueOf(position)));
-                }
+            public void onClick(DialogInterface dialog, int position) {
+                checkedItems = position;
+
             }
         });
 
@@ -262,15 +226,16 @@ public class SuggestPlaceActivity extends AppCompatActivity implements OnMapRead
         mBuilder.setPositiveButton("Đồng ý", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int which) {
-                String item = "";
-                for (int i = 0; i < listItems.length; i++) {
-                    ItemSuggest itemSuggest = new ItemSuggest();
-                    if(checkedItems[i] == true) {
-                        itemSuggest.setPosition(i);
-                        ListItemSuggests.add(itemSuggest);
-                    }
-                }
 
+                mMap.clear();
+                ItemSuggest itemSuggest = new ItemSuggest();
+                if(checkedItems >= 0 ) {
+                    itemSuggest.setPosition(checkedItems);
+                    ListItemSuggests.add(itemSuggest);
+                }
+                /**
+                 * set marker location
+                * */
                 suggestPre.setMarkerLocation(ListItemSuggests, mMap, new SuggestCallback() {
                     @Override
                     public void getListLocation(List<Location> locationList) {
@@ -283,10 +248,8 @@ public class SuggestPlaceActivity extends AppCompatActivity implements OnMapRead
         mBuilder.setNeutralButton("Hủy", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int which) {
-                for (int i = 0; i < checkedItems.length; i++) {
-                    checkedItems[i] = false;
+                    checkedItems = -1;
                     mUserItems.clear();
-                }
             }
         });
         AlertDialog mDialog = mBuilder.create();
@@ -318,6 +281,5 @@ public class SuggestPlaceActivity extends AppCompatActivity implements OnMapRead
         }
         return bestLocation;
     }
-
 }
 

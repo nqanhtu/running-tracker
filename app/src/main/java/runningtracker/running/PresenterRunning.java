@@ -40,13 +40,13 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
-import org.json.JSONException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -56,10 +56,10 @@ import java.util.Map;
 import runningtracker.R;
 import runningtracker.common.MyLocation;
 import runningtracker.data.model.running.ResultObject;
+import runningtracker.data.model.setting.ShareLocationObject;
 import runningtracker.model.ObjectCommon;
 import runningtracker.model.modelrunning.BodilyCharacteristicObject;
 import runningtracker.model.ResAPICommon;
-import runningtracker.model.modelrunning.DatabaseLocation;
 import runningtracker.data.model.running.LocationObject;
 import runningtracker.fitnessstatistic.Calculator;
 
@@ -115,13 +115,6 @@ public class PresenterRunning {
         currentUser = mAuth.getCurrentUser();
     }
 
-    public void saveRunning() throws JSONException {
-    }
-
-
-    public void getData() {
-    }
-
 
     public float DistanceLocation(Location locationA, Location locationB) {
         float distance;
@@ -160,7 +153,6 @@ public class PresenterRunning {
                     public void onLocationResult(LocationResult locationResult) {
                         super.onLocationResult(locationResult);
                         if(setupCalories > 0) {
-                            Log.d("AAAAAAAAAAAA", ""+setupCalories);
                             if (setupCalories < rCalories && countNotification < 3) {
                                 ring.start();
                                 countNotification += 1;
@@ -170,9 +162,6 @@ public class PresenterRunning {
                     }
                 };
             }
-            /**
-             * Set value callback if don't connect internet
-             * */
             else {
                 mLocationCallback = new LocationCallback() {
                     @Override
@@ -182,7 +171,12 @@ public class PresenterRunning {
                     }
                 };
             }
-        } else {
+        }
+
+        /**
+         * Set value callback if don't connect internet
+         * */
+        else {
             mLocationCallback = new LocationCallback() {
                 @Override
                 public void onLocationResult(LocationResult locationResult) {
@@ -198,8 +192,51 @@ public class PresenterRunning {
      * @param : Location
      * @function: Update change information if location change
      */
-    public void onLocationChanged(Location location, String ID, FirebaseFirestore firestore) {
-        DatabaseLocation mQuery = new DatabaseLocation(runningContract.getMainActivity());
+    public void onLocationChanged(Location location, String ID, final FirebaseFirestore firestore) {
+
+        final Map<String, Object> mapShareLocation = new HashMap<>();
+        mapShareLocation.put("latitudeValue", location.getLatitude());
+        mapShareLocation.put("longitudeValue", location.getLongitude());
+        /**
+         * Check share location value before update my location value or no
+        * */
+        DocumentReference docRef =  firestore.collection("users")
+                .document(currentUser.getUid())
+                .collection("sharelocation")
+                .document("1");
+
+        docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                ShareLocationObject shareLocationObject = documentSnapshot.toObject(ShareLocationObject.class);
+                if(shareLocationObject.getShareLocation()){
+
+                    DocumentReference shareLocation = firestore.collection("users")
+                            .document(currentUser.getUid())
+                            .collection("updatelocation")
+                            .document("1");
+
+                    shareLocation.update(mapShareLocation)
+                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                    Log.d("Status: ", "DocumentSnapshot successfully updated!");
+                                }
+                            })
+                            .addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    Log.w("Status: ", "Error updating document", e);
+                                }
+                            });
+                }
+            }
+        });
+        /**
+         * get list location update of friends and set marker
+        * */
+        getListLocationFriends(firestore);
+
         LocationObject iLocation = new LocationObject();
         iLocation.setLatitudeValue(location.getLatitude());
         iLocation.setLongitudeValue(location.getLongitude());
@@ -308,7 +345,6 @@ public class PresenterRunning {
                 });
     }
 
-
     public boolean checkPermissions() {
         int permissionState = ActivityCompat.checkSelfPermission(runningContract.getMainActivity(), Manifest.permission.ACCESS_FINE_LOCATION);
         return permissionState == PackageManager.PERMISSION_GRANTED;
@@ -331,6 +367,7 @@ public class PresenterRunning {
     }
 
     public float getPace() {
+
         return rPace;
     }
 
@@ -339,6 +376,11 @@ public class PresenterRunning {
     }
 
     public void onLocationChangedOffline(Location location, String ID, FirebaseFirestore firestore) {
+        /**
+         * Check share location value before update my location value or no
+         * */
+
+
         if (mLatitude != 0) {
             rPace = 0;
             mLocation = new Location("B");
@@ -556,6 +598,121 @@ public class PresenterRunning {
                         }
                     }
                 });
+    }
+
+    /**
+     * Get id friends
+     * @param : FirebaseFirestore and IdFriendsCallback
+    * */
+    public void getIdFriends(FirebaseFirestore firestore, final IdFriendsCallback idFriendsCallback){
+        final List<Map<String, Object>> friends = new ArrayList<>();
+        firestore.collection("users")
+                .document(currentUser.getUid())
+                .collection("friends")
+                .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        Log.d(TAG, document.getId() + " => " + document.getData());
+                        /**
+                         * get information id friends
+                         * */
+                        try {
+                            friends.add(document.getData());
+                            idFriendsCallback.onSuccess(friends);
+                        }catch(Exception e){
+                            e.printStackTrace();
+                        }
+                    }
+                } else {
+                    Log.d(TAG, "Error getting documents: ", task.getException());
+                }
+            }
+        });
+    }
+
+    /**
+     * Check share location friends
+     * @param : idFriend, FirebaseFirestore and CheckShareCallback
+    * */
+    private void checkShareLocation(String idFriend, FirebaseFirestore firestore, final CheckShareCallback checkShareCallback){
+        DocumentReference docRef =  firestore.collection("users")
+                .document(idFriend)
+                .collection("sharelocation")
+                .document("1");
+
+        docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                ShareLocationObject shareLocationObject = documentSnapshot.toObject(ShareLocationObject.class);
+                checkShareCallback.successShare(shareLocationObject.getShareLocation());
+
+            }
+        });
+    }
+    /**
+     * Set marker of friends
+    * */
+    private void setMarker(LocationObject locationObject){
+        /**
+         * Set view map icon
+        * */
+        runningContract.getMapShare().addMarker(new MarkerOptions().position(new LatLng(locationObject.getLatitudeValue(), locationObject.getLongitudeValue()))
+                .title("Friend"));
+
+        CameraUpdate cameraUpdateIcon = CameraUpdateFactory.newLatLngZoom((new LatLng(locationObject.getLatitudeValue(),locationObject.getLongitudeValue())), 15);
+        runningContract.getMapShare().animateCamera(cameraUpdateIcon);
+
+        /**
+         * Set view full map friends
+        * */
+        runningContract.getMapViewFull().addMarker(new MarkerOptions().position(new LatLng(locationObject.getLatitudeValue(), locationObject.getLongitudeValue()))
+                .title("Friend"));
+
+        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom((new LatLng(locationObject.getLatitudeValue(),locationObject.getLongitudeValue())), 15);
+        runningContract.getMapViewFull().animateCamera(cameraUpdate);
+    }
+    /**
+     * Get location update friends
+     * @param :
+    * */
+    private void getListLocationFriends(final FirebaseFirestore firestore){
+
+        getIdFriends(firestore, new IdFriendsCallback() {
+            @Override
+            public void onSuccess(List<Map<String, Object>> idFriends) {
+                for(int i = 0; i < idFriends.size(); i++){
+                    /**
+                     * Get id of friend
+                    * */
+                    Map<String, Object> lastIdFriend = idFriends.get(i);
+                    final String idFriend = lastIdFriend.get("uid").toString();
+                    checkShareLocation(idFriend, firestore, new CheckShareCallback() {
+                        @Override
+                        public void successShare(Boolean status) {
+                            /**
+                             * if is true get location update of friend
+                            * */
+                            if(status){
+                                DocumentReference docRef =  firestore.collection("users")
+                                        .document(idFriend)
+                                        .collection("updatelocation")
+                                        .document("1");
+
+                                docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                    @Override
+                                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                        LocationObject locationObject = documentSnapshot.toObject(LocationObject.class);
+                                        setMarker(locationObject);
+                                    }
+                                });
+                            }
+                        }
+                    });
+                }
+            }
+        });
     }
 }
 
