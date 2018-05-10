@@ -20,6 +20,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import runningtracker.R;
 import runningtracker.common.InitializationFirebase;
 import runningtracker.data.model.running.ResultObject;
+import runningtracker.running.model.TrackingHistoryCallback;
 
 
 import java.util.ArrayList;

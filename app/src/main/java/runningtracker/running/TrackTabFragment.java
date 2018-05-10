@@ -29,6 +29,7 @@ import runningtracker.common.InitializationFirebase;
 import runningtracker.common.MyLocation;
 import runningtracker.data.model.running.IdHistory;
 import runningtracker.data.model.running.LocationObject;
+import runningtracker.running.model.LocationHistoryCallback;
 
 import static runningtracker.running.ResultActivity.idDateHistory;
 import static runningtracker.running.ResultActivity.tabFragmentLayouts;

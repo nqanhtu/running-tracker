@@ -31,6 +31,7 @@ import com.google.android.gms.location.SettingsClient;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polygon;
 import com.google.android.gms.maps.model.PolygonOptions;
@@ -49,6 +50,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -62,6 +64,12 @@ import runningtracker.model.modelrunning.BodilyCharacteristicObject;
 import runningtracker.model.ResAPICommon;
 import runningtracker.data.model.running.LocationObject;
 import runningtracker.fitnessstatistic.Calculator;
+import runningtracker.running.model.CheckShareCallback;
+import runningtracker.running.model.IdFriendsCallback;
+import runningtracker.running.model.IdHistoryCallback;
+import runningtracker.running.model.LocationHistoryCallback;
+import runningtracker.running.model.RunningContract;
+import runningtracker.running.model.TrackingHistoryCallback;
 
 import static runningtracker.running.RunningActivity.setupCalories;
 
@@ -92,6 +100,8 @@ public class PresenterRunning {
     private MediaPlayer ring;
     private FirebaseUser currentUser;
     private int countNotification = 0;
+    /**Create method list marker*/
+    public static List<Marker> listMarker;
 
     BodilyCharacteristicObject m_Bodily;
 
@@ -654,12 +664,12 @@ public class PresenterRunning {
     /**
      * Set marker of friends
     * */
-    private void setMarker(LocationObject locationObject){
+    private void setMarker(LocationObject locationObject, String nameFriends){
         /**
          * Set view map icon
         * */
         runningContract.getMapShare().addMarker(new MarkerOptions().position(new LatLng(locationObject.getLatitudeValue(), locationObject.getLongitudeValue()))
-                .title("Friend"));
+                .title(nameFriends));
 
         CameraUpdate cameraUpdateIcon = CameraUpdateFactory.newLatLngZoom((new LatLng(locationObject.getLatitudeValue(),locationObject.getLongitudeValue())), 15);
         runningContract.getMapShare().animateCamera(cameraUpdateIcon);
@@ -667,17 +677,36 @@ public class PresenterRunning {
         /**
          * Set view full map friends
         * */
-        runningContract.getMapViewFull().addMarker(new MarkerOptions().position(new LatLng(locationObject.getLatitudeValue(), locationObject.getLongitudeValue()))
-                .title("Friend"));
+        listMarker = Collections.singletonList(runningContract.getMapViewFull().addMarker(new MarkerOptions().position(new LatLng(locationObject.getLatitudeValue(), locationObject.getLongitudeValue()))
+                .title(nameFriends)));
 
         CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom((new LatLng(locationObject.getLatitudeValue(),locationObject.getLongitudeValue())), 15);
         runningContract.getMapViewFull().animateCamera(cameraUpdate);
     }
     /**
+     * Search marker after move camera
+    * */
+    public void searchMarker(String nameMarker){
+
+        /**Check list marker is null or not null*/
+        if(listMarker != null) {
+            /**Search marker in list marker*/
+            for (Marker m : listMarker) {
+                if (m.getSnippet().equals(nameMarker)) {
+                    LatLng location = m.getPosition();
+                    CameraUpdate cameraUpdateIcon = CameraUpdateFactory.newLatLngZoom(location, 15);
+                    runningContract.getMapShare().animateCamera(cameraUpdateIcon);
+                }
+            }
+        }
+    }
+    /**
      * Get location update friends
      * @param :
     * */
-    private void getListLocationFriends(final FirebaseFirestore firestore){
+    public void getListLocationFriends(final FirebaseFirestore firestore){
+
+        listMarker = new ArrayList<>();
 
         getIdFriends(firestore, new IdFriendsCallback() {
             @Override
@@ -688,6 +717,7 @@ public class PresenterRunning {
                     * */
                     Map<String, Object> lastIdFriend = idFriends.get(i);
                     final String idFriend = lastIdFriend.get("uid").toString();
+                    final String nameFriends = lastIdFriend.get("displayName").toString();
                     checkShareLocation(idFriend, firestore, new CheckShareCallback() {
                         @Override
                         public void successShare(Boolean status) {
@@ -704,7 +734,7 @@ public class PresenterRunning {
                                     @Override
                                     public void onSuccess(DocumentSnapshot documentSnapshot) {
                                         LocationObject locationObject = documentSnapshot.toObject(LocationObject.class);
-                                        setMarker(locationObject);
+                                        setMarker(locationObject, nameFriends);
                                     }
                                 });
                             }
