@@ -1,4 +1,4 @@
-package runningtracker.running;
+package runningtracker.running.model;
 
 import java.util.List;
 import java.util.Map;

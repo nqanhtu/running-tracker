@@ -38,8 +38,8 @@ import runningtracker.R;
 import runningtracker.common.InitializationFirebase;
 import runningtracker.data.model.history.DateHistoryObject;
 import runningtracker.data.model.running.LocationObject;
-import runningtracker.running.IdHistoryCallback;
-import runningtracker.running.LocationHistoryCallback;
+import runningtracker.running.model.IdHistoryCallback;
+import runningtracker.running.model.LocationHistoryCallback;
 import runningtracker.running.ResultActivity;
 
 public class HistoryActivity extends AppCompatActivity implements OnMapReadyCallback, AdapterView.OnItemClickListener{

@@ -12,16 +12,13 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
 import runningtracker.data.model.running.LocationObject;
-import runningtracker.running.IdHistoryCallback;
-import runningtracker.running.LocationHistoryCallback;
+import runningtracker.running.model.IdHistoryCallback;
+import runningtracker.running.model.LocationHistoryCallback;
 
 public class HistoryPresenter {
 

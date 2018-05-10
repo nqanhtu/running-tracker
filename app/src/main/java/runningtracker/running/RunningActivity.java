@@ -25,6 +25,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -36,20 +38,20 @@ import runningtracker.common.GenerateID;
 import runningtracker.common.InitializationFirebase;
 import runningtracker.common.MyLocation;
 import runningtracker.data.model.running.IdHistory;
-import runningtracker.data.model.running.LocationObject;
 import runningtracker.data.model.running.ResultObject;
 import runningtracker.model.modelrunning.BodilyCharacteristicObject;
 import runningtracker.model.modelrunning.DatabaseLocation;
 import runningtracker.fitnessstatistic.Calculator;
+import runningtracker.running.model.RunningContract;
 
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.maps.CameraUpdate;
-import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Marker;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import org.json.JSONException;
@@ -57,6 +59,7 @@ import org.json.JSONException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 
 public class RunningActivity extends AppCompatActivity implements RunningContract, OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks {
@@ -70,6 +73,10 @@ public class RunningActivity extends AppCompatActivity implements RunningContrac
     boolean isRun;
     private String timeRunning;
     private ImageView statusConnect;
+    /**
+     * Test auto search
+    * */
+    AutoCompleteTextView text;
 
     public Runnable runnable = new Runnable() {
         @Override
@@ -77,7 +84,7 @@ public class RunningActivity extends AppCompatActivity implements RunningContrac
             lSystemTime = SystemClock.uptimeMillis() - lStartTime;
             long lUpdateTime = lPauseTime + lSystemTime;
             rUpdateTime = lUpdateTime;
-            long secs = (long) (lUpdateTime / 1000);
+            long secs = (lUpdateTime / 1000);
             long mins = secs / 60;
             long hour = mins / 60;
             secs = secs % 60;
@@ -128,6 +135,8 @@ public class RunningActivity extends AppCompatActivity implements RunningContrac
 
         InitializationFirebase initializationFirebase = new InitializationFirebase();
         firestore = initializationFirebase.createFirebase();
+        /**Get location friends*/
+        presenterRunning.getListLocationFriends(firestore);
 
         GenerateID generateID = new GenerateID();
         idHistory = new IdHistory();
@@ -301,6 +310,7 @@ public class RunningActivity extends AppCompatActivity implements RunningContrac
     }
 
     private void initializeUI() {
+
         /**Toolbar*/
         Toolbar actionBar = findViewById(R.id.actionbar);
         actionBar.setTitle(R.string.RunningTitle);
@@ -353,7 +363,33 @@ public class RunningActivity extends AppCompatActivity implements RunningContrac
         });
 
         /**
-         * Create fragment view full friends of user
+         * Create fragment view full friends share location of user
+        * */
+        /**
+         * Test search view
+        * */
+        /**Create list suggest*/
+        String[] languages = new String[100];
+
+        if(PresenterRunning.listMarker != null){
+            for(int i = 0; i < PresenterRunning.listMarker.size(); i++){
+                languages[i] = PresenterRunning.listMarker.get(i).getTitle();
+            }
+        }
+        text = findViewById(R.id.autoCompleteTextView1);
+        ArrayAdapter adapter = new
+                ArrayAdapter(this,android.R.layout.simple_list_item_1,languages);
+        text.setAdapter(adapter);
+        text.setThreshold(1);
+        /**Listener image event*/
+        ImageView imgSearch = findViewById(R.id.imgSearch);
+        imgSearch.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+               presenterRunning.searchMarker(String.valueOf(text.getText()));
+            }
+        });
+        /**
+         * Map view
         * */
         MapFragment mapFragmentViewShare = (MapFragment) getFragmentManager().findFragmentById(R.id.mapViewFull);
         mapFragmentViewShare.getMapAsync(new OnMapReadyCallback() {

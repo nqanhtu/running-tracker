@@ -15,18 +15,90 @@
         android:id="@+id/mapViewFullLayout"
         android:orientation="vertical">
 
-        <fragment
-            android:id="@+id/mapViewFull"
-            android:name="com.google.android.gms.maps.MapFragment"
+        <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:android.support.v7.appcompat="http://schemas.android.com/apk/res-auto"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:id="@+id/aboveSectionLayoutFullMap"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:paddingBottom="10dp">
+
+            <!--<SearchView
+                android:id="@+id/searchView1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
+                android:background="@drawable/ic_replay_white_48dp"
+                android:iconifiedByDefault="false"
+                android:padding="2dp"
+                android:queryHint="Search...."
+                tools:layout_editor_absoluteX="32dp"
+                tools:layout_editor_absoluteY="5dp"
+                tools:ignore="MissingConstraints">
+
+            </SearchView> -->
+
+            <ImageView
+                android:id="@+id/imgSearch"
+                android:layout_width="62dp"
+                android:layout_height="44dp"
+                android:layout_marginStart="20dp"
+                android.support.v7.appcompat:layout_constraintHorizontal_bias="0.983"
+                android.support.v7.appcompat:layout_constraintStart_toEndOf="@+id/autoCompleteTextView1"
+                android.support.v7.appcompat:layout_constraintVertical_bias="0.0"
+                android.support.v7.appcompat:srcCompat="@drawable/ic_search"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="@+id/autoCompleteTextView1"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="parent" />
+                tools:ignore="MissingConstraints" />
+
+            <AutoCompleteTextView
+                android:id="@+id/autoCompleteTextView1"
+                android:layout_width="wrap_content"
+                android:layout_height="43dp"
+                android:layout_alignLeft="@+id/imageView"
+                android:layout_alignStart="@+id/imageView"
+                android:layout_below="@+id/imageView"
+                android:ems="10"
+                android:hint="Search"
+                tools:ignore="MissingConstraints"
+                tools:layout_editor_absoluteX="85dp"
+                tools:layout_editor_absoluteY="13dp">
+
+                <requestFocus />
+            </AutoCompleteTextView>
+
+        </android.support.constraint.ConstraintLayout>
+
+        <android.support.constraint.ConstraintLayout
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:id="@+id/belowSectionLayoutFullMap"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
 
-            android:enabled="false"
+            android:layout_alignParentBottom="true"
+            android:layout_below="@+id/aboveSectionLayout">
 
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="parent" />
+            <fragment
+                android:id="@+id/mapViewFull"
+                android:name="com.google.android.gms.maps.MapFragment"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+
+                android:enabled="false"
+
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="parent" />
+        </android.support.constraint.ConstraintLayout>
 
     </LinearLayout>
 
@@ -50,7 +122,6 @@
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
-
 
 
         <!--Duration-->
