@@ -121,8 +121,8 @@ public class RunningActivity extends AppCompatActivity implements RunningContrac
          *  online onCreate
         * */
         presenterRunning.initialization();
-        txtTimer = (TextView) findViewById(R.id.textValueDuration);
-        statusConnect = (ImageView) findViewById(R.id.iconStatus);
+        txtTimer = findViewById(R.id.textValueDuration);
+        statusConnect = findViewById(R.id.iconStatus);
 
         checkConnect = presenterRunning.isConnected(this);
 
@@ -251,9 +251,9 @@ public class RunningActivity extends AppCompatActivity implements RunningContrac
 
     @Override
     public void setupViewRunning(float mDistanceValue, float mPaceValue, float mCalorie) {
-        TextView txtDistance = (TextView) findViewById(R.id.textValueDistance);
-        TextView txtNetCalorie = (TextView) findViewById(R.id.textValueCalorie);
-        TextView txtPace = (TextView) findViewById(R.id.textValuePace);
+        TextView txtDistance = findViewById(R.id.textValueDistance);
+        TextView txtNetCalorie = findViewById(R.id.textValueCalorie);
+        TextView txtPace = findViewById(R.id.textValuePace);
         txtDistance.setText(Float.toString(mDistanceValue));
         txtNetCalorie.setText(Float.toString(mCalorie));
         String rMin ="";
@@ -301,8 +301,8 @@ public class RunningActivity extends AppCompatActivity implements RunningContrac
     }
 
     private void initializeUI() {
-        // Toolbar
-        Toolbar actionBar = (Toolbar) findViewById(R.id.actionbar);
+        /**Toolbar*/
+        Toolbar actionBar = findViewById(R.id.actionbar);
         actionBar.setTitle(R.string.RunningTitle);
         actionBar.setTitleTextColor(ContextCompat.getColor(this, R.color.textColorPrimary));
         setSupportActionBar(actionBar);
@@ -368,7 +368,6 @@ public class RunningActivity extends AppCompatActivity implements RunningContrac
                     mMapViewFullFriend.setMyLocationEnabled(true);
                     mMapViewFullFriend.getUiSettings().setMyLocationButtonEnabled(false);
 
-
                     /**
                      * Get touch event on map fragment
                      * */
@@ -387,9 +386,9 @@ public class RunningActivity extends AppCompatActivity implements RunningContrac
 
 
 
-    //send data to ResultActivity
+    /**send data to ResultActivity*/
     private void sendDataToResult(){
-        //calculator grossCalorieBurned
+        /**calculator grossCalorieBurned*/
         rGrossCalorie = 0;
         if(m_Bodily != null) {
             rGrossCalorie = (float) Calculator.grossCalorieBurned(presenterRunning.getCalories(), m_Bodily.getRestingMetabolicRate(), rUpdateTime /3600000);
@@ -422,9 +421,9 @@ public class RunningActivity extends AppCompatActivity implements RunningContrac
 
     public void onClickStartButton(View startButton) {
 
-        // Perform animation
-        ImageButton pauseButton = (ImageButton) findViewById(R.id.pauseButton);
-        ImageButton stopButton = (ImageButton) findViewById(R.id.stopButton);
+        /**Perform animation*/
+        ImageButton pauseButton = findViewById(R.id.pauseButton);
+        ImageButton stopButton = findViewById(R.id.stopButton);
 
         Animation pauseButtonAnimation = AnimationUtils.loadAnimation(RunningActivity.this, R.anim.pause_button_separation);
         Animation stopButtonAnimation = AnimationUtils.loadAnimation(RunningActivity.this, R.anim.stop_button_separation);
@@ -448,15 +447,14 @@ public class RunningActivity extends AppCompatActivity implements RunningContrac
             statusConnect.setImageResource(R.drawable.ic_offline);
             locationManager.requestLocationUpdates(locationProvider, 0, 0, locListener);
         }
-        //refreshMap(mMap);
-        // Get start time
+        /**Get start time*/
         startCurrentTime = Calendar.getInstance().getTime();
     }
 
     public void onClickPauseButton(View pauseButton) {
-        // Perform animation
-        ImageButton resumeButton = (ImageButton) findViewById(R.id.resumeButton);
-        ImageButton stopButton = (ImageButton) findViewById(R.id.stopButton);
+        /**Perform animation*/
+        ImageButton resumeButton = findViewById(R.id.resumeButton);
+        ImageButton stopButton = findViewById(R.id.stopButton);
         Animation resumeButtonAnimation = AnimationUtils.loadAnimation(RunningActivity.this, R.anim.resume_button_fade_in);
         Animation pauseButtonAnimation = AnimationUtils.loadAnimation(RunningActivity.this, R.anim.pause_button_unification);
         Animation stopButtonAnimation = AnimationUtils.loadAnimation(RunningActivity.this, R.anim.stop_button_unification);
@@ -479,9 +477,9 @@ public class RunningActivity extends AppCompatActivity implements RunningContrac
     }
 
     public void onClickResumeButton(View resumeButton) {
-        // Perform animation
-        ImageButton pauseButton = (ImageButton) findViewById(R.id.pauseButton);
-        ImageButton stopButton = (ImageButton) findViewById(R.id.stopButton);
+        /**Perform animation*/
+        ImageButton pauseButton = findViewById(R.id.pauseButton);
+        ImageButton stopButton = findViewById(R.id.stopButton);
         Animation pauseButtonAnimation = AnimationUtils.loadAnimation(RunningActivity.this, R.anim.pause_button_separation);
         Animation stopButtonAnimation = AnimationUtils.loadAnimation(RunningActivity.this, R.anim.stop_button_separation);
         resumeButton.setEnabled(false);
