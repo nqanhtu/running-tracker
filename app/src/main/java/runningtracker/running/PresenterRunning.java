@@ -56,7 +56,10 @@ import java.util.List;
 import java.util.Map;
 
 import runningtracker.R;
+import runningtracker.common.InitializationFirebase;
 import runningtracker.common.MyLocation;
+import runningtracker.data.model.Friend;
+import runningtracker.data.model.running.InfoUserObject;
 import runningtracker.data.model.running.ResultObject;
 import runningtracker.data.model.setting.ShareLocationObject;
 import runningtracker.model.ObjectCommon;
@@ -67,6 +70,8 @@ import runningtracker.fitnessstatistic.Calculator;
 import runningtracker.running.model.CheckShareCallback;
 import runningtracker.running.model.IdFriendsCallback;
 import runningtracker.running.model.IdHistoryCallback;
+import runningtracker.running.model.InforUserCallback;
+import runningtracker.running.model.ListSuggestCallback;
 import runningtracker.running.model.LocationHistoryCallback;
 import runningtracker.running.model.RunningContract;
 import runningtracker.running.model.TrackingHistoryCallback;
@@ -101,14 +106,16 @@ public class PresenterRunning {
     private FirebaseUser currentUser;
     private int countNotification = 0;
     /**Create method list marker*/
-    public static List<Marker> listMarker;
+    public ArrayList<Marker> listMarker;
 
-    BodilyCharacteristicObject m_Bodily;
+   private InfoUserObject infoUser;
+    private FirebaseFirestore firestore;
 
     RunningContract runningContract;
     ResAPICommon resAPICommon;
     ObjectCommon objectCommon;
     MyLocation myLocation;
+
 
     public PresenterRunning(RunningContract runningContract) {
         this.runningContract = runningContract;
@@ -118,11 +125,35 @@ public class PresenterRunning {
 
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         currentUser = mAuth.getCurrentUser();
+        /**Create firebase*/
+        InitializationFirebase initializationFirebase = new InitializationFirebase();
+        firestore = initializationFirebase.createFirebase();
+
+        /**Get info user*/
+        infoUser = new InfoUserObject();
+        getInforUser(firestore, new InforUserCallback() {
+            @Override
+            public void successInfor(InfoUserObject infoUserObjectnfo) {
+                infoUser = infoUserObjectnfo;
+            }
+        });
     }
 
     public PresenterRunning() {
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         currentUser = mAuth.getCurrentUser();
+        /**Create firebase*/
+        InitializationFirebase initializationFirebase = new InitializationFirebase();
+        firestore = initializationFirebase.createFirebase();
+
+        /**Get info user*/
+        infoUser = new InfoUserObject();
+        getInforUser(firestore, new InforUserCallback() {
+            @Override
+            public void successInfor(InfoUserObject infoUserObjectnfo) {
+                infoUser = infoUserObjectnfo;
+            }
+        });
     }
 
 
@@ -245,7 +276,12 @@ public class PresenterRunning {
         /**
          * get list location update of friends and set marker
         * */
-        getListLocationFriends(firestore);
+        getListLocationFriends(firestore, new ListSuggestCallback() {
+            @Override
+            public void getListNameFriends(ArrayList<Marker> listNameFriends) {
+
+            }
+        });
 
         LocationObject iLocation = new LocationObject();
         iLocation.setLatitudeValue(location.getLatitude());
@@ -263,7 +299,10 @@ public class PresenterRunning {
             }
             //if(m_Bodily != null)
             //rCalories = (float) Calculator.netCalorieBurned(m_Bodily.getWeightInKg(), m_Bodily.getVo2Max(), rDisaTance, 0, false);
-            rCalories = (float) Calculator.netCalorieBurned(80, 42, rDisaTance, 0, false);
+            if(infoUser != null) {
+                rCalories = (float) Calculator.netCalorieBurned(infoUser.getWeight(),
+                        42, rDisaTance, 0, false);
+            }
             if (rPace > maxPace) {
                 maxPace = rPace;
             }
@@ -389,7 +428,6 @@ public class PresenterRunning {
         /**
          * Check share location value before update my location value or no
          * */
-
 
         if (mLatitude != 0) {
             rPace = 0;
@@ -625,16 +663,18 @@ public class PresenterRunning {
                 if (task.isSuccessful()) {
                     for (QueryDocumentSnapshot document : task.getResult()) {
                         Log.d(TAG, document.getId() + " => " + document.getData());
+
                         /**
                          * get information id friends
                          * */
                         try {
                             friends.add(document.getData());
-                            idFriendsCallback.onSuccess(friends);
+
                         }catch(Exception e){
                             e.printStackTrace();
                         }
                     }
+                    idFriendsCallback.onSuccess(friends);
                 } else {
                     Log.d(TAG, "Error getting documents: ", task.getException());
                 }
@@ -664,7 +704,8 @@ public class PresenterRunning {
     /**
      * Set marker of friends
     * */
-    private void setMarker(LocationObject locationObject, String nameFriends){
+    private void setMarker(LocationObject locationObject, String nameFriends, ListSuggestCallback listSuggestCallback){
+
         /**
          * Set view map icon
         * */
@@ -677,8 +718,10 @@ public class PresenterRunning {
         /**
          * Set view full map friends
         * */
-        listMarker = Collections.singletonList(runningContract.getMapViewFull().addMarker(new MarkerOptions().position(new LatLng(locationObject.getLatitudeValue(), locationObject.getLongitudeValue()))
+        listMarker.add(runningContract.getMapViewFull().addMarker(new MarkerOptions().position(new LatLng(locationObject.getLatitudeValue(), locationObject.getLongitudeValue()))
                 .title(nameFriends)));
+
+        listSuggestCallback.getListNameFriends(listMarker);
 
         CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom((new LatLng(locationObject.getLatitudeValue(),locationObject.getLongitudeValue())), 15);
         runningContract.getMapViewFull().animateCamera(cameraUpdate);
@@ -692,10 +735,10 @@ public class PresenterRunning {
         if(listMarker != null) {
             /**Search marker in list marker*/
             for (Marker m : listMarker) {
-                if (m.getSnippet().equals(nameMarker)) {
+                if (m.getTitle().equalsIgnoreCase(nameMarker)) {
                     LatLng location = m.getPosition();
-                    CameraUpdate cameraUpdateIcon = CameraUpdateFactory.newLatLngZoom(location, 15);
-                    runningContract.getMapShare().animateCamera(cameraUpdateIcon);
+                    CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(location, 15);
+                    runningContract.getMapViewFull().animateCamera(cameraUpdate);
                 }
             }
         }
@@ -704,7 +747,7 @@ public class PresenterRunning {
      * Get location update friends
      * @param :
     * */
-    public void getListLocationFriends(final FirebaseFirestore firestore){
+    public void getListLocationFriends(final FirebaseFirestore firestore, final ListSuggestCallback listSuggestCallback){
 
         listMarker = new ArrayList<>();
 
@@ -734,13 +777,29 @@ public class PresenterRunning {
                                     @Override
                                     public void onSuccess(DocumentSnapshot documentSnapshot) {
                                         LocationObject locationObject = documentSnapshot.toObject(LocationObject.class);
-                                        setMarker(locationObject, nameFriends);
+                                        if(locationObject.getLatitudeValue() != 0.0)
+                                            setMarker(locationObject, nameFriends, listSuggestCallback);
                                     }
                                 });
                             }
                         }
                     });
                 }
+            }
+        });
+    }
+
+    /**
+     * Get information user
+    * */
+    public void getInforUser(final FirebaseFirestore firestore, final InforUserCallback inforUserCallback){
+        DocumentReference docRefInfo =  firestore.collection("usersData")
+                .document(currentUser.getUid());
+        docRefInfo.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                InfoUserObject infoUserObject = documentSnapshot.toObject(InfoUserObject.class);
+                inforUserCallback.successInfor(infoUserObject);
             }
         });
     }

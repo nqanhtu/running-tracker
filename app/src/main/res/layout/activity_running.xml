@@ -24,6 +24,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
+            android:background="#64b5f6"
             android:paddingBottom="10dp">
 
             <!--<SearchView
@@ -44,31 +45,38 @@
 
             <ImageView
                 android:id="@+id/imgSearch"
-                android:layout_width="62dp"
+                android:layout_width="44dp"
                 android:layout_height="44dp"
-                android:layout_marginStart="20dp"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="8dp"
                 android.support.v7.appcompat:layout_constraintHorizontal_bias="0.983"
                 android.support.v7.appcompat:layout_constraintStart_toEndOf="@+id/autoCompleteTextView1"
-                android.support.v7.appcompat:layout_constraintVertical_bias="0.0"
+                android.support.v7.appcompat:layout_constraintTop_toTopOf="parent"
+                android.support.v7.appcompat:layout_constraintVertical_bias="1.0"
                 android.support.v7.appcompat:srcCompat="@drawable/ic_search"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintLeft_toLeftOf="@+id/autoCompleteTextView1"
+                app:layout_constraintLeft_toRightOf="@+id/autoCompleteTextView1"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="parent" />
-                tools:ignore="MissingConstraints" />
+                app:layout_constraintTop_toBottomOf="parent"
+                tools:ignore="NotSibling" />
 
             <AutoCompleteTextView
                 android:id="@+id/autoCompleteTextView1"
-                android:layout_width="wrap_content"
-                android:layout_height="43dp"
+                android:layout_width="178dp"
+                android:layout_height="50dp"
                 android:layout_alignLeft="@+id/imageView"
-                android:layout_alignStart="@+id/imageView"
-                android:layout_below="@+id/imageView"
+                android:layout_marginEnd="100dp"
+                android:layout_marginLeft="68dp"
                 android:ems="10"
                 android:hint="Search"
-                tools:ignore="MissingConstraints"
-                tools:layout_editor_absoluteX="85dp"
-                tools:layout_editor_absoluteY="13dp">
+                android.support.v7.appcompat:layout_constraintEnd_toEndOf="parent"
+                android.support.v7.appcompat:layout_constraintStart_toEndOf="@+id/imageView"
+                android.support.v7.appcompat:layout_constraintTop_toTopOf="parent"
+                android.support.v7.appcompat:layout_constraintVertical_bias="1.0"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintRight_toLeftOf="@+id/imageView"
+                app:layout_constraintTop_toBottomOf="parent"
+                tools:ignore="MissingConstraints">
 
                 <requestFocus />
             </AutoCompleteTextView>
@@ -116,9 +124,10 @@
         <android.support.v7.widget.Toolbar
             android:id="@+id/actionbar"
             style="@style/Toolbar"
+            android.support.v7.appcompat:layout_constraintHorizontal_bias="0.0"
             android.support.v7.appcompat:navigationIcon="@drawable/ic_menu_white_24dp"
-            app:layout_constraintLeft_toLeftOf="parent"
 
+            app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />

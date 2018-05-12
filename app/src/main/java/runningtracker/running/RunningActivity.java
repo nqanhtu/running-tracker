@@ -42,6 +42,7 @@ import runningtracker.data.model.running.ResultObject;
 import runningtracker.model.modelrunning.BodilyCharacteristicObject;
 import runningtracker.model.modelrunning.DatabaseLocation;
 import runningtracker.fitnessstatistic.Calculator;
+import runningtracker.running.model.ListSuggestCallback;
 import runningtracker.running.model.RunningContract;
 
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -50,8 +51,6 @@ import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import org.json.JSONException;
@@ -135,8 +134,6 @@ public class RunningActivity extends AppCompatActivity implements RunningContrac
 
         InitializationFirebase initializationFirebase = new InitializationFirebase();
         firestore = initializationFirebase.createFirebase();
-        /**Get location friends*/
-        presenterRunning.getListLocationFriends(firestore);
 
         GenerateID generateID = new GenerateID();
         idHistory = new IdHistory();
@@ -369,25 +366,38 @@ public class RunningActivity extends AppCompatActivity implements RunningContrac
          * Test search view
         * */
         /**Create list suggest*/
-        String[] languages = new String[100];
-
-        if(PresenterRunning.listMarker != null){
-            for(int i = 0; i < PresenterRunning.listMarker.size(); i++){
-                languages[i] = PresenterRunning.listMarker.get(i).getTitle();
-            }
+        /**Get location friends*/
+       // final String[] languages  = new String[10];
+        final ArrayList<String> listSuggest = new ArrayList<>();
+        if(firestore ==  null){
+            InitializationFirebase initializationFirebase = new InitializationFirebase();
+            firestore = initializationFirebase.createFirebase();
         }
-        text = findViewById(R.id.autoCompleteTextView1);
-        ArrayAdapter adapter = new
-                ArrayAdapter(this,android.R.layout.simple_list_item_1,languages);
-        text.setAdapter(adapter);
-        text.setThreshold(1);
-        /**Listener image event*/
-        ImageView imgSearch = findViewById(R.id.imgSearch);
-        imgSearch.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-               presenterRunning.searchMarker(String.valueOf(text.getText()));
+
+        presenterRunning.getListLocationFriends(firestore, new ListSuggestCallback() {
+            @Override
+            public void getListNameFriends(ArrayList<Marker> listNameFriends) {
+                if(listNameFriends != null){
+                    for(int i = 0; i < listNameFriends.size(); i++){
+                        listSuggest.add(listNameFriends.get(i).getTitle());
+                    }
+                }
+
+                text = findViewById(R.id.autoCompleteTextView1);
+                ArrayAdapter adapter = new ArrayAdapter(getMainActivity(), android.R.layout.simple_list_item_1,listSuggest);
+                text.setAdapter(adapter);
+                text.setThreshold(1);
+
+                /**Listener image event*/
+                ImageView imgSearch = findViewById(R.id.imgSearch);
+                imgSearch.setOnClickListener(new View.OnClickListener() {
+                    public void onClick(View v) {
+                        presenterRunning.searchMarker(String.valueOf(text.getText()));
+                    }
+                });
             }
         });
+
         /**
          * Map view
         * */
