@@ -1,8 +1,8 @@
 apply plugin: 'com.android.application'
 android {
 
-    compileSdkVersion 27
-    buildToolsVersion "27.0.3"
+    compileSdkVersion 'android-P'
+//    buildToolsVersion "27.0.3"
 
     defaultConfig {
         applicationId "com.example.minhtri.running"
@@ -25,23 +25,26 @@ android {
 }
 
 dependencies {
-    implementation 'com.android.support:support-v4:27.1.1'
+
+    api 'com.android.support:design:28.0.0-alpha1'
+    implementation 'com.android.support:support-v4:28.0.0-alpha1'
+  //  implementation 'com.android.support:support-v4:27.1.1'
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     androidTestImplementation('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
         exclude group: 'com.google.code.findbugs'
     })
-    implementation 'com.android.support:appcompat-v7:27.1.1'
+  //  implementation 'com.android.support:appcompat-v7:27.1.1'
     implementation 'com.android.support.constraint:constraint-layout:1.1.0'
     implementation 'com.readystatesoftware.sqliteasset:sqliteassethelper:2.0.1'
     implementation 'com.google.android.gms:play-services-maps:15.0.1'
     implementation 'com.google.android.gms:play-services-location:15.0.1'
     implementation 'com.google.code.gson:gson:2.8.2'
     implementation 'com.mcxiaoke.volley:library:1.0.19'
-    implementation 'com.android.support:design:27.1.1'
-    implementation 'com.android.support:support-v13:27.1.1'
-    implementation 'com.android.support:cardview-v7:27.1.1'
-    implementation 'com.android.support:recyclerview-v7:27.1.1'
+//    implementation 'com.android.support:design:27.1.1'
+//    implementation 'com.android.support:support-v13:27.1.1'
+//    implementation 'com.android.support:cardview-v7:27.1.1'
+//    implementation 'com.android.support:recyclerview-v7:27.1.1'
     implementation 'com.jakewharton:butterknife:8.8.1'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
     testImplementation 'junit:junit:4.12'
@@ -51,10 +54,9 @@ dependencies {
     // loging res req
     implementation 'com.squareup.okhttp3:logging-interceptor:3.8.0'
     // Add Dagger dependencies
-    implementation 'com.google.dagger:dagger:2.8'
+    implementation 'com.google.dagger:dagger:2.15'
     annotationProcessor 'com.google.dagger:dagger-compiler:2.8'
     implementation "com.google.guava:guava:24.0-android"
-    implementation 'com.aurelhubert:ahbottomnavigation:2.1.0'
     implementation 'com.squareup.picasso:picasso:2.5.2'
 
     //firebase

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#64b5f6</color>
-    <color name="colorAccent">#64b5f6</color>
-    <color name="colorPrimaryDark">#2286c3</color>
+    <!--<color name="colorPrimary">#64b5f6</color>-->
+    <!--<color name="colorAccent">#64b5f6</color>-->
+    <!--<color name="colorPrimaryDark">#2286c3</color>-->
     <color name="colorPrimaryLight">#9be7ff</color>
     <color name="textColorPrimary">#212121</color>
     <color name="navigationBarColor">#000000</color>
@@ -15,4 +15,12 @@
     <color name="colorBackgroundWhite">#ffffff</color>
     <color name="white">#ffffff</color>
     <color name="textColorSecondary">#616161</color>
+
+
+    <color name="colorPrimary">#8187ff</color>
+    <color name="colorPrimaryDark">#0031ca</color>
+    <color name="colorAccent">#3d5afe</color>
+    <color name="toolbarIconColor">#FFFFFF</color>
+    <color name="loginPageBackgroundColor">#FFFFFF</color>
+    <color name="productGridBackgroundColor">#FFFFFF</color>
 </resources>

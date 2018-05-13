@@ -2,30 +2,33 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     tools:context="runningtracker.dashboard.DashboardFragment">
 
-    <LinearLayout
+    <android.support.design.card.MaterialCardView
         android:id="@+id/main_activity_container"
         android:layout_width="match_parent"
         android:layout_height="150dp"
-        android:layout_marginBottom="2dp"
+        android:layout_margin="8dp"
         android:background="@color/colorBackgroundWhite"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        app:contentPadding="16dp">
 
         <TextView
             android:id="@+id/textView3"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="TextView" />
-    </LinearLayout>
+    </android.support.design.card.MaterialCardView>
 
-    <LinearLayout
+    <android.support.design.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="150dp"
-        android:layout_marginBottom="2dp"
+        android:layout_margin="8dp"
         android:background="@color/colorBackgroundWhite"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        app:contentPadding="16dp">
 
         <TextView
             android:id="@+id/locationTextView"
@@ -55,13 +58,13 @@
             android:id="@+id/weatherIcon"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
-    </LinearLayout>
+    </android.support.design.card.MaterialCardView>
 
     <GridView xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/gridview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginBottom="2dp"
+        android:layout_margin="8dp"
         android:columnWidth="90dp"
         android:gravity="center"
         android:horizontalSpacing="2dp"

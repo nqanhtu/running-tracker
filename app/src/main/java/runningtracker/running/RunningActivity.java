@@ -11,6 +11,7 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.ActivityCompat;
@@ -18,6 +19,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -37,7 +39,10 @@ import runningtracker.R;
 import runningtracker.common.GenerateID;
 import runningtracker.common.InitializationFirebase;
 import runningtracker.common.MyLocation;
+import runningtracker.data.model.Friend;
+import runningtracker.data.model.User;
 import runningtracker.data.model.running.IdHistory;
+import runningtracker.data.model.running.LocationObject;
 import runningtracker.data.model.running.ResultObject;
 import runningtracker.model.modelrunning.BodilyCharacteristicObject;
 import runningtracker.model.modelrunning.DatabaseLocation;
@@ -45,6 +50,8 @@ import runningtracker.fitnessstatistic.Calculator;
 import runningtracker.running.model.RunningContract;
 
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.maps.CameraUpdate;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -52,7 +59,16 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import org.json.JSONException;
 
@@ -60,6 +76,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class RunningActivity extends AppCompatActivity implements RunningContract, OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks {
@@ -77,6 +95,8 @@ public class RunningActivity extends AppCompatActivity implements RunningContrac
      * Test auto search
     * */
     AutoCompleteTextView text;
+    private User mCurrentUser;
+    private FirebaseAuth mAuth;
 
     public Runnable runnable = new Runnable() {
         @Override
@@ -111,9 +131,9 @@ public class RunningActivity extends AppCompatActivity implements RunningContrac
 
     /**
      * create method set value calories
-    * */
+     */
     int checkedItems = -1;
-    public static int  setupCalories = -1;
+    public static int setupCalories = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -123,10 +143,11 @@ public class RunningActivity extends AppCompatActivity implements RunningContrac
         myLocation = new MyLocation();
 
         initializeUI();
+        init();
 
         /**
          *  online onCreate
-        * */
+         * */
         presenterRunning.initialization();
         txtTimer = findViewById(R.id.textValueDuration);
         statusConnect = findViewById(R.id.iconStatus);
@@ -144,22 +165,22 @@ public class RunningActivity extends AppCompatActivity implements RunningContrac
 
         /**
          * Save file day help select and chosen data
-        * */
-        presenterRunning.saveHistory( idHistory.id, firestore);
+         * */
+        presenterRunning.saveHistory(idHistory.id, firestore);
 
-        presenterRunning.createLocationCallback(checkConnect,  idHistory.id , firestore);
+        presenterRunning.createLocationCallback(checkConnect, idHistory.id, firestore);
         presenterRunning.createLocationRequest();
         presenterRunning.buildLocationSettingsRequest();
 
         /**
          * offline onCreate
-        * */
+         * */
         locationManager = (LocationManager) this.getSystemService(LOCATION_SERVICE);
         locationProvider = LocationManager.GPS_PROVIDER;
         locListener = new LocationListener() {
             @Override
             public void onLocationChanged(Location location) {
-                presenterRunning.onLocationChangedOffline(location,  idHistory.id , firestore);
+                presenterRunning.onLocationChangedOffline(location, idHistory.id, firestore);
             }
 
             @Override
@@ -191,7 +212,7 @@ public class RunningActivity extends AppCompatActivity implements RunningContrac
             mMap.setMyLocationEnabled(true);
             mMap.getUiSettings().setMyLocationButtonEnabled(false);
             Location L = myLocation.getMyLocation(this);
-            if(L != null) {
+            if (L != null) {
                 presenterRunning.moveCamera(L);
             }
         }
@@ -213,8 +234,8 @@ public class RunningActivity extends AppCompatActivity implements RunningContrac
     }
 
     @Override
-    public void startTime(){
-        if(isRun)
+    public void startTime() {
+        if (isRun)
             return;
         isRun = true;
         lStartTime = SystemClock.uptimeMillis();
@@ -225,9 +246,10 @@ public class RunningActivity extends AppCompatActivity implements RunningContrac
     public float getUpdateTime() {
         return rUpdateTime;
     }
+
     @Override
-    public void stopTime(){
-        if(!isRun)
+    public void stopTime() {
+        if (!isRun)
             return;
         isRun = false;
         lPauseTime = 0;
@@ -265,32 +287,30 @@ public class RunningActivity extends AppCompatActivity implements RunningContrac
         TextView txtPace = (TextView) findViewById(R.id.textValuePace);
         txtDistance.setText(Float.toString(mDistanceValue));
         txtNetCalorie.setText(Float.toString(mCalorie));
-        String rMin ="";
-        String rSec ="";
-        if(mPaceValue > 0.0) {
+        String rMin = "";
+        String rSec = "";
+        if (mPaceValue > 0.0) {
             Log.d(TAG, "index=" + mPaceValue);
             int rA = (int) (mPaceValue);
-            int rB = (int) ((mPaceValue -rA )*100);
-            if(rA > 999){
+            int rB = (int) ((mPaceValue - rA) * 100);
+            if (rA > 999) {
                 rSec = String.valueOf(rB);
-                String rPace = "999:"+rSec;
+                String rPace = "999:" + rSec;
                 txtPace.setText(rPace);
-            }
-            else{
+            } else {
                 rMin = String.valueOf(rA);
                 rSec = String.valueOf(rB);
-                String rPace = rMin+":"+rSec;
+                String rPace = rMin + ":" + rSec;
                 txtPace.setText(rPace);
             }
-        }
-        else{
+        } else {
             txtPace.setText("00:00");
         }
     }
 
     /**
      * Create menu setting item
-    * */
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate navigation menu from the resources by using the menu inflater.
@@ -300,7 +320,7 @@ public class RunningActivity extends AppCompatActivity implements RunningContrac
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch(item.getItemId()) {
+        switch (item.getItemId()) {
             case R.id.setting:
                 createDialogCalories();
                 return true;
@@ -318,20 +338,20 @@ public class RunningActivity extends AppCompatActivity implements RunningContrac
 
         /**
          * Create layout need set hide or show
-        * */
+         * */
         final ConstraintLayout aboveSecsionLayout = this.findViewById(R.id.aboveSectionLayout);
         final ConstraintLayout belowSecsionLayout = this.findViewById(R.id.belowSectionLayout);
         final LinearLayout mapViewFull = this.findViewById(R.id.mapViewFullLayout);
         mapViewFull.setVisibility(LinearLayout.INVISIBLE);
         /**
          * Create map tracking
-        * */
+         * */
         MapFragment mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
         /**
          * Create map view location share of friends
-        * */
+         * */
         MapFragment mapFragmentShare = (MapFragment) getFragmentManager().findFragmentById(R.id.mapShareLocation);
         mapFragmentShare.getMapAsync(new OnMapReadyCallback() {
             @Override
@@ -348,7 +368,7 @@ public class RunningActivity extends AppCompatActivity implements RunningContrac
 
                     /**
                      * Get touch event on map fragment
-                    * */
+                     * */
                     mMapShareLocation.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
                         @Override
                         public void onMapLongClick(LatLng latLng) {
@@ -389,7 +409,9 @@ public class RunningActivity extends AppCompatActivity implements RunningContrac
         });
         /**
          * Map view
-        * */
+        *
+         * Create fragment view full friends of user
+         * */
         MapFragment mapFragmentViewShare = (MapFragment) getFragmentManager().findFragmentById(R.id.mapViewFull);
         mapFragmentViewShare.getMapAsync(new OnMapReadyCallback() {
             @Override
@@ -403,6 +425,28 @@ public class RunningActivity extends AppCompatActivity implements RunningContrac
                     mMapViewFullFriend.setMyLocationEnabled(true);
                     mMapViewFullFriend.getUiSettings().setMyLocationButtonEnabled(false);
 
+                    /**
+                     * Create list location friends demo
+                     * */
+                    ArrayList<LocationObject> list = new ArrayList<>();
+                    list.add(new LocationObject(10.736096, 106.674790));
+                    list.add(new LocationObject(10.738214, 106.677853));
+                    list.add(new LocationObject(10.734489, 106.678814));
+                    list.add(new LocationObject(10.738797, 106.681894));
+
+                    /**
+                     * Move camera first friend
+                     * */
+                    CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(new LatLng(list.get(0).getLatitudeValue(), list.get(0).getLongitudeValue()), 15);
+                    mMapViewFullFriend.animateCamera(cameraUpdate);
+
+                    /**
+                     * Set marker friend on map
+                     * */
+                    for (int i = 0; i < list.size(); i++) {
+                        mMapViewFullFriend.addMarker(new MarkerOptions().position(new LatLng(list.get(i).getLatitudeValue(), list.get(i).getLongitudeValue()))
+                                .title("Friend " + (i + 1)));
+                    }
 
                     /**
                      * Get touch event on map fragment
@@ -423,26 +467,26 @@ public class RunningActivity extends AppCompatActivity implements RunningContrac
 
 
     //send data to ResultActivity
-    private void sendDataToResult(){
+    private void sendDataToResult() {
         //calculator grossCalorieBurned
         rGrossCalorie = 0;
-        if(m_Bodily != null) {
-            rGrossCalorie = (float) Calculator.grossCalorieBurned(presenterRunning.getCalories(), m_Bodily.getRestingMetabolicRate(), rUpdateTime /3600000);
+        if (m_Bodily != null) {
+            rGrossCalorie = (float) Calculator.grossCalorieBurned(presenterRunning.getCalories(), m_Bodily.getRestingMetabolicRate(), rUpdateTime / 3600000);
             rGrossCalorie = presenterRunning.RoundAvoid(rGrossCalorie, 2);
         }
         Intent nextActivity = new Intent(RunningActivity.this, ResultActivity.class);
         nextActivity.putExtra("duration", timeRunning);
-        nextActivity.putExtra("distance", presenterRunning.RoundAvoid(presenterRunning.getDisaTance(),2));
-        nextActivity.putExtra("avgPace", presenterRunning.RoundAvoid(presenterRunning.getPace(),2));
-        nextActivity.putExtra("maxPace", presenterRunning.RoundAvoid(presenterRunning.getMaxPace(),2));
-        nextActivity.putExtra("netCalorie", presenterRunning.RoundAvoid(presenterRunning.getCalories(),1));
-        nextActivity.putExtra("grossCalorie", presenterRunning.RoundAvoid(rGrossCalorie,1));
+        nextActivity.putExtra("distance", presenterRunning.RoundAvoid(presenterRunning.getDisaTance(), 2));
+        nextActivity.putExtra("avgPace", presenterRunning.RoundAvoid(presenterRunning.getPace(), 2));
+        nextActivity.putExtra("maxPace", presenterRunning.RoundAvoid(presenterRunning.getMaxPace(), 2));
+        nextActivity.putExtra("netCalorie", presenterRunning.RoundAvoid(presenterRunning.getCalories(), 1));
+        nextActivity.putExtra("grossCalorie", presenterRunning.RoundAvoid(rGrossCalorie, 1));
 
         saveRunning();
         startActivity(nextActivity);
     }
 
-    public void saveRunning(){
+    public void saveRunning() {
         ResultObject resultObject;
         resultObject = new ResultObject(timeRunning, presenterRunning.RoundAvoid(presenterRunning.getDisaTance(), 2),
                 presenterRunning.RoundAvoid(presenterRunning.getPace(), 2),
@@ -451,11 +495,13 @@ public class RunningActivity extends AppCompatActivity implements RunningContrac
                 presenterRunning.RoundAvoid(rGrossCalorie, 2));
         /**
          * push data to firebase
-        * */
-        presenterRunning.saveHistoryRunningData( idHistory.id, firestore, resultObject);
+         * */
+        presenterRunning.saveHistoryRunningData(idHistory.id, firestore, resultObject);
     }
 
     public void onClickStartButton(View startButton) {
+        sendNotificcation();
+
 
         // Perform animation
         ImageButton pauseButton = (ImageButton) findViewById(R.id.pauseButton);
@@ -472,11 +518,10 @@ public class RunningActivity extends AppCompatActivity implements RunningContrac
         stopButton.startAnimation(stopButtonAnimation);
 
         startTime();
-        if(checkConnect) {
+        if (checkConnect) {
             statusConnect.setImageResource(R.drawable.ic_online);
             presenterRunning.startLocationUpdates();
-        }
-        else{
+        } else {
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 return;
             }
@@ -506,9 +551,9 @@ public class RunningActivity extends AppCompatActivity implements RunningContrac
         stopButton.startAnimation(stopButtonAnimation);
 
         pauseTime();
-        if(checkConnect) {
+        if (checkConnect) {
             presenterRunning.stopLocationUpdates();
-        }else{
+        } else {
             locationManager.removeUpdates(locListener);
         }
     }
@@ -529,9 +574,9 @@ public class RunningActivity extends AppCompatActivity implements RunningContrac
         stopButton.startAnimation(stopButtonAnimation);
 
         startTime();
-        if(checkConnect) {
+        if (checkConnect) {
             presenterRunning.startLocationUpdates();
-        }else{
+        } else {
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 return;
             }
@@ -540,22 +585,23 @@ public class RunningActivity extends AppCompatActivity implements RunningContrac
     }
 
     public void onClickStopButton(View view) throws JSONException {
-        if(checkConnect) {
+        if (checkConnect) {
             presenterRunning.stopLocationUpdates();
-        }else{
+        } else {
             locationManager.removeUpdates(locListener);
         }
         stopTime();
         stopCurrentTime = Calendar.getInstance().getTime();
         sendDataToResult();
     }
+
     /**
      * Create dialog setting calories before tracking of user
-    * */
-    private void createDialogCalories(){
+     */
+    private void createDialogCalories() {
 
         final AlertDialog.Builder mBuilder = new AlertDialog.Builder(this);
-        final String[] arrayAdater =  {"1000", "2000"};
+        final String[] arrayAdater = {"1000", "2000"};
 
         mBuilder.setTitle("Thiết Lập Calories");
         LayoutInflater inflater = this.getLayoutInflater();
@@ -563,7 +609,7 @@ public class RunningActivity extends AppCompatActivity implements RunningContrac
         mBuilder.setView(dialogView);
         final EditText editTextCalories = dialogView.findViewById(R.id.edtSetupCalories);
 
-        mBuilder.setSingleChoiceItems( arrayAdater, -1, new DialogInterface.OnClickListener() {
+        mBuilder.setSingleChoiceItems(arrayAdater, -1, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 checkedItems = i;
@@ -580,18 +626,18 @@ public class RunningActivity extends AppCompatActivity implements RunningContrac
                 //mBuilder.set(R.layout.dialog_chose_calories);
                 String temp = String.valueOf(editTextCalories.getText());
                 int calories = -1;
-                if(!temp.equals("")) {
+                if (!temp.equals("")) {
                     calories = Integer.parseInt(temp);
                 }
 
-                if(checkedItems >= 0 && calories > 0){
+                if (checkedItems >= 0 && calories > 0) {
                     setupCalories = calories;
-                }else if(checkedItems >= 0){
+                } else if (checkedItems >= 0) {
                     int tempCalories = Integer.parseInt(arrayAdater[checkedItems]);
                     setupCalories = tempCalories;
-                }else if(calories > 0){
+                } else if (calories > 0) {
                     setupCalories = calories;
-                }else{
+                } else {
                     setupCalories = 0;
 
                 }
@@ -607,5 +653,58 @@ public class RunningActivity extends AppCompatActivity implements RunningContrac
 
         AlertDialog mDialog = mBuilder.create();
         mDialog.show();
+    }
+
+
+    public void sendNotificcation() {
+
+        final String message = "Đang chạy bộ gần bạn";
+
+        firestore.collection("users").document(mCurrentUser.getUid()).collection("friends").get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot documentSnapshot : task.getResult()
+                                    ) {
+                                Friend friend = documentSnapshot.toObject(Friend.class);
+                                Map<String, Object> notificationMessage = new HashMap<>();
+                                notificationMessage.put("message", message);
+                                notificationMessage.put("from", mCurrentUser.getUid());
+                                notificationMessage.put("fromName", mCurrentUser.getDisplayName());
+                                firestore.collection("users/" + friend.getUid() + "/notifications").add(notificationMessage).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                                    @Override
+                                    public void onSuccess(DocumentReference documentReference) {
+                                        Log.d(TAG, "Ghi data thanh cong");
+                                    }
+                                });
+                            }
+                        }
+                    }
+                });
+
+
+    }
+
+
+    // Khỏi tạo các đối tuonjg
+    public void init() {
+        firestore = FirebaseFirestore.getInstance();
+        mAuth = FirebaseAuth.getInstance();
+        getCurrentUser();
+
+    }
+
+    public void getCurrentUser() {
+        firestore.collection("users").document(mAuth.getUid()).get()
+                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if (task.isSuccessful()) {
+                            mCurrentUser = task.getResult().toObject(User.class);
+                            Log.d(TAG,task.getResult().getData().toString());
+                        }
+                    }
+                });
     }
 }
