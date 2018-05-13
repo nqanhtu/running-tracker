@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.VisibleForTesting;
+import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
@@ -35,9 +36,9 @@ import runningtracker.register.RegisterActivity;
 public class LoginActivity extends AppCompatActivity implements LoginContract.View {
     private FirebaseAuth mAuth;
     @BindView(R.id.editEmail)
-    EditText mEmail;
+    TextInputEditText mEmail;
     @BindView(R.id.editPassword)
-    EditText mPassword;
+    TextInputEditText mPassword;
     private FirebaseFirestore mFirestore;
     private static final String TAG = "EmailPassword";
 
