@@ -47,6 +47,7 @@ import runningtracker.data.model.running.ResultObject;
 import runningtracker.model.modelrunning.BodilyCharacteristicObject;
 import runningtracker.model.modelrunning.DatabaseLocation;
 import runningtracker.fitnessstatistic.Calculator;
+import runningtracker.running.model.ListSuggestCallback;
 import runningtracker.running.model.RunningContract;
 
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -156,8 +157,6 @@ public class RunningActivity extends AppCompatActivity implements RunningContrac
 
         InitializationFirebase initializationFirebase = new InitializationFirebase();
         firestore = initializationFirebase.createFirebase();
-        /**Get location friends*/
-        presenterRunning.getListLocationFriends(firestore);
 
         GenerateID generateID = new GenerateID();
         idHistory = new IdHistory();
@@ -282,9 +281,9 @@ public class RunningActivity extends AppCompatActivity implements RunningContrac
 
     @Override
     public void setupViewRunning(float mDistanceValue, float mPaceValue, float mCalorie) {
-        TextView txtDistance = (TextView) findViewById(R.id.textValueDistance);
-        TextView txtNetCalorie = (TextView) findViewById(R.id.textValueCalorie);
-        TextView txtPace = (TextView) findViewById(R.id.textValuePace);
+        TextView txtDistance = findViewById(R.id.textValueDistance);
+        TextView txtNetCalorie = findViewById(R.id.textValueCalorie);
+        TextView txtPace = findViewById(R.id.textValuePace);
         txtDistance.setText(Float.toString(mDistanceValue));
         txtNetCalorie.setText(Float.toString(mCalorie));
         String rMin = "";
@@ -330,7 +329,8 @@ public class RunningActivity extends AppCompatActivity implements RunningContrac
     }
 
     private void initializeUI() {
-        // Toolbar
+
+        /**Toolbar*/
         Toolbar actionBar = findViewById(R.id.actionbar);
         actionBar.setTitle(R.string.RunningTitle);
         actionBar.setTitleTextColor(ContextCompat.getColor(this, R.color.textColorPrimary));
@@ -388,25 +388,38 @@ public class RunningActivity extends AppCompatActivity implements RunningContrac
          * Test search view
         * */
         /**Create list suggest*/
-        String[] languages = new String[100];
-
-        if(PresenterRunning.listMarker != null){
-            for(int i = 0; i < PresenterRunning.listMarker.size(); i++){
-                languages[i] = PresenterRunning.listMarker.get(i).getTitle();
-            }
+        /**Get location friends*/
+       // final String[] languages  = new String[10];
+        final ArrayList<String> listSuggest = new ArrayList<>();
+        if(firestore ==  null){
+            InitializationFirebase initializationFirebase = new InitializationFirebase();
+            firestore = initializationFirebase.createFirebase();
         }
-        text = findViewById(R.id.autoCompleteTextView1);
-        ArrayAdapter adapter = new
-                ArrayAdapter(this,android.R.layout.simple_list_item_1,languages);
-        text.setAdapter(adapter);
-        text.setThreshold(1);
-        /**Listener image event*/
-        ImageView imgSearch = findViewById(R.id.imgSearch);
-        imgSearch.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-               presenterRunning.searchMarker(String.valueOf(text.getText()));
+
+        presenterRunning.getListLocationFriends(firestore, new ListSuggestCallback() {
+            @Override
+            public void getListNameFriends(ArrayList<Marker> listNameFriends) {
+                if(listNameFriends != null){
+                    for(int i = 0; i < listNameFriends.size(); i++){
+                        listSuggest.add(listNameFriends.get(i).getTitle());
+                    }
+                }
+
+                text = findViewById(R.id.autoCompleteTextView1);
+                ArrayAdapter adapter = new ArrayAdapter(getMainActivity(), android.R.layout.simple_list_item_1,listSuggest);
+                text.setAdapter(adapter);
+                text.setThreshold(1);
+
+                /**Listener image event*/
+                ImageView imgSearch = findViewById(R.id.imgSearch);
+                imgSearch.setOnClickListener(new View.OnClickListener() {
+                    public void onClick(View v) {
+                        presenterRunning.searchMarker(String.valueOf(text.getText()));
+                    }
+                });
             }
         });
+
         /**
          * Map view
         *
@@ -503,9 +516,9 @@ public class RunningActivity extends AppCompatActivity implements RunningContrac
         sendNotificcation();
 
 
-        // Perform animation
-        ImageButton pauseButton = (ImageButton) findViewById(R.id.pauseButton);
-        ImageButton stopButton = (ImageButton) findViewById(R.id.stopButton);
+        /**Perform animation*/
+        ImageButton pauseButton = findViewById(R.id.pauseButton);
+        ImageButton stopButton = findViewById(R.id.stopButton);
 
         Animation pauseButtonAnimation = AnimationUtils.loadAnimation(RunningActivity.this, R.anim.pause_button_separation);
         Animation stopButtonAnimation = AnimationUtils.loadAnimation(RunningActivity.this, R.anim.stop_button_separation);
@@ -528,15 +541,14 @@ public class RunningActivity extends AppCompatActivity implements RunningContrac
             statusConnect.setImageResource(R.drawable.ic_offline);
             locationManager.requestLocationUpdates(locationProvider, 0, 0, locListener);
         }
-        //refreshMap(mMap);
-        // Get start time
+        /**Get start time*/
         startCurrentTime = Calendar.getInstance().getTime();
     }
 
     public void onClickPauseButton(View pauseButton) {
-        // Perform animation
-        ImageButton resumeButton = (ImageButton) findViewById(R.id.resumeButton);
-        ImageButton stopButton = (ImageButton) findViewById(R.id.stopButton);
+        /**Perform animation*/
+        ImageButton resumeButton = findViewById(R.id.resumeButton);
+        ImageButton stopButton = findViewById(R.id.stopButton);
         Animation resumeButtonAnimation = AnimationUtils.loadAnimation(RunningActivity.this, R.anim.resume_button_fade_in);
         Animation pauseButtonAnimation = AnimationUtils.loadAnimation(RunningActivity.this, R.anim.pause_button_unification);
         Animation stopButtonAnimation = AnimationUtils.loadAnimation(RunningActivity.this, R.anim.stop_button_unification);
@@ -559,7 +571,7 @@ public class RunningActivity extends AppCompatActivity implements RunningContrac
     }
 
     public void onClickResumeButton(View resumeButton) {
-        // Perform animation
+        /**Perform animation*/
         ImageButton pauseButton = findViewById(R.id.pauseButton);
         ImageButton stopButton = findViewById(R.id.stopButton);
         Animation pauseButtonAnimation = AnimationUtils.loadAnimation(RunningActivity.this, R.anim.pause_button_separation);

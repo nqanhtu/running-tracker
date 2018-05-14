@@ -82,11 +82,11 @@ public class HistoryPresenter {
                          * */
                         try {
                             histories.add(document.getData());
-                            idHistoryCallback.onSuccess(histories);
                         }catch(Exception e){
                             e.printStackTrace();
                         }
                     }
+                    idHistoryCallback.onSuccess(histories);
                 } else {
                     Log.d(TAG, "Error getting documents: ", task.getException());
                 }
