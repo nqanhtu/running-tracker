@@ -62,17 +62,23 @@ public class ResultActivity extends AppCompatActivity {
 
     private void initializeUI() {
         // Toolbar
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setTitle("Track Result");
-        toolbar.setTitleTextColor(ContextCompat.getColor(this, R.color.textColorPrimary));
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        /**event back dashboard*/
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent0 = new Intent(ResultActivity.this, RunningActivity.class);
+                startActivity(intent0);
+            }
+        });
+        toolbar.setTitleTextColor(ContextCompat.getColor(this, R.color.browser_actions_title_color));
 
         // ViewPager support swiping between tabs
-        ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
+        ViewPager viewPager =  findViewById(R.id.viewpager);
         setupViewPager(viewPager);
         // Tabs
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
+        TabLayout tabLayout =  findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
         setupTabIcons(tabLayout);
     }

@@ -39,6 +39,10 @@
             android:configChanges="keyboardHidden|orientation"
             android:screenOrientation="portrait" />
         <activity
+            android:name=".notification.MapDangerActivity"
+            android:configChanges="keyboardHidden|orientation"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".login.LoginActivity"
             android:configChanges="keyboardHidden|orientation"
             android:screenOrientation="portrait">

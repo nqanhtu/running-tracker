@@ -1,5 +1,6 @@
 package runningtracker.notification;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -11,26 +12,23 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import runningtracker.R;
-import runningtracker.addfriend.AddFriendFragment;
-import runningtracker.data.model.Friend;
 import runningtracker.data.model.Notification;
 
 public class NotificationsFragment extends Fragment {
@@ -93,7 +91,19 @@ public class NotificationsFragment extends Fragment {
             public NotificationHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
                 View view = LayoutInflater.from(parent.getContext())
                         .inflate(R.layout.item_notification, parent, false);
-
+                /**event click notication*/
+                view.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        int itemPosition = mRecyclerView.getChildLayoutPosition(v);
+                        Notification notification = new Notification();
+                        notification = (Notification) firestoreRecyclerAdapter.getItem(itemPosition);
+                        Intent intent = new Intent(getActivity(), MapDangerActivity.class);
+                        intent.putExtra("latitude", notification.getLatitudeValue());
+                        intent.putExtra("longitude", notification.getLongitudeValue());
+                        startActivity(intent);
+                    }
+                });
                 return new NotificationHolder(view);
             }
         };
@@ -101,6 +111,7 @@ public class NotificationsFragment extends Fragment {
         mLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setAdapter(firestoreRecyclerAdapter);
+
     }
 
     public class NotificationHolder extends RecyclerView.ViewHolder {

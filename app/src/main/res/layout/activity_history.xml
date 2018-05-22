@@ -22,7 +22,7 @@
         <android.support.v7.widget.Toolbar
             android:id="@+id/actionbarHistory"
             style="@style/Toolbar"
-            android.support.v7.appcompat:navigationIcon="@drawable/ic_menu_white_24dp"
+            android.support.v7.appcompat:navigationIcon="@drawable/ic_android_back_white_24dp"
             app:layout_constraintLeft_toLeftOf="parent"
 
             app:layout_constraintRight_toRightOf="parent"
@@ -33,14 +33,14 @@
             android:id="@+id/mapHistory"
             android:name="com.google.android.gms.maps.MapFragment"
             android:layout_width="match_parent"
-            android:layout_height="280dp"
+            android:layout_height="267dp"
 
             android:enabled="false"
 
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/actionbar" />
+            app:layout_constraintTop_toBottomOf="@+id/actionbarHistory" />
 
 
     </android.support.constraint.ConstraintLayout>

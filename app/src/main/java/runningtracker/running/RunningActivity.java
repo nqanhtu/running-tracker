@@ -15,11 +15,11 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -39,10 +39,10 @@ import runningtracker.R;
 import runningtracker.common.GenerateID;
 import runningtracker.common.InitializationFirebase;
 import runningtracker.common.MyLocation;
+import runningtracker.dashboard.DashboardFragment;
 import runningtracker.data.model.Friend;
 import runningtracker.data.model.User;
 import runningtracker.data.model.running.IdHistory;
-import runningtracker.data.model.running.LocationObject;
 import runningtracker.data.model.running.ResultObject;
 import runningtracker.model.modelrunning.BodilyCharacteristicObject;
 import runningtracker.model.modelrunning.DatabaseLocation;
@@ -51,20 +51,15 @@ import runningtracker.running.model.ListSuggestCallback;
 import runningtracker.running.model.RunningContract;
 
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.maps.CameraUpdate;
-import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -76,7 +71,6 @@ import org.json.JSONException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -215,6 +209,14 @@ public class RunningActivity extends AppCompatActivity implements RunningContrac
                 presenterRunning.moveCamera(L);
             }
         }
+        mMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
+            @Override
+            public void onMapLongClick(LatLng latLng) {
+                MyLocation myLocation = new MyLocation();
+                sendNotificcation(myLocation.getMyLocation(getMainActivity()).getLatitude(),
+                        myLocation.getMyLocation(getMainActivity()).getLongitude());
+            }
+        });
     }
 
     @Override
@@ -323,6 +325,9 @@ public class RunningActivity extends AppCompatActivity implements RunningContrac
             case R.id.setting:
                 createDialogCalories();
                 return true;
+            case R.id.actionbarTracking:
+                finish();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -331,9 +336,18 @@ public class RunningActivity extends AppCompatActivity implements RunningContrac
     private void initializeUI() {
 
         /**Toolbar*/
-        Toolbar actionBar = findViewById(R.id.actionbar);
+        Toolbar actionBar = findViewById(R.id.actionbarTracking);
         actionBar.setTitle(R.string.RunningTitle);
-        actionBar.setTitleTextColor(ContextCompat.getColor(this, R.color.textColorPrimary));
+        actionBar.setTitleTextColor(ContextCompat.getColor(this, R.color.browser_actions_title_color));
+/*        actionBar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                DashboardFragment fragment = new DashboardFragment();
+                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                transaction.replace(R.id.main_activity_container, fragment);
+                transaction.commit();
+            }
+        });*/
         setSupportActionBar(actionBar);
 
         /**
@@ -384,12 +398,7 @@ public class RunningActivity extends AppCompatActivity implements RunningContrac
         /**
          * Create fragment view full friends share location of user
         * */
-        /**
-         * Test search view
-        * */
-        /**Create list suggest*/
         /**Get location friends*/
-       // final String[] languages  = new String[10];
         final ArrayList<String> listSuggest = new ArrayList<>();
         if(firestore ==  null){
             InitializationFirebase initializationFirebase = new InitializationFirebase();
@@ -454,9 +463,7 @@ public class RunningActivity extends AppCompatActivity implements RunningContrac
         });
     }
 
-
-
-    //send data to ResultActivity
+    /**send data to ResultActivity*/
     private void sendDataToResult() {
         //calculator grossCalorieBurned
         rGrossCalorie = 0;
@@ -490,8 +497,6 @@ public class RunningActivity extends AppCompatActivity implements RunningContrac
     }
 
     public void onClickStartButton(View startButton) {
-        sendNotificcation();
-
 
         /**Perform animation*/
         ImageButton pauseButton = findViewById(R.id.pauseButton);
@@ -645,9 +650,9 @@ public class RunningActivity extends AppCompatActivity implements RunningContrac
     }
 
 
-    public void sendNotificcation() {
+    public void sendNotificcation(final double latitudeValue, final double longitudeValue) {
 
-        final String message = "Đang chạy bộ gần bạn";
+        final String message = "Đang gặp sự cố!!";
 
         firestore.collection("users").document(mCurrentUser.getUid()).collection("friends").get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -661,6 +666,8 @@ public class RunningActivity extends AppCompatActivity implements RunningContrac
                                 notificationMessage.put("message", message);
                                 notificationMessage.put("from", mCurrentUser.getUid());
                                 notificationMessage.put("fromName", mCurrentUser.getDisplayName());
+                                notificationMessage.put("latitudeValue", latitudeValue);
+                                notificationMessage.put("longitudeValue", longitudeValue);
                                 firestore.collection("users/" + friend.getUid() + "/notifications").add(notificationMessage).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                                     @Override
                                     public void onSuccess(DocumentReference documentReference) {
@@ -674,7 +681,7 @@ public class RunningActivity extends AppCompatActivity implements RunningContrac
     }
 
 
-    // Khỏi tạo các đối tuonjg
+    /**create objects*/
     public void init() {
         firestore = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
