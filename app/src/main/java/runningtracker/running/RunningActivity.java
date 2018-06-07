@@ -439,29 +439,6 @@ public class RunningActivity extends AppCompatActivity implements RunningContrac
                     mMapViewFullFriend.getUiSettings().setMyLocationButtonEnabled(false);
 
                     /**
-                     * Create list location friends demo
-                     * */
-                    ArrayList<LocationObject> list = new ArrayList<>();
-                    list.add(new LocationObject(10.736096, 106.674790));
-                    list.add(new LocationObject(10.738214, 106.677853));
-                    list.add(new LocationObject(10.734489, 106.678814));
-                    list.add(new LocationObject(10.738797, 106.681894));
-
-                    /**
-                     * Move camera first friend
-                     * */
-                    CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(new LatLng(list.get(0).getLatitudeValue(), list.get(0).getLongitudeValue()), 15);
-                    mMapViewFullFriend.animateCamera(cameraUpdate);
-
-                    /**
-                     * Set marker friend on map
-                     * */
-                    for (int i = 0; i < list.size(); i++) {
-                        mMapViewFullFriend.addMarker(new MarkerOptions().position(new LatLng(list.get(i).getLatitudeValue(), list.get(i).getLongitudeValue()))
-                                .title("Friend " + (i + 1)));
-                    }
-
-                    /**
                      * Get touch event on map fragment
                      * */
                     mMapViewFullFriend.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
@@ -694,8 +671,6 @@ public class RunningActivity extends AppCompatActivity implements RunningContrac
                         }
                     }
                 });
-
-
     }
 
 
