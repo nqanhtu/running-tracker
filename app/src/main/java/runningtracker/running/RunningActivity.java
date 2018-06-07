@@ -1,6 +1,7 @@
 package runningtracker.running;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -17,12 +18,15 @@ import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
@@ -49,6 +53,8 @@ import runningtracker.model.modelrunning.DatabaseLocation;
 import runningtracker.fitnessstatistic.Calculator;
 import runningtracker.running.model.ListSuggestCallback;
 import runningtracker.running.model.RunningContract;
+import runningtracker.running.model.ViewFullFriendsActivity;
+import runningtracker.settings.SettingDashBoardActivity;
 
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.maps.GoogleMap;
@@ -86,12 +92,18 @@ public class RunningActivity extends AppCompatActivity implements RunningContrac
     boolean isRun;
     private String timeRunning;
     private ImageView statusConnect;
+    private Menu menuAuto;
     /**
      * Test auto search
     * */
     AutoCompleteTextView text;
     private User mCurrentUser;
     private FirebaseAuth mAuth;
+    /**
+     * auto search
+    * */
+    private SearchView searchView;
+    private SearchView.SearchAutoComplete   mSearchAutoComplete;
 
     public Runnable runnable = new Runnable() {
         @Override
@@ -312,10 +324,27 @@ public class RunningActivity extends AppCompatActivity implements RunningContrac
     /**
      * Create menu setting item
      */
+    @SuppressLint("RestrictedApi")
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate navigation menu from the resources by using the menu inflater.
         getMenuInflater().inflate(R.menu.navigation_menu, menu);
+        menuAuto = menu;
+        //
+/*        getMenuInflater().inflate(R.menu.search_auto, menu);
+        MenuItem item = menu.findItem(R.id.action_search);
+
+        searchView = (SearchView) MenuItemCompat.getActionView(item);
+        mSearchAutoComplete =  searchView
+                .findViewById(android.support.v7.appcompat.R.id.search_src_text);
+        mSearchAutoComplete.setDropDownBackgroundResource(R.drawable.background_login);
+        mSearchAutoComplete.setDropDownAnchor(R.id.action_search);
+        mSearchAutoComplete.setThreshold(0);
+        final ArrayList<String> listSuggest = new ArrayList<>();
+        listSuggest.add("asdf");
+        listSuggest.add("ndfjihasd");
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listSuggest);
+        mSearchAutoComplete.setAdapter(adapter);*/
         return true;
     }
 
@@ -331,6 +360,24 @@ public class RunningActivity extends AppCompatActivity implements RunningContrac
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    @SuppressLint("RestrictedApi")
+    public void onCreateOptionsMenuAuto(Menu menu) {
+        getMenuInflater().inflate(R.menu.search_auto, menu);
+        MenuItem item = menu.findItem(R.id.action_search);
+
+        searchView = (SearchView) MenuItemCompat.getActionView(item);
+        mSearchAutoComplete =  searchView
+                .findViewById(android.support.v7.appcompat.R.id.search_src_text);
+        mSearchAutoComplete.setDropDownBackgroundResource(R.drawable.background_login);
+        mSearchAutoComplete.setDropDownAnchor(R.id.action_search);
+        mSearchAutoComplete.setThreshold(0);
+        final ArrayList<String> listSuggest = new ArrayList<>();
+        listSuggest.add("asdf");
+        listSuggest.add("ndfjihasd");
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listSuggest);
+        mSearchAutoComplete.setAdapter(adapter);
     }
 
     private void initializeUI() {
@@ -386,18 +433,22 @@ public class RunningActivity extends AppCompatActivity implements RunningContrac
                     mMapShareLocation.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
                         @Override
                         public void onMapLongClick(LatLng latLng) {
-                            aboveSecsionLayout.setVisibility(ConstraintLayout.INVISIBLE);
-                            belowSecsionLayout.setVisibility(ConstraintLayout.INVISIBLE);
-                            mapViewFull.setVisibility(LinearLayout.VISIBLE);
+                           // aboveSecsionLayout.setVisibility(ConstraintLayout.INVISIBLE);
+                            //belowSecsionLayout.setVisibility(ConstraintLayout.INVISIBLE);
+                            //mapViewFull.setVisibility(LinearLayout.VISIBLE);
+                            Intent intent0 = new Intent(getMainActivity(), ViewFullFriendsActivity.class);
+                            startActivity(intent0);
                         }
                     });
                 }
             }
         });
 
+
         /**
          * Create fragment view full friends share location of user
         * */
+
         /**Get location friends*/
         final ArrayList<String> listSuggest = new ArrayList<>();
         if(firestore ==  null){
@@ -405,7 +456,9 @@ public class RunningActivity extends AppCompatActivity implements RunningContrac
             firestore = initializationFirebase.createFirebase();
         }
 
-        presenterRunning.getListLocationFriends(firestore, new ListSuggestCallback() {
+
+
+     /*     presenterRunning.getListLocationFriends(firestore, new ListSuggestCallback() {
             @Override
             public void getListNameFriends(ArrayList<Marker> listNameFriends) {
                 if(listNameFriends != null){
@@ -419,7 +472,7 @@ public class RunningActivity extends AppCompatActivity implements RunningContrac
                 text.setAdapter(adapter);
                 text.setThreshold(1);
 
-                /**Listener image event*/
+                *//**Listener image event*//*
                 ImageView imgSearch = findViewById(R.id.imgSearch);
                 imgSearch.setOnClickListener(new View.OnClickListener() {
                     public void onClick(View v) {
@@ -427,7 +480,7 @@ public class RunningActivity extends AppCompatActivity implements RunningContrac
                     }
                 });
             }
-        });
+        }); */
 
         /**
          * Map view
