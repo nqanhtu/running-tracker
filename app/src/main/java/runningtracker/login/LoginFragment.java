@@ -4,13 +4,15 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
 import android.support.design.widget.TextInputEditText;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.util.Log;
-import android.widget.EditText;
-import android.widget.TextView;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -19,23 +21,24 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.GetTokenResult;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.iid.FirebaseInstanceId;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
+import java.util.concurrent.Executor;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import runningtracker.NavigationHost;
 import runningtracker.R;
-import runningtracker.home.HomeActivity;
+import runningtracker.dashboard.DashboardFragment;
 import runningtracker.register.RegisterActivity;
-import runningtracker.registerinfomation.RegisterInformationActivity;
+import runningtracker.register.RegisterFragment;
 
-public class LoginActivity extends AppCompatActivity {
+public class LoginFragment extends Fragment {
+    LoginContract loginContract;
     private FirebaseAuth mAuth;
     @BindView(R.id.editEmail)
     TextInputEditText mEmail;
@@ -44,34 +47,24 @@ public class LoginActivity extends AppCompatActivity {
     private FirebaseFirestore mFirestore;
     private static final String TAG = "EmailPassword";
 
+    @Nullable
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
-        ButterKnife.bind(this);
-        // [START initialize_auth]
-        mFirestore = FirebaseFirestore.getInstance();
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.activity_login, container, false);
+        ButterKnife.bind(this, view);
         mAuth = FirebaseAuth.getInstance();
-        // [END initialize_auth]
-
-        Objects.requireNonNull(getSupportActionBar()).hide();
+        mFirestore = FirebaseFirestore.getInstance();
+        return view;
     }
 
-    // [START on_start_check_user]
-    @Override
-    public void onStart() {
-        super.onStart();
-        // Check if user is signed in (non-null) and update UI accordingly.
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-        if (currentUser != null) {
-            startHomeActivity();
-        }
-        updateUI(currentUser);
+    @OnClick(R.id.buttonRegister)
+    public void startSignUpActivity() {
+        ((NavigationHost) getActivity()).navigateTo(new RegisterFragment(), true);
     }
-
 
     @OnClick(R.id.buttonLogin)
-    public void signIn() {
+    public void startDash() {
+
         String email = mEmail.getText().toString();
         String password = mPassword.getText().toString();
 
@@ -82,9 +75,10 @@ public class LoginActivity extends AppCompatActivity {
 
         showProgressDialog();
 
+
         // [START sign_in_with_email]
         mAuth.signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
@@ -99,27 +93,22 @@ public class LoginActivity extends AppCompatActivity {
                             mFirestore.collection("users").document(current_id).update(tokenMap).addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void aVoid) {
-
+                                    loginContract.loginSuccessed();
                                 }
                             });
 
-
-
-
-
-                            startHomeActivity();
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "signInWithEmail:failure", task.getException());
-                            Toast.makeText(LoginActivity.this, "Authentication failed.",
+                            Toast.makeText(getActivity(), "Authentication failed.",
                                     Toast.LENGTH_SHORT).show();
-                            updateUI(null);
                         }
                         hideProgressDialog();
                         // [END_EXCLUDE]
                     }
                 });
         // [END sign_in_with_email]
+        ///loginContract.buttonClicked();
     }
 
     private void updateUI(FirebaseUser user) {
@@ -153,7 +142,7 @@ public class LoginActivity extends AppCompatActivity {
 
     public void showProgressDialog() {
         if (mProgressDialog == null) {
-            mProgressDialog = new ProgressDialog(this);
+            mProgressDialog = new ProgressDialog(getActivity());
             mProgressDialog.setMessage(getString(R.string.loading));
             mProgressDialog.setIndeterminate(true);
         }
@@ -167,17 +156,7 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-    // [END on_start_check_user]
-    public void startHomeActivity() {
-        Intent intent = new Intent(this, HomeActivity.class);
-        startActivity(intent);
+    public void setInterface(LoginContract loginContract) {
+        this.loginContract = loginContract;
     }
-
-    @OnClick(R.id.buttonRegister)
-    public void startSignUpActivity() {
-        Intent intent = new Intent(this, RegisterActivity.class);
-        startActivity(intent);
-    }
-
-
 }

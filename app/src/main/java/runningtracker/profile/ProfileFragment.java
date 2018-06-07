@@ -33,14 +33,15 @@ import runningtracker.R;
 import runningtracker.common.InitializationFirebase;
 import runningtracker.data.model.User;
 import runningtracker.data.repository.UsersRepository;
+import runningtracker.home.HomeActivity;
 import runningtracker.login.LoginActivity;
 import runningtracker.settings.SettingsActivity;
 
 public class ProfileFragment extends Fragment implements ProfileContract.View {
     private ProfilePresenter presenter;
     FirebaseFirestore firestore;
-    @BindView(R.id.editTextMessage)
-    EditText text;
+    //    @BindView(R.id.editTextMessage)
+//    EditText text;
     private String mUserId;
     private String mCurrentId;
     private User currentUser;
@@ -62,13 +63,6 @@ public class ProfileFragment extends Fragment implements ProfileContract.View {
                 }
             }
         });
-
-        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        String mess = Boolean.toString(sharedPref.getBoolean("switch_preference_1", true));
-
-        //CheckedTextView simpleCheckedTextView = (CheckedTextView) view.findViewById(R.id.checkedTextView);
-
-        Toast.makeText(getActivity(), mess, Toast.LENGTH_SHORT).show();
         return view;
     }
 
@@ -79,36 +73,34 @@ public class ProfileFragment extends Fragment implements ProfileContract.View {
 
     @Override
     public void showLogin() {
-        Intent intent = new Intent(getActivity(), LoginActivity.class);
+        Intent intent = new Intent(getActivity(), HomeActivity.class);
         startActivity(intent);
     }
 
-    @OnClick(R.id.buttonSendNoti)
-    public void sendNotificcation() {
-
-        String message = text.getText().toString();
-        mUserId = "cTafTiuOoJMatWJWZ6gGHb8CQrz2";
-        if (!TextUtils.isEmpty(
-                message
-        )) {
-            Map<String, Object> notificationMessage = new HashMap<>();
-            notificationMessage.put("message", message);
-            notificationMessage.put("from", mCurrentId);
-            notificationMessage.put("fromName", currentUser.getDisplayName());
-
-            firestore.collection("users/" + mUserId + "/notifications").add(notificationMessage).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                @Override
-                public void onSuccess(DocumentReference documentReference) {
-                    text.setText("");
-                }
-            });
-        }
+//    @OnClick(R.id.buttonSendNoti)
+//    public void sendNotificcation() {
+//
+//        String message = text.getText().toString();
+//        mUserId = "cTafTiuOoJMatWJWZ6gGHb8CQrz2";
+//        if (!TextUtils.isEmpty(
+//                message
+//        )) {
+//            Map<String, Object> notificationMessage = new HashMap<>();
+//            notificationMessage.put("message", message);
+//            notificationMessage.put("from", mCurrentId);
+//            notificationMessage.put("fromName", currentUser.getDisplayName());
+//
+//            firestore.collection("users/" + mUserId + "/notifications").add(notificationMessage).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+//                @Override
+//                public void onSuccess(DocumentReference documentReference) {
+//                    text.setText("");
+//                }
+//            });
+//        }
 
 //
 //        Intent intent = new Intent(getActivity(), SettingsActivity.class);
 //        startActivity(intent);
 
-    }
-
-
 }
+

@@ -11,7 +11,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class WeatherGenerator {
 
-    private static final String BASE_URL = "http://api.wunderground.com/";
+    private static final String BASE_URL = "http://api.openweathermap.org/";
 
     private static Retrofit.Builder builder =
             new Retrofit.Builder()

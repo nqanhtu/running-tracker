@@ -14,6 +14,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.AppCompatTextView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,7 +28,6 @@ import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.messaging.FirebaseMessaging;
 import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
@@ -45,32 +45,38 @@ import runningtracker.Adapter.OptionAdapter;
 import runningtracker.BuildConfig;
 import runningtracker.R;
 import runningtracker.data.model.Option;
+import runningtracker.data.model.weather.OpenWeather;
 import runningtracker.data.model.weather.Weather;
 import runningtracker.data.service.WeatherService;
 import runningtracker.friends.FriendsActivity;
 import runningtracker.history.HistoryActivity;
+import runningtracker.network.ServiceGenerator;
 import runningtracker.network.WeatherGenerator;
 import runningtracker.settings.SettingDashBoardActivity;
 import runningtracker.suggestplace.SuggestPlaceActivity;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-public class DashboardFragment extends Fragment implements DashBoardContract.View{
+public class DashboardFragment extends Fragment implements DashBoardContract.View {
 
     private DashBoardContract.Presenter mPresenter;
 
     ArrayList<Option> options = new ArrayList<>();
     private FusedLocationProviderClient mFusedLocationClient;
-    private static final String TAG = "ABC";
+    private static final String TAG = "DashBoardLog";
     protected Location mLastLocation;
 
     OnFragmentInteractionListener mListener;
 
-    @BindView(R.id.weather) TextView weatherText;
-    @BindView(R.id.temp_c) TextView tempcText;
-    @BindView(R.id.locationTextView) TextView locationText;
-    @BindView(R.id.main_activity_container) View container;
-    @BindView(R.id.weatherIcon)
+    @BindView(R.id.weather_text_view)
+    AppCompatTextView weatherText;
+    @BindView(R.id.temp_text_view)
+    AppCompatTextView tempcText;
+    @BindView(R.id.location_text_view)
+    AppCompatTextView locationText;
+    @BindView(R.id.main_activity_container)
+    View container;
+    @BindView(R.id.weather_icon_image_view)
     ImageView weatherIcon;
     private static final int REQUEST_PERMISSIONS_REQUEST_CODE = 34;
 
@@ -81,7 +87,6 @@ public class DashboardFragment extends Fragment implements DashBoardContract.Vie
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_dashboard, container, false);
         ButterKnife.bind(this, view);
-
 
         initGridView(view);
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(getActivity());
@@ -113,7 +118,7 @@ public class DashboardFragment extends Fragment implements DashBoardContract.Vie
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                switch (position){
+                switch (position) {
                     case 0:
                         Intent intent0 = new Intent(getActivity(), SettingDashBoardActivity.class);
                         startActivity(intent0);
@@ -163,7 +168,7 @@ public class DashboardFragment extends Fragment implements DashBoardContract.Vie
                     public void onComplete(@NonNull Task<Location> task) {
                         if (task.isSuccessful() && task.getResult() != null) {
                             mLastLocation = task.getResult();
-                            //getWeather(mLastLocation);
+                            getWeather(mLastLocation);
                         } else {
                             Log.w(TAG, "getLastLocation:exception", task.getException());
                             showSnackbar(getString(R.string.no_location_detected));
@@ -173,53 +178,118 @@ public class DashboardFragment extends Fragment implements DashBoardContract.Vie
     }
 
     private void getWeather(Location mLastLocation) {
-        WeatherService weatherService = WeatherGenerator.createService(WeatherService.class);
-        String latlong = String.valueOf(mLastLocation.getLatitude())+"," +String.valueOf(mLastLocation.getLongitude());
-        Call<Weather> call = weatherService.getWeather(latlong);
+
+        String latitude = String.valueOf(mLastLocation.getLatitude());
+        String longitude = String.valueOf(mLastLocation.getLongitude());
+        WeatherService weatherService = ServiceGenerator.createService(WeatherService.class);
+        //WeatherGenerator weatherService = WeatherGenerator.createService(WeatherService.class);
+
+        Call<OpenWeather> call = weatherService.getWeather(latitude, longitude);
+
+
+        call.enqueue(new Callback<OpenWeather>() {
+            @Override
+            public void onResponse(Call<OpenWeather> call, Response<OpenWeather> response) {
+                Log.d("resabc", response.body().toString());
+
+                Weather weather = response.body().getWeather().get(0);
+
+                weatherText.setText(weather.getDescription());
+                tempcText.setText(String.valueOf(response.body().getMain().getTemp()));
+
+                String weatherIcon = weather.getIcon();
+                int weatherIconPath = 0;
+                switch (weatherIcon) {
+                    case "01d":
+                        weatherIconPath = R.drawable.d01;
+                        break;
+                    case "01n":
+                        weatherIconPath = R.drawable.n01;
+                        break;
+                    case "02d":
+                        weatherIconPath = R.drawable.d02;
+                        break;
+                    case "02n":
+                        weatherIconPath = R.drawable.n02;
+                        break;
+                    case "03d":
+                        weatherIconPath = R.drawable.d03;
+                        break;
+                    case "03n":
+                        weatherIconPath = R.drawable.n03;
+                        break;
+                    case "04d":
+                        weatherIconPath = R.drawable.d04;
+                        break;
+                    case "04n":
+                        weatherIconPath = R.drawable.n04;
+                        break;
+                    case "09d":
+                        weatherIconPath = R.drawable.d09;
+                        break;
+                    case "09n":
+                        weatherIconPath = R.drawable.n09;
+                        break;
+                    case "10d":
+                        weatherIconPath = R.drawable.d10;
+                        break;
+                    case "10n":
+                        weatherIconPath = R.drawable.n10;
+                        break;
+                    case "11d":
+                        weatherIconPath = R.drawable.d11;
+                        break;
+                    case "11n":
+                        weatherIconPath = R.drawable.n11;
+                        break;
+                    case "13d":
+                        weatherIconPath = R.drawable.d13;
+                        break;
+                    case "13n":
+                        weatherIconPath = R.drawable.n13;
+                        break;
+                    case "50d":
+                        weatherIconPath = R.drawable.d50;
+                        break;
+                    case "50n":
+                        weatherIconPath = R.drawable.n50;
+                        break;
+
+
+                }
+
+                loadWeatherIcon(weatherIconPath);
+
+            }
+
+            @Override
+            public void onFailure(Call<OpenWeather> call, Throwable t) {
+
+            }
+        });
 
         Geocoder geocoder = new Geocoder(getActivity(), Locale.getDefault());
         String result = null;
 
         try {
             List<Address> addresses = geocoder.getFromLocation(mLastLocation.getLatitude(), mLastLocation.getLongitude(), 1);
-
             String city = addresses.get(0).getLocality();
             String state = addresses.get(0).getAdminArea();
             String zip = addresses.get(0).getPostalCode();
             String country = addresses.get(0).getCountryName();
-            locationText.setText(state +  " " + city);
+            locationText.setText(state + " " + city);
 
         } catch (IOException e) {
             e.printStackTrace();
         }
-        call.enqueue(new Callback<Weather>() {
-            @Override
-            public void onResponse(Call<Weather> call, Response<Weather> response) {
-                if (response.isSuccessful()) {
-                    Log.d("res",response.body().toString());
-
-                    weatherText.setText(response.body().getCurrentObservation().getWeather());
-                    tempcText.setText(String.valueOf(response.body().getCurrentObservation().getTempC()));
-
-
-
-                    loadWeatherIcon(response.body().getCurrentObservation().getIconUrl());
-                }
-            }
-
-            @Override
-            public void onFailure(Call<Weather> call, Throwable t) {
-
-            }
-        });
 
 
     }
 
-    private void loadWeatherIcon(String iconUrl) {
+    private void loadWeatherIcon(int iconId) {
         Picasso
-                .with(getActivity())
-                .load(iconUrl)
+                .get()
+                .load(iconId)
                 .into(weatherIcon);
     }
 
@@ -343,7 +413,7 @@ public class DashboardFragment extends Fragment implements DashBoardContract.Vie
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         try {
-            mListener = (OnFragmentInteractionListener)getActivity();
+            mListener = (OnFragmentInteractionListener) getActivity();
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString());
         }
@@ -353,6 +423,6 @@ public class DashboardFragment extends Fragment implements DashBoardContract.Vie
 
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
-         public void onStartRunning();
+        public void onStartRunning();
     }
 }

@@ -51,7 +51,7 @@ public class RegisterPresenter implements RegisterContract.Presenter {
     }
 
     @Override
-    public void createAccount(final String displayName, final String email, String password, final String birthday, final double height, final double weight, final double heartRate) {
+    public void createAccount(final String email, String password) {
         Log.d(TAG, "createAccount:" + email);
         if (!mRegisterView.validateForm()) {
             return;
@@ -71,47 +71,47 @@ public class RegisterPresenter implements RegisterContract.Presenter {
                             assert firebaseUser != null;
 
                             //update user auth infomation
-                            UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
-                                    .setDisplayName(displayName)
-                                    .setPhotoUri(Uri.parse("https://firebasestorage.googleapis.com/v0/b/running-assistant-1133.appspot.com/o/boy.png"))
-                                    .build();
-
-                            firebaseUser.updateProfile(profileUpdates)
-                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                        @Override
-                                        public void onComplete(@NonNull Task<Void> task) {
-                                            if (task.isSuccessful()) {
-                                                Log.d(TAG, "User profile updated.");
-                                                Map<String, Object> userMap = new HashMap<>();
-                                                userMap.put("displayName", firebaseUser.getDisplayName());
-                                                userMap.put("uid", firebaseUser.getUid());
-                                                userMap.put("photoUrl", firebaseUser.getPhotoUrl().toString());
-                                                userMap.put("email", firebaseUser.getEmail());
-
-                                                db.collection("users").document(firebaseUser.getUid())
-                                                        .set(userMap)
-                                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                            @Override
-                                                            public void onSuccess(Void aVoid) {
-
-                                                                Map<String, Object> userMap = new HashMap<>();
-                                                                userMap.put("birthday", birthday);
-                                                                userMap.put("height", height);
-                                                                userMap.put("weight", weight);
-                                                                userMap.put("heartRate", heartRate);
-                                                                db.collection("usersData").document(firebaseUser.getUid())
-                                                                        .set(userMap)
-                                                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                                            @Override
-                                                                            public void onSuccess(Void aVoid) {
-                                                                                Log.d(TAG, "User data writed.");
-                                                                            }
-                                                                        });
-                                                            }
-                                                        });
-                                            }
-                                        }
-                                    });
+//                            UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+//                                    .setDisplayName(displayName)
+//                                    .setPhotoUri(Uri.parse("https://firebasestorage.googleapis.com/v0/b/running-assistant-1133.appspot.com/o/boy.png"))
+//                                    .build();
+//
+//                            firebaseUser.updateProfile(profileUpdates)
+//                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+//                                        @Override
+//                                        public void onComplete(@NonNull Task<Void> task) {
+//                                            if (task.isSuccessful()) {
+//                                                Log.d(TAG, "User profile updated.");
+//                                                Map<String, Object> userMap = new HashMap<>();
+//                                                userMap.put("displayName", firebaseUser.getDisplayName());
+//                                                userMap.put("uid", firebaseUser.getUid());
+//                                                userMap.put("photoUrl", firebaseUser.getPhotoUrl().toString());
+//                                                userMap.put("email", firebaseUser.getEmail());
+//
+//                                                db.collection("users").document(firebaseUser.getUid())
+//                                                        .set(userMap)
+//                                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+//                                                            @Override
+//                                                            public void onSuccess(Void aVoid) {
+//
+//                                                                Map<String, Object> userMap = new HashMap<>();
+//                                                                userMap.put("birthday", birthday);
+//                                                                userMap.put("height", height);
+//                                                                userMap.put("weight", weight);
+//                                                                userMap.put("heartRate", heartRate);
+//                                                                db.collection("usersData").document(firebaseUser.getUid())
+//                                                                        .set(userMap)
+//                                                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+//                                                                            @Override
+//                                                                            public void onSuccess(Void aVoid) {
+//                                                                                Log.d(TAG, "User data writed.");
+//                                                                            }
+//                                                                        });
+//                                                            }
+//                                                        });
+//                                            }
+//                                        }
+//                                    });
                             mRegisterView.makeToast("Authentication success.");
 
                             mRegisterView.startHome();

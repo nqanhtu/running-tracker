@@ -7,7 +7,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 
 public class ServiceGenerator {
-    private static final String BASE_URL = "https://running-server-2903.herokuapp.com/";
+    private static final String BASE_URL = "http://api.openweathermap.org/";
 
     private static Retrofit.Builder builder =
             new Retrofit.Builder()
@@ -23,8 +23,7 @@ public class ServiceGenerator {
     private static OkHttpClient.Builder httpClient =
             new OkHttpClient.Builder();
 
-    public static <S> S createService(
-            Class<S> serviceClass) {
+    public static <S> S createService(Class<S> serviceClass) {
         if (!httpClient.interceptors().contains(logging)) {
             httpClient.addInterceptor(logging);
             builder.client(httpClient.build());

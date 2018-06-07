@@ -23,6 +23,6 @@ public interface RegisterContract {
     }
 
     interface Presenter extends BasePresenter {
-        void createAccount(String displayName, String email, String password, String birthday, double height, double weight, double heartRate);
+        void createAccount(String email, String password);
     }
 }
