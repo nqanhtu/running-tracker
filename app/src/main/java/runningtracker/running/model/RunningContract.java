@@ -12,6 +12,5 @@ public interface RunningContract {
     void pauseTime();
     void stopTime();
     GoogleMap getMap();
-    GoogleMap getMapViewFull();
     GoogleMap getMapShare();
 }

@@ -31,7 +31,6 @@ public class ResultActivity extends AppCompatActivity {
 
     private static PresenterRunning presenterRunning;
     public static ArrayList<ViewGroup> tabFragmentLayouts;
-    private static GoogleMap mMap;
     public static String idDateHistory;
     private static FirebaseFirestore firestore;
 
@@ -68,8 +67,12 @@ public class ResultActivity extends AppCompatActivity {
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent0 = new Intent(ResultActivity.this, RunningActivity.class);
-                startActivity(intent0);
+                if (idDateHistory  == null) {
+                    Intent intent0 = new Intent(ResultActivity.this, RunningActivity.class);
+                    startActivity(intent0);
+                } else {
+                    finish();
+                }
             }
         });
         toolbar.setTitleTextColor(ContextCompat.getColor(this, R.color.browser_actions_title_color));
@@ -161,17 +164,17 @@ public class ResultActivity extends AppCompatActivity {
         static void setStatsValue(Intent intent) {
             idDateHistory = intent.getStringExtra("idDate");
             if(idDateHistory == null) {
-                mDuration = intent.getStringExtra("duration");
-                mAvgPace = intent.getFloatExtra("avgPace", 0);
-                mNetCalorie = intent.getFloatExtra("netCalorie", 0);
-                mDistance = intent.getFloatExtra("distance", 0);
-                mMaxPace = intent.getFloatExtra("maxPace", 0);
+                mDuration     = intent.getStringExtra("duration");
+                mAvgPace      = intent.getFloatExtra("avgPace", 0);
+                mNetCalorie   = intent.getFloatExtra("netCalorie", 0);
+                mDistance     = intent.getFloatExtra("distance", 0);
+                mMaxPace      = intent.getFloatExtra("maxPace", 0);
                 mGrossCalorie = intent.getFloatExtra("grossCalorie", 0);
             }else{
                 presenterRunning.getTrackingHistory(idDateHistory, firestore, new TrackingHistoryCallback() {
                     @Override
                     public void onSuccessTrackingData(List<ResultObject> resultObject) {
-                        mDuration     =  resultObject.get(0).getDuration();
+                        mDuration     = resultObject.get(0).getDuration();
                         mAvgPace      = resultObject.get(0).getPace();
                         mNetCalorie   = resultObject.get(0).getNetCalorie();
                         mDistance     = resultObject.get(0).getDistance();
@@ -187,13 +190,13 @@ public class ResultActivity extends AppCompatActivity {
         }
 
         private static void createView(){
-            txtDuration = ((TextView) childViews.get(R.id.textValueDuration));
-            txtDistance = ((TextView) childViews.get(R.id.textValueDistance));
-            txtAvgPace = ((TextView) childViews.get(R.id.textValueAveragePace));
-            txtMaxPace = ((TextView) childViews.get(R.id.textValueMaxPace));
-            txtAvgSpeed = ((TextView) childViews.get(R.id.textValueAverageSpeed));
-            txtMaxSpeed = ((TextView) childViews.get(R.id.textValueMaxSpeed));
-            txtNetCalorie = ((TextView) childViews.get(R.id.textValueNetCalorie));
+            txtDuration     = ((TextView) childViews.get(R.id.textValueDuration));
+            txtDistance     = ((TextView) childViews.get(R.id.textValueDistance));
+            txtAvgPace      = ((TextView) childViews.get(R.id.textValueAveragePace));
+            txtMaxPace      = ((TextView) childViews.get(R.id.textValueMaxPace));
+            txtAvgSpeed     = ((TextView) childViews.get(R.id.textValueAverageSpeed));
+            txtMaxSpeed     = ((TextView) childViews.get(R.id.textValueMaxSpeed));
+            txtNetCalorie   = ((TextView) childViews.get(R.id.textValueNetCalorie));
             txtGrossCalorie = ((TextView) childViews.get(R.id.textValueGrossCalorie));
         }
 

@@ -31,7 +31,7 @@
             android:configChanges="keyboardHidden|orientation"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".running.model.ViewFullFriendsActivity"
+            android:name=".running.ViewFullFriendsActivity"
             android:configChanges="keyboardHidden|orientation"
             android:screenOrientation="portrait" />
         <activity

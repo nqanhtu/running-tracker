@@ -33,7 +33,7 @@
             android:id="@+id/mapHistory"
             android:name="com.google.android.gms.maps.MapFragment"
             android:layout_width="match_parent"
-            android:layout_height="267dp"
+            android:layout_height="288dp"
 
             android:enabled="false"
 

@@ -27,7 +27,6 @@ import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.messaging.FirebaseMessaging;
 import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
@@ -217,8 +216,7 @@ public class DashboardFragment extends Fragment implements DashBoardContract.Vie
     }
 
     private void loadWeatherIcon(String iconUrl) {
-        Picasso
-                .with(getActivity())
+        Picasso.with(getActivity())
                 .load(iconUrl)
                 .into(weatherIcon);
     }
