@@ -1,8 +1,10 @@
 package runningtracker.register;
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.VisibleForTesting;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.Toolbar;
@@ -51,6 +53,12 @@ public class RegisterFragment extends Fragment {
     @BindView(R.id.toolbar)
     Toolbar toolbar;
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -96,6 +104,9 @@ public class RegisterFragment extends Fragment {
         String password = passwordEditText.getText().toString();
         if (validateForm()) {
             // [START create_user_with_email]
+
+
+            showProgressDialog();
             mAuth.createUserWithEmailAndPassword(email, password)
                     .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                         @Override
@@ -106,70 +117,17 @@ public class RegisterFragment extends Fragment {
                                 final FirebaseUser firebaseUser = mAuth.getCurrentUser();
                                 assert firebaseUser != null;
                                 startRegisterInformation();
-
-                                //update user auth infomation
-//                            UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
-//                                    .setDisplayName(displayName)
-//                                    .setPhotoUri(Uri.parse("https://firebasestorage.googleapis.com/v0/b/running-assistant-1133.appspot.com/o/boy.png"))
-//                                    .build();
-//
-//                            firebaseUser.updateProfile(profileUpdates)
-//                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
-//                                        @Override
-//                                        public void onComplete(@NonNull Task<Void> task) {
-//                                            if (task.isSuccessful()) {
-//                                                Log.d(TAG, "User profile updated.");
-//                                                Map<String, Object> userMap = new HashMap<>();
-//                                                userMap.put("displayName", firebaseUser.getDisplayName());
-//                                                userMap.put("uid", firebaseUser.getUid());
-//                                                userMap.put("photoUrl", firebaseUser.getPhotoUrl().toString());
-//                                                userMap.put("email", firebaseUser.getEmail());
-//
-//                                                db.collection("users").document(firebaseUser.getUid())
-//                                                        .set(userMap)
-//                                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
-//                                                            @Override
-//                                                            public void onSuccess(Void aVoid) {
-//
-//                                                                Map<String, Object> userMap = new HashMap<>();
-//                                                                userMap.put("birthday", birthday);
-//                                                                userMap.put("height", height);
-//                                                                userMap.put("weight", weight);
-//                                                                userMap.put("heartRate", heartRate);
-//                                                                db.collection("usersData").document(firebaseUser.getUid())
-//                                                                        .set(userMap)
-//                                                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
-//                                                                            @Override
-//                                                                            public void onSuccess(Void aVoid) {
-//                                                                                Log.d(TAG, "User data writed.");
-//                                                                            }
-//                                                                        });
-//                                                            }
-//                                                        });
-//                                            }
-//                                        }
-//                                    });
-                                // mRegisterView.makeToast("Authentication success.");
-
-                                //  mRegisterView.startHome();
-                            } else {
-                                //   Log.w(TAG, "createUserWithEmail:failure", task.getException());
-                                //  mRegisterView.makeToast("Authentication failed.");
+                                hideProgressDialog();
                             }
-
-                            // [START_EXCLUDE]
-                            //   mRegisterView.hideProgressDialog();
-                            // [END_EXCLUDE]
                         }
                     });
-            // [END create_user_with_email]
         }
-        //  ((NavigationHost) Objects.requireNonNull(getActivity())).navigateTo(new RegisterInformationFragment(),true);
     }
 
     private void startRegisterInformation() {
         ((NavigationHost) getActivity()).navigateTo(new RegisterInformationFragment(), true);
     }
+
 
     public boolean validateForm() {
         boolean valid = true;
@@ -197,6 +155,13 @@ public class RegisterFragment extends Fragment {
         return valid;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+
+
+    }
+
     private void disableError() {
 
         emailEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
@@ -222,4 +187,25 @@ public class RegisterFragment extends Fragment {
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
     }
+
+
+    @VisibleForTesting
+    public ProgressDialog mProgressDialog;
+
+    public void showProgressDialog() {
+        if (mProgressDialog == null) {
+            mProgressDialog = new ProgressDialog(getActivity());
+            mProgressDialog.setMessage(getString(R.string.loading));
+            mProgressDialog.setIndeterminate(true);
+        }
+
+        mProgressDialog.show();
+    }
+
+    public void hideProgressDialog() {
+        if (mProgressDialog != null && mProgressDialog.isShowing()) {
+            mProgressDialog.dismiss();
+        }
+    }
+
 }

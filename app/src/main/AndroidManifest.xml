@@ -40,20 +40,9 @@
             android:configChanges="keyboardHidden|orientation"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".login.LoginActivity"
-            android:configChanges="keyboardHidden|orientation"
-            android:screenOrientation="portrait">
-            <!--<intent-filter>-->
-            <!--<action android:name="android.intent.action.MAIN" />-->
-
-            <!--<category android:name="android.intent.category.LAUNCHER" />-->
-            <!--</intent-filter>-->
-        </activity>
-        <activity android:name=".register.RegisterActivity" />
-        <activity
             android:name=".home.HomeActivity"
             android:configChanges="keyboardHidden|orientation"
-            android:windowSoftInputMode="stateAlwaysHidden">
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -80,7 +69,6 @@
             android:name=".settings.SettingDashBoardActivity"
             android:configChanges="keyboardHidden|orientation"
             android:screenOrientation="portrait" />
-        <activity android:name=".registerinfomation.RegisterInformationActivity" />
 
         <service android:name=".MyFirebaseMessagingService">
             <intent-filter>
@@ -97,9 +85,6 @@
             android:name=".notificationfriends.NotificationFriendsActivity"
             android:configChanges="keyboardHidden|orientation"
             android:screenOrientation="portrait" />
-        <activity android:name=".main.MainActivity">
-
-        </activity>
     </application>
 
 </manifest>

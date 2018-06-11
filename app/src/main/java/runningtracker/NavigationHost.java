@@ -13,4 +13,12 @@ public interface NavigationHost {
      * stack to make this navigation reversible.
      */
     void navigateTo(Fragment fragment, boolean addToBackstack);
+
+    void enableBottomNav(boolean flag);
+
+    void startMainApp();
+
+    void hideSoftKeyboard();
+
+    void setSelectedItem();
 }

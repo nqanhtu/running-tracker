@@ -1,7 +1,6 @@
 package runningtracker.login;
 
 import android.app.ProgressDialog;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -13,6 +12,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -26,7 +26,6 @@ import com.google.firebase.iid.FirebaseInstanceId;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.Executor;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -34,11 +33,9 @@ import butterknife.OnClick;
 import runningtracker.NavigationHost;
 import runningtracker.R;
 import runningtracker.dashboard.DashboardFragment;
-import runningtracker.register.RegisterActivity;
 import runningtracker.register.RegisterFragment;
 
 public class LoginFragment extends Fragment {
-    LoginContract loginContract;
     private FirebaseAuth mAuth;
     @BindView(R.id.editEmail)
     TextInputEditText mEmail;
@@ -50,10 +47,11 @@ public class LoginFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.activity_login, container, false);
+        View view = inflater.inflate(R.layout.fragment_login, container, false);
         ButterKnife.bind(this, view);
         mAuth = FirebaseAuth.getInstance();
         mFirestore = FirebaseFirestore.getInstance();
+        ((NavigationHost) getActivity()).enableBottomNav(false);
         return view;
     }
 
@@ -64,7 +62,7 @@ public class LoginFragment extends Fragment {
 
     @OnClick(R.id.buttonLogin)
     public void startDash() {
-
+        ((NavigationHost) getActivity()).hideSoftKeyboard();
         String email = mEmail.getText().toString();
         String password = mPassword.getText().toString();
 
@@ -93,9 +91,11 @@ public class LoginFragment extends Fragment {
                             mFirestore.collection("users").document(current_id).update(tokenMap).addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void aVoid) {
-                                    loginContract.loginSuccessed();
+
                                 }
                             });
+                            ((NavigationHost) getActivity()).navigateTo(new DashboardFragment(), false);
+                            ((NavigationHost) getActivity()).enableBottomNav(true);
 
                         } else {
                             // If sign in fails, display a message to the user.
@@ -156,7 +156,4 @@ public class LoginFragment extends Fragment {
         }
     }
 
-    public void setInterface(LoginContract loginContract) {
-        this.loginContract = loginContract;
-    }
 }

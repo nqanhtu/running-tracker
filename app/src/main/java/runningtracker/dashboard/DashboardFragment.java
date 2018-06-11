@@ -106,9 +106,8 @@ public class DashboardFragment extends Fragment implements DashBoardContract.Vie
 
     private void initGridView(View view) {
         GridView gridView = (GridView) view.findViewById(R.id.gridview);
-        options.add(new Option("Cài đặt", R.drawable.ic_setup_calories));
+        options.add(new Option("Cài đặt", R.drawable.ic_settings));
         options.add(new Option("Lịch sử chạy", R.drawable.ic_history));
-        options.add(new Option("Khu vực nguy hiểm", R.drawable.ic_stopwatch));
         options.add(new Option("Bạn bè", R.drawable.ic_friends));
         options.add(new Option("Bắt đầu chạy", R.drawable.ic_running));
         options.add(new Option("Địa điểm chạy", R.drawable.ic_map));
@@ -128,15 +127,13 @@ public class DashboardFragment extends Fragment implements DashBoardContract.Vie
                         startActivity(intent1);
                         break;
                     case 2:
-                        break;
-                    case 3:
                         Intent intent3 = new Intent(getActivity(), FriendsActivity.class);
                         startActivity(intent3);
                         break;
-                    case 4:
+                    case 3:
                         mListener.onStartRunning();
                         break;
-                    case 5:
+                    case 4:
                         Intent intent = new Intent(getActivity(), SuggestPlaceActivity.class);
                         startActivity(intent);
                         break;
