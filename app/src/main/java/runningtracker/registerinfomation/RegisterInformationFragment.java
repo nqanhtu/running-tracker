@@ -1,5 +1,6 @@
 package runningtracker.registerinfomation;
 
+import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
@@ -13,8 +14,10 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.DatePicker;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -29,6 +32,9 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -74,6 +80,7 @@ public class RegisterInformationFragment extends Fragment {
     String email;
     String password;
     Uri uri;
+    private DatePickerDialog mDatePickerDialog;
     private final static String TAG = "register information";
 
     @Nullable
@@ -82,6 +89,16 @@ public class RegisterInformationFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_register_information, container, false);
         ButterKnife.bind(this, view);
         setUpToolbar();
+        setDateTimeField();
+
+        birthdayEditText.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+
+                mDatePickerDialog.show();
+                return false;
+            }
+        });
         return view;
     }
 
@@ -197,6 +214,26 @@ public class RegisterInformationFragment extends Fragment {
                     }
                 });
 
+
+    }
+
+    private void setDateTimeField() {
+
+        Calendar newCalendar = Calendar.getInstance();
+        mDatePickerDialog = new DatePickerDialog(getContext(), new DatePickerDialog.OnDateSetListener() {
+
+            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                Calendar newDate = Calendar.getInstance();
+                newDate.set(year, monthOfYear, dayOfMonth);
+                SimpleDateFormat sd = new SimpleDateFormat("dd-MM-yyyy");
+                final Date startDate = newDate.getTime();
+                String fdate = sd.format(startDate);
+
+                birthdayEditText.setText(fdate);
+
+            }
+        }, newCalendar.get(Calendar.YEAR), newCalendar.get(Calendar.MONTH), newCalendar.get(Calendar.DAY_OF_MONTH));
+        mDatePickerDialog.getDatePicker().setMaxDate(System.currentTimeMillis());
 
     }
 
