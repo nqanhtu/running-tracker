@@ -103,6 +103,7 @@
 
                 </android.support.design.widget.TextInputLayout>
 
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -137,12 +138,15 @@
                     </android.support.design.widget.TextInputLayout>
                 </LinearLayout>
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
                 <android.support.design.widget.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Nhịp tim (bmp)"
-                    app:errorEnabled="true">
-
+                    android:layout_weight="0.5"
+                    android:hint="Nhịp tim (bmp)">
                     <android.support.design.widget.TextInputEditText
                         android:id="@+id/heart_rate_edit_text"
                         android:layout_width="match_parent"
@@ -151,11 +155,21 @@
                         android:maxLines="1" />
                 </android.support.design.widget.TextInputLayout>
 
+                <Spinner
+                    android:id="@+id/gioi_tinh_spinner"
+                    android:layout_width="match_parent"
+                    android:layout_weight="0.5"
+                    android:layout_height="match_parent">
+
+                </Spinner>
+            </LinearLayout>
+
                 <android.support.v7.widget.AppCompatButton
                     android:id="@+id/register_button"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Cập nhật"
+                    android:layout_marginTop="@dimen/activity_horizontal_margin"
                     android:textColor="@color/white"
                     android:theme="@style/MyButton" />
             </LinearLayout>

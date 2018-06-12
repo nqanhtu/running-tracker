@@ -45,7 +45,7 @@
                         android:layout_marginTop="20dp" />
 
                     <TextView
-                        android:id="@+id/name_textview"
+                        android:id="@+id/name_text_view"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
@@ -90,7 +90,9 @@
                         android:paddingLeft="20dp"
                         android:text="Email"
                         android:textStyle="bold" />
+
                     <TextView
+                        android:id="@+id/email_text_view"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
@@ -115,10 +117,19 @@
                         android:textStyle="bold" />
 
                     <TextView
+                        android:id="@+id/height_text_view"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
                         android:paddingLeft="20dp"
+                        android:text="170"
+                        android:textStyle="bold" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:paddingLeft="8dp"
+                        android:text="cm"
                         android:textStyle="bold" />
                 </LinearLayout>
 
@@ -138,11 +149,21 @@
                         android:textStyle="bold" />
 
                     <TextView
+                        android:id="@+id/weight_text_view"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
                         android:paddingLeft="20dp"
-                        android:text=""
+                        android:text="86"
+                        android:textStyle="bold" />
+
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:paddingLeft="8dp"
+                        android:text="kg"
                         android:textStyle="bold" />
                 </LinearLayout>
 
@@ -154,15 +175,28 @@
                     android:paddingLeft="25dp">
 
                     <TextView
-                        android:layout_width="36dp"
-                        android:layout_height="36dp" />
 
-                    <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
                         android:paddingLeft="20dp"
-                        android:text="Show all comments"
+                        android:textStyle="bold"
+                        android:text="Nhịp tim bình thường" />
+
+                    <TextView
+                        android:id="@+id/heart_rate_text_view"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:paddingLeft="20dp"
+                        android:text="100"
+                        android:textStyle="bold" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:paddingLeft="8dp"
+                        android:text="bpm"
                         android:textStyle="bold" />
                 </LinearLayout>
             </LinearLayout>
@@ -173,6 +207,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
+                android:layout_marginTop="@dimen/activity_horizontal_margin"
                 android:text="Đăng xuất" />
         </LinearLayout>
     </ScrollView>

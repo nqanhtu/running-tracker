@@ -9,107 +9,6 @@
     android:layout_height="match_parent">
 
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/mapViewFullLayout"
-        android:orientation="vertical">
-
-        <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:android.support.v7.appcompat="http://schemas.android.com/apk/res-auto"
-            xmlns:app="http://schemas.android.com/apk/res-auto"
-            xmlns:tools="http://schemas.android.com/tools"
-            android:id="@+id/aboveSectionLayoutFullMap"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:background="#64b5f6"
-            android:paddingBottom="10dp">
-
-            <!--<SearchView
-                android:id="@+id/searchView1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentTop="true"
-                android:background="@drawable/ic_replay_white_48dp"
-                android:iconifiedByDefault="false"
-                android:padding="2dp"
-                android:queryHint="Search...."
-                tools:layout_editor_absoluteX="32dp"
-                tools:layout_editor_absoluteY="5dp"
-                tools:ignore="MissingConstraints">
-
-            </SearchView> -->
-
-            <ImageView
-                android:id="@+id/imgSearch"
-                android:layout_width="44dp"
-                android:layout_height="44dp"
-                android:layout_marginStart="24dp"
-                android:layout_marginTop="8dp"
-                android.support.v7.appcompat:layout_constraintHorizontal_bias="0.983"
-                android.support.v7.appcompat:layout_constraintStart_toEndOf="@+id/autoCompleteTextView1"
-                android.support.v7.appcompat:layout_constraintTop_toTopOf="parent"
-                android.support.v7.appcompat:layout_constraintVertical_bias="1.0"
-                android.support.v7.appcompat:srcCompat="@drawable/ic_search"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintLeft_toRightOf="@+id/autoCompleteTextView1"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="parent"
-                tools:ignore="NotSibling" />
-
-            <AutoCompleteTextView
-                android:id="@+id/autoCompleteTextView1"
-                android:layout_width="178dp"
-                android:layout_height="50dp"
-                android:layout_alignLeft="@+id/imageView"
-                android:layout_marginEnd="100dp"
-                android:layout_marginLeft="68dp"
-                android:ems="10"
-                android:hint="Search"
-                android.support.v7.appcompat:layout_constraintEnd_toEndOf="parent"
-                android.support.v7.appcompat:layout_constraintStart_toEndOf="@+id/imageView"
-                android.support.v7.appcompat:layout_constraintTop_toTopOf="parent"
-                android.support.v7.appcompat:layout_constraintVertical_bias="1.0"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintRight_toLeftOf="@+id/imageView"
-                app:layout_constraintTop_toBottomOf="parent"
-                tools:ignore="MissingConstraints">
-
-                <requestFocus />
-            </AutoCompleteTextView>
-
-        </android.support.constraint.ConstraintLayout>
-
-        <android.support.constraint.ConstraintLayout
-            xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:app="http://schemas.android.com/apk/res-auto"
-            xmlns:tools="http://schemas.android.com/tools"
-            android:id="@+id/belowSectionLayoutFullMap"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-
-            android:layout_alignParentBottom="true"
-            android:layout_below="@+id/aboveSectionLayout">
-
-            <fragment
-                android:id="@+id/mapViewFull"
-                android:name="com.google.android.gms.maps.MapFragment"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-
-                android:enabled="false"
-
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="parent" />
-        </android.support.constraint.ConstraintLayout>
-
-    </LinearLayout>
-
     <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:android.support.v7.appcompat="http://schemas.android.com/apk/res-auto"
         xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -122,10 +21,9 @@
         android:paddingBottom="10dp">
 
         <android.support.v7.widget.Toolbar
-            android:id="@+id/actionbar"
+            android:id="@+id/actionbarTracking"
             style="@style/Toolbar"
             android.support.v7.appcompat:layout_constraintHorizontal_bias="0.0"
-            android.support.v7.appcompat:navigationIcon="@drawable/ic_menu_white_24dp"
 
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
@@ -145,7 +43,7 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
 
-            app:layout_constraintTop_toBottomOf="@+id/actionbar" />
+            app:layout_constraintTop_toBottomOf="@+id/actionbarTracking" />
 
         <TextView
             android:id="@+id/textDescriptionDuration"

@@ -11,6 +11,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -78,8 +79,34 @@ public class DashboardFragment extends Fragment implements DashBoardContract.Vie
     View container;
     @BindView(R.id.weather_icon_image_view)
     ImageView weatherIcon;
+    // @BindView(R.id.gridview)
+    GridView gridView;
+
     private static final int REQUEST_PERMISSIONS_REQUEST_CODE = 34;
 
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        options.add(new Option("Cài đặt", R.drawable.ic_settings));
+        options.add(new Option("Lịch sử chạy", R.drawable.ic_history));
+        options.add(new Option("Bạn bè", R.drawable.ic_friends));
+        options.add(new Option("Bắt đầu chạy", R.drawable.ic_running));
+        options.add(new Option("Địa điểm chạy", R.drawable.ic_map));
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(getActivity());
+        if (!checkPermissions()) {
+            requestPermissions();
+        } else {
+            getLastLocation();
+        }
+        if (savedInstanceState == null) {
+            Log.d(TAG, "instance null");
+        } else {
+            Log.d(TAG, "instance not null");
+
+        }
+
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -88,8 +115,11 @@ public class DashboardFragment extends Fragment implements DashBoardContract.Vie
         View view = inflater.inflate(R.layout.fragment_dashboard, container, false);
         ButterKnife.bind(this, view);
 
-        initGridView(view);
-        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(getActivity());
+        if (savedInstanceState == null) {
+            gridView = view.findViewById(R.id.gridview);
+            initGridView();
+        }
+
         return view;
     }
 
@@ -97,20 +127,10 @@ public class DashboardFragment extends Fragment implements DashBoardContract.Vie
     public void onStart() {
         super.onStart();
 
-        if (!checkPermissions()) {
-            requestPermissions();
-        } else {
-            getLastLocation();
-        }
+
     }
 
-    private void initGridView(View view) {
-        GridView gridView = (GridView) view.findViewById(R.id.gridview);
-        options.add(new Option("Cài đặt", R.drawable.ic_settings));
-        options.add(new Option("Lịch sử chạy", R.drawable.ic_history));
-        options.add(new Option("Bạn bè", R.drawable.ic_friends));
-        options.add(new Option("Bắt đầu chạy", R.drawable.ic_running));
-        options.add(new Option("Địa điểm chạy", R.drawable.ic_map));
+    private void initGridView() {
 
         final OptionAdapter optionAdapter = new OptionAdapter(getActivity(), options);
         gridView.setAdapter(optionAdapter);

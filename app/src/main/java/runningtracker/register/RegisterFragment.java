@@ -162,6 +162,15 @@ public class RegisterFragment extends Fragment {
 
     }
 
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        if (mAuth.getCurrentUser() != null) {
+            ((NavigationHost) getActivity()).startMainApp();
+        }
+    }
+
     private void disableError() {
 
         emailEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {

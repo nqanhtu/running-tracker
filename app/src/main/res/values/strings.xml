@@ -76,4 +76,11 @@
     <string name="status_sign_in_failed">Sign-in failed</string>
     <string name="instant_validation">(instant validation)</string>
     <string name="title_activity_friends">FriendsActivity</string>
+
+
+    <string-array name="gioi_tinh">
+        <item>Giới tính</item>
+        <item>Nam</item>
+        <item>Nữ</item>
+    </string-array>
 </resources>

@@ -87,18 +87,18 @@ public class SuggestPlaceActivity extends AppCompatActivity implements OnMapRead
                         PackageManager.PERMISSION_GRANTED) {
             return;
         }
-        mMap.setMyLocationEnabled(true);
+        mMap.setMyLocationEnabled(false);
         LatLng latLng = new LatLng(getMyLocation().getLatitude(), getMyLocation().getLongitude());
         CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 15);
         mMap.animateCamera(cameraUpdate);
     }
 
-    @OnClick(R.id.btnRoad)
+    @OnClick(R.id.imgSuggestRoad)
     public void startHomeActivity() {
         sendRequest();
     }
 
-    @OnClick(R.id.btnSuggest)
+    @OnClick(R.id.imgSuggest)
     public void startSuggestItem() {
         getListItem();
     }

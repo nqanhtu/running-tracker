@@ -17,7 +17,9 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -26,6 +28,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
@@ -72,6 +75,9 @@ public class RegisterInformationFragment extends Fragment {
     TextInputEditText weightEditText;
     @BindView(R.id.birthday_edit_text)
     TextInputEditText birthdayEditText;
+    @BindView(R.id.gioi_tinh_spinner)
+    Spinner gioiTinhSpinner;
+
 
     FirebaseFirestore db;
     FirebaseAuth mAuth;
@@ -90,22 +96,28 @@ public class RegisterInformationFragment extends Fragment {
         ButterKnife.bind(this, view);
         setUpToolbar();
         setDateTimeField();
-
-        birthdayEditText.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-
-                mDatePickerDialog.show();
-                return false;
-            }
-        });
+        setUpSpinner();
+        loadUserInformation();
+        ((NavigationHost) getActivity()).enableBottomNav(false);
         return view;
+    }
+
+    private void setUpSpinner() {
+        // Create an ArrayAdapter using the string array and a default spinner layout
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getContext(),
+                R.array.gioi_tinh, android.R.layout.simple_spinner_item);
+// Specify the layout to use when the list of choices appears
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+// Apply the adapter to the spinner
+        gioiTinhSpinner.setAdapter(adapter);
+        gioiTinhSpinner.setSelection(0);
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         initFirebase();
+
     }
 
     private void initFirebase() {
@@ -155,18 +167,71 @@ public class RegisterInformationFragment extends Fragment {
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ((NavigationHost) getActivity()).startMainApp();
+                Objects.requireNonNull(getActivity()).onBackPressed();
             }
         });
     }
 
     @OnClick(R.id.register_button)
     public void registerUser() {
+        ((NavigationHost) getActivity()).hideSoftKeyboard();
         showProgressDialog();
         updateInformation();
 
     }
 
+    void loadUserInformation() {
+        if (mAuth.getCurrentUser() != null) {
+            StorageReference storageReference = mStorageRef.child("Photos").child(mAuth.getCurrentUser().getUid());
+            storageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                @Override
+                public void onSuccess(Uri uri) {
+                    Log.d(TAG, uri.toString());
+                    loadAvatar(uri);
+                }
+            });
+            birthdayEditText.setKeyListener(null);
+
+            db.collection("users").document(mAuth.getCurrentUser().getUid()).get()
+                    .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                            if (task.isSuccessful()) {
+                                if (task.getResult().getData() != null) {
+
+                                    Map<String, Object> user = task.getResult().getData();
+                                    if (user.get("username") != null)
+                                        usernameEditText.setText(user.get("username").toString());
+                                    if (user.get("displayName") != null)
+                                        nameEditText.setText(user.get("displayName").toString());
+
+                                }
+
+                            }
+                        }
+                    });
+
+
+            db.collection("usersData").document(mAuth.getCurrentUser().getUid()).get()
+                    .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                            if (task.isSuccessful()) {
+                                if (task.getResult().getData() != null) {
+                                    Map<String, Object> userData = task.getResult().getData();
+                                    heightEditText.setText(userData.get("height").toString());
+                                    weightEditText.setText(userData.get("weight").toString());
+                                    birthdayEditText.setText(userData.get("birthday").toString());
+                                    heartRateEditText.setText(userData.get("heartRate").toString());
+                                }
+                            }
+                        }
+                    });
+
+
+        }
+
+    }
 
     private void updateInformation() {
 
@@ -194,6 +259,7 @@ public class RegisterInformationFragment extends Fragment {
                                                     userInfo.put("weight", weightEditText.getText().toString());
                                                     userInfo.put("height", heightEditText.getText().toString());
                                                     userInfo.put("birthday", birthdayEditText.getText().toString());
+                                                    userInfo.put("sex", gioiTinhSpinner.getSelectedItem().toString());
                                                     db.collection("usersData").document(mAuth.getCurrentUser().getUid()).set(userInfo)
                                                             .addOnCompleteListener(new OnCompleteListener<Void>() {
                                                                 @Override
@@ -201,7 +267,6 @@ public class RegisterInformationFragment extends Fragment {
                                                                     if (task.isSuccessful()) {
                                                                         hideProgressDialog();
                                                                         ((NavigationHost) getActivity()).navigateTo(new ProfileFragment(), false);
-                                                                        ((NavigationHost) getActivity()).enableBottomNav(true);
                                                                         ((NavigationHost) getActivity()).setSelectedItem();
                                                                     }
                                                                 }
@@ -218,7 +283,14 @@ public class RegisterInformationFragment extends Fragment {
     }
 
     private void setDateTimeField() {
+        birthdayEditText.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
 
+                mDatePickerDialog.show();
+                return false;
+            }
+        });
         Calendar newCalendar = Calendar.getInstance();
         mDatePickerDialog = new DatePickerDialog(getContext(), new DatePickerDialog.OnDateSetListener() {
 
@@ -257,4 +329,16 @@ public class RegisterInformationFragment extends Fragment {
         }
     }
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        ((NavigationHost) getActivity()).enableBottomNav(true);
+
+    }
+
+    private void loadAvatar(Uri uri) {
+        Glide.with(Objects.requireNonNull(getContext()))
+                .load(uri)
+                .into(profileImageView);
+    }
 }

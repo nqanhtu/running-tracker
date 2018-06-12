@@ -6,13 +6,16 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -22,6 +25,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import java.util.Map;
+import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -35,9 +39,7 @@ import runningtracker.home.HomeActivity;
 import runningtracker.registerinfomation.RegisterInformationFragment;
 
 
-public class ProfileFragment extends Fragment implements ProfileContract.View {
-    private ProfilePresenter presenter;
-    FirebaseFirestore firestore;
+public class ProfileFragment extends Fragment {
     //    @BindView(R.id.editTextMessage)
 //    EditText text;
     private String mUserId;
@@ -52,15 +54,32 @@ public class ProfileFragment extends Fragment implements ProfileContract.View {
     CircleImageView avatarImageView;
     @BindView(R.id.username_text_view)
     TextView usernameTextView;
-    @BindView(R.id.name_textview)
+    @BindView(R.id.height_text_view)
+    TextView heightTextView;
+    @BindView(R.id.weight_text_view)
+    TextView weightTextView;
+    @BindView(R.id.heart_rate_text_view)
+    TextView heartRateTextView;
+    @BindView(R.id.name_text_view)
     TextView nameTextView;
+    @BindView(R.id.email_text_view)
+    TextView emailTextView;
     private final static String TAG = "ProfileFragment";
+    Uri filepath;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (savedInstanceState != null) {
+            Log.d(TAG, "save instance fragment");
+
+        }
+
+        if (savedInstanceState == null) {
+            Log.d(TAG, "save instance fragment null");
+
+        }
         initFirebase();
-        myFragment = this;
         loadUserInfo();
     }
 
@@ -69,11 +88,9 @@ public class ProfileFragment extends Fragment implements ProfileContract.View {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
         ButterKnife.bind(this, view);
-        firestore = FirebaseFirestore.getInstance();
         mCurrentId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        presenter = new ProfilePresenter(UsersRepository.getInstance(firestore), this);
 
-        firestore.collection("users").document(mCurrentId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+        db.collection("users").document(mCurrentId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful()) {
@@ -81,17 +98,16 @@ public class ProfileFragment extends Fragment implements ProfileContract.View {
                 }
             }
         });
-        // ((NavigationHost) getActivity()).enableBottomNav(true);
 
         return view;
     }
 
     @OnClick(R.id.button_logout)
     public void logout() {
-        presenter.logout();
+        FirebaseAuth.getInstance().signOut();
+        showLogin();
     }
 
-    @Override
     public void showLogin() {
         Intent intent = new Intent(getActivity(), HomeActivity.class);
         startActivity(intent);
@@ -112,10 +128,12 @@ public class ProfileFragment extends Fragment implements ProfileContract.View {
     }
 
     void loadUserInfo() {
-        final StorageReference filePath = mStorageRef.child("Photos").child(mAuth.getCurrentUser().getUid());
-        filePath.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+        StorageReference storageReference = mStorageRef.child("Photos").child(mAuth.getCurrentUser().getUid());
+        storageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
             @Override
             public void onSuccess(Uri uri) {
+                filepath = uri;
+                Log.d(TAG, uri.toString());
                 loadAvatar(uri);
             }
         });
@@ -127,26 +145,59 @@ public class ProfileFragment extends Fragment implements ProfileContract.View {
                     @Override
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                         if (task.isSuccessful()) {
-
-                            Map<String, Object> user = task.getResult().getData();
-
-                            String username = user.get("username").toString();
-                            String name = user.get("displayName").toString();
-                            usernameTextView.setText(username);
-                            nameTextView.setText(name);
-
+                            if (task.getResult().getData() != null) {
+                                Map<String, Object> user = task.getResult().getData();
+                                String username = "";
+                                String name = "";
+                                username = user.get("username").toString();
+                                name = user.get("displayName").toString();
+                                usernameTextView.setText(username);
+                                nameTextView.setText(name);
+                            }
                         }
                     }
                 });
 
+        db.collection("usersData").document(mAuth.getCurrentUser().getUid())
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if (task.isSuccessful()) {
+                            if (task.getResult().getData() != null) {
+                                Map<String, Object> user = task.getResult().getData();
+                                String height = "";
+                                String weight = "";
+                                String heartRate = "";
+                                String email = "";
+                                if (user.get("email") != null) email = user.get("email").toString();
+                                if (user.get("height") != null)  height = user.get("height").toString();
+                                if (user.get("weight") != null)  weight = user.get("weight").toString();
+                                if (user.get("heartRate") != null) heartRate = user.get("heartRate").toString();
+
+
+                                heightTextView.setText(height);
+                                weightTextView.setText(weight);
+                                heartRateTextView.setText(heartRate);
+                                emailTextView.setText(email);
+                            }
+                        }
+                    }
+                });
     }
 
-    public void loadAvatar(Uri uri) {
-        Glide
-                .with(this)
+    private void loadAvatar(Uri uri) {
+
+        Glide.with(Objects.requireNonNull(getContext()))
                 .load(uri)
                 .into(avatarImageView);
     }
 
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+
+    }
 }
 
