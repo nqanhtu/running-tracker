@@ -5,6 +5,9 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.View;
+
+import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -16,8 +19,12 @@ import runningtracker.friendslist.FriendsListFragment;
 
 public class FriendsActivity extends AppCompatActivity {
 
-    @BindView(R.id.tab_friend) TabLayout tabLayout;
-    @BindView(R.id.friend_view_pager) ViewPager viewPager;
+    @BindView(R.id.tab_friend)
+    TabLayout tabLayout;
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
+    @BindView(R.id.friend_view_pager)
+    ViewPager viewPager;
     private ViewPagerAdapter adapter;
 
 
@@ -29,16 +36,19 @@ public class FriendsActivity extends AppCompatActivity {
 
         adapter = new ViewPagerAdapter(getSupportFragmentManager());
 
-        adapter.addFragment(new FriendsListFragment(),"Danh sách");
-        adapter.addFragment(new FriendRequestsFragment(),"Lời mời");
-        adapter.addFragment(new AddFriendFragment(),"Thêm bạn");
+        adapter.addFragment(new FriendsListFragment(), "Danh sách");
+        adapter.addFragment(new FriendRequestsFragment(), "Lời mời");
+        adapter.addFragment(new AddFriendFragment(), "Thêm bạn");
         viewPager.setAdapter(adapter);
 
         tabLayout.setupWithViewPager(viewPager);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_friend);
-        setSupportActionBar(toolbar);
-
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onBackPressed();
+            }
+        });
 
 
     }

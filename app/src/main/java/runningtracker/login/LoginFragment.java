@@ -1,6 +1,7 @@
 package runningtracker.login;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -94,8 +95,11 @@ public class LoginFragment extends Fragment {
 
                                 }
                             });
-                            ((NavigationHost) getActivity()).navigateTo(new DashboardFragment(), false);
-                            ((NavigationHost) getActivity()).enableBottomNav(true);
+                            Intent intent = getActivity().getIntent();
+                            getActivity().finish();
+                            startActivity(intent);
+//                            ((NavigationHost) getActivity()).navigateTo(new DashboardFragment(), false);
+//                            ((NavigationHost) getActivity()).enableBottomNav(true);
 
                         } else {
                             // If sign in fails, display a message to the user.

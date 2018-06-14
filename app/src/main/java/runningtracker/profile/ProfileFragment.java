@@ -110,6 +110,7 @@ public class ProfileFragment extends Fragment {
 
     public void showLogin() {
         Intent intent = new Intent(getActivity(), HomeActivity.class);
+        getActivity().finish();
         startActivity(intent);
     }
 

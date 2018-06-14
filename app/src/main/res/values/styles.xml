@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:android="http://schemas.android.com/tools">
     Base application theme.
 
     <!-- Base application theme. -->
@@ -11,9 +11,8 @@
     </style>
 
     <style name="MyButton" parent="Widget.AppCompat.Button">
-        <item name="android:backgroundTint">@color/colorPrimary</item>
+        <item name="android:background">@drawable/buttonshape</item>
         <item name="android:textColor">@color/white</item>
-        <!--<item name="backgroundTint">?attr/colorPrimary</item>-->
     </style>
 
     <style name="MyToolbar" parent="Widget.AppCompat.Toolbar">
