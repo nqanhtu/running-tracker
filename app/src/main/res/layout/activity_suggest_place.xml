@@ -18,9 +18,16 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="Các địa điểm tập luyện"
-            android:textSize="18sp" />
+            android:layout_margin="16dp"
+            android:gravity="center_vertical"
+            android:text="Địa điểm" />
+
+        <android.support.v7.widget.AppCompatSpinner
+            android:id="@+id/places_spinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:layout_marginStart="16dp" />
     </android.support.v7.widget.Toolbar>
 
     <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"

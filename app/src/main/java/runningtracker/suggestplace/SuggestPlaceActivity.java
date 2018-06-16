@@ -14,6 +14,8 @@ import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdate;
@@ -27,14 +29,20 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.storage.FirebaseStorage;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import runningtracker.R;
+import runningtracker.data.model.suggestplace.Place;
 import runningtracker.model.suggets_place.ItemSuggest;
 import runningtracker.model.suggets_place.Route;
 
@@ -57,6 +65,9 @@ public class SuggestPlaceActivity extends AppCompatActivity implements OnMapRead
     private Geocoder geocoder;
     private List<Address> addresses;
     private Location myLocation;
+    @BindView(R.id.places_spinner)
+    Spinner placesSpinner;
+    FirebaseFirestore db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,7 +76,6 @@ public class SuggestPlaceActivity extends AppCompatActivity implements OnMapRead
 
         suggestPre = new DirectionFinderPresenter();
 
-        toolbarTitle =  (Toolbar) findViewById(R.id.actName);
 
         ButterKnife.bind(this);
 
@@ -75,6 +85,7 @@ public class SuggestPlaceActivity extends AppCompatActivity implements OnMapRead
         listItems = getResources().getStringArray(R.array.suggets_item);
         myLocation = getMyLocation();
         getListItem();
+        getPlaces();
     }
 
 
@@ -113,7 +124,7 @@ public class SuggestPlaceActivity extends AppCompatActivity implements OnMapRead
             origin = myLocation.getLatitude() + "," + myLocation.getLongitude();
             destination = minLocation.getLatitude() + "," + minLocation.getLongitude();
 
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -151,7 +162,7 @@ public class SuggestPlaceActivity extends AppCompatActivity implements OnMapRead
         }
 
         if (polylinePaths != null) {
-            for (Polyline polyline:polylinePaths ) {
+            for (Polyline polyline : polylinePaths) {
                 polyline.remove();
             }
         }
@@ -160,7 +171,7 @@ public class SuggestPlaceActivity extends AppCompatActivity implements OnMapRead
     /**
      * @param: list route
      * @return: view direction on map
-    * */
+     */
     @Override
     public void onDirectionFinderSuccess(List<Route> routes) {
         progressDialog.dismiss();
@@ -168,7 +179,7 @@ public class SuggestPlaceActivity extends AppCompatActivity implements OnMapRead
         originMarkers = new ArrayList<>();
         destinationMarkers = new ArrayList<>();
 
-        for(Route route : routes) {
+        for (Route route : routes) {
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(route.startLocation, 16));
             geocoder = new Geocoder(this, Locale.getDefault());
 
@@ -203,10 +214,11 @@ public class SuggestPlaceActivity extends AppCompatActivity implements OnMapRead
     }
 
     /**
-    * Create view list choice location
-    * @return: list location
-    */
-    public void getListItem(){
+     * Create view list choice location
+     *
+     * @return: list location
+     */
+    public void getListItem() {
 
         listLocation = new ArrayList<>();
         ListItemSuggests = new ArrayList<>();
@@ -222,24 +234,23 @@ public class SuggestPlaceActivity extends AppCompatActivity implements OnMapRead
         });
 
         mBuilder.setCancelable(false);
-
         mBuilder.setPositiveButton("Đồng ý", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int which) {
 
                 mMap.clear();
                 ItemSuggest itemSuggest = new ItemSuggest();
-                if(checkedItems >= 0 ) {
+                if (checkedItems >= 0) {
                     itemSuggest.setPosition(checkedItems);
                     ListItemSuggests.add(itemSuggest);
                 }
                 /**
                  * set marker location
-                * */
+                 * */
                 suggestPre.setMarkerLocation(ListItemSuggests, mMap, new SuggestCallback() {
                     @Override
                     public void getListLocation(List<Location> locationList) {
-                            listLocation = locationList;
+                        listLocation = locationList;
                     }
                 });
             }
@@ -248,8 +259,8 @@ public class SuggestPlaceActivity extends AppCompatActivity implements OnMapRead
         mBuilder.setNeutralButton("Hủy", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int which) {
-                    checkedItems = -1;
-                    mUserItems.clear();
+                checkedItems = -1;
+                mUserItems.clear();
             }
         });
         AlertDialog mDialog = mBuilder.create();
@@ -257,17 +268,17 @@ public class SuggestPlaceActivity extends AppCompatActivity implements OnMapRead
     }
 
     /**
-     *@return: Location of user
-    * */
+     * @return: Location of user
+     */
     public Location getMyLocation() {
         LocationManager rLocationManager = (LocationManager) this.getSystemService(LOCATION_SERVICE);
         List<String> providers = rLocationManager.getProviders(true);
         Location bestLocation = null;
         for (String provider : providers) {
-            if (ActivityCompat.checkSelfPermission( this, Manifest.permission.ACCESS_FINE_LOCATION) !=
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) !=
                     PackageManager.PERMISSION_GRANTED &&
                     ActivityCompat.checkSelfPermission(
-                   this, Manifest.permission.ACCESS_COARSE_LOCATION) !=
+                            this, Manifest.permission.ACCESS_COARSE_LOCATION) !=
                             PackageManager.PERMISSION_GRANTED) {
                 return null;
             }
@@ -280,6 +291,25 @@ public class SuggestPlaceActivity extends AppCompatActivity implements OnMapRead
             }
         }
         return bestLocation;
+    }
+
+    public void setPlacesSpinner(List<Place> places) {
+        ArrayAdapter<Place> adapter = new ArrayAdapter<>(this, R.layout.simple_spinner_item, places);
+        // Specify the layout to use when the list of choices appears
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        // Apply the adapter to the spinner
+        placesSpinner.setAdapter(adapter);
+    }
+
+    public void getPlaces() {
+        db = FirebaseFirestore.getInstance();
+        db.collection("suggestlocations").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                List<Place> places = queryDocumentSnapshots.toObjects(Place.class);
+                setPlacesSpinner(places);
+            }
+        });
     }
 }
 
