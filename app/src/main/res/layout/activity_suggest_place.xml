@@ -1,42 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android.support.v7.appcompat="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mapSuggestPlace"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/aboveSectionLayout"
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:layout_alignParentTop="true"
-        android:background="#8187ff"
-        android:paddingBottom="10dp">
+        android:layout_height="?attr/actionBarSize"
+        android:theme="@style/MyToolbar"
+        app:navigationIcon="?attr/homeAsUpIndicator">
 
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/actName"
-            style="@style/Toolbar"
-            android:layout_width="383dp"
-
-            android:layout_height="70dp"
-            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-            tools:ignore="MissingConstraints"
-            tools:layout_editor_absoluteX="1dp" />
-
-    </android.support.constraint.ConstraintLayout>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="Các địa điểm tập luyện"
+            android:textSize="18sp" />
+    </android.support.v7.widget.Toolbar>
 
     <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/belowSectionLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-
-        android:layout_alignParentBottom="true"
-        android:layout_below="@+id/aboveSectionLayout">
+        android:layout_height="match_parent">
 
 
         <FrameLayout
