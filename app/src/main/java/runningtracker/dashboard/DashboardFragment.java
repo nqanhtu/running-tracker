@@ -82,6 +82,11 @@ public class DashboardFragment extends Fragment implements DashBoardContract.Vie
     // @BindView(R.id.gridview)
     GridView gridView;
 
+    @BindView(R.id.humidity_text_view)
+    TextView humidityTextView;
+    @BindView(R.id.wind_text_view)
+    TextView windTextView;
+
     private static final int REQUEST_PERMISSIONS_REQUEST_CODE = 34;
 
 
@@ -199,7 +204,6 @@ public class DashboardFragment extends Fragment implements DashBoardContract.Vie
         String latitude = String.valueOf(mLastLocation.getLatitude());
         String longitude = String.valueOf(mLastLocation.getLongitude());
         WeatherService weatherService = ServiceGenerator.createService(WeatherService.class);
-        //WeatherGenerator weatherService = WeatherGenerator.createService(WeatherService.class);
 
         Call<OpenWeather> call = weatherService.getWeather(latitude, longitude);
 
@@ -211,8 +215,14 @@ public class DashboardFragment extends Fragment implements DashBoardContract.Vie
 
                 Weather weather = response.body().getWeather().get(0);
 
-                weatherText.setText(weather.getDescription());
+                String weatherDescription = weather.getDescription();
+                weatherDescription = weatherDescription.substring(0, 1).toUpperCase() + weatherDescription.substring(1);
+
+
+                weatherText.setText(weatherDescription);
                 tempcText.setText(String.valueOf(response.body().getMain().getTemp()));
+                humidityTextView.setText(String.valueOf(response.body().getMain().getHumidity()));
+                windTextView.setText(String.valueOf(response.body().getWind().getSpeed()));
 
                 String weatherIcon = weather.getIcon();
                 int weatherIconPath = 0;
@@ -286,15 +296,13 @@ public class DashboardFragment extends Fragment implements DashBoardContract.Vie
         });
 
         Geocoder geocoder = new Geocoder(getActivity(), Locale.getDefault());
-        String result = null;
 
         try {
             List<Address> addresses = geocoder.getFromLocation(mLastLocation.getLatitude(), mLastLocation.getLongitude(), 1);
             String city = addresses.get(0).getLocality();
             String state = addresses.get(0).getAdminArea();
-            String zip = addresses.get(0).getPostalCode();
-            String country = addresses.get(0).getCountryName();
-            locationText.setText(state + " " + city);
+            String subCity = addresses.get(0).getSubAdminArea();
+            locationText.setText(city + ", " + subCity + ", " + state);
 
         } catch (IOException e) {
             e.printStackTrace();
