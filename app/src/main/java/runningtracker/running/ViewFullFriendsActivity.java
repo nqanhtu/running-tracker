@@ -56,7 +56,6 @@ public class ViewFullFriendsActivity extends AppCompatActivity implements OnMapR
 
         actionBar = findViewById(R.id.tbAutoSearch);
         actionBar.setTitle("Tìm kiếm bạn bè");
-        actionBar.setTitleTextColor(ContextCompat.getColor(this, R.color.browser_actions_title_color));
         actionBar.setNavigationIcon(R.drawable.ic_android_back_white_24dp);
         setSupportActionBar(actionBar);
     }

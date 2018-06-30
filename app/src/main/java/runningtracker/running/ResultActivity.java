@@ -91,8 +91,8 @@ public class ResultActivity extends AppCompatActivity {
     }
 
     private void setupTabIcons(TabLayout tabLayout) {
-        tabLayout.getTabAt(0).setIcon(R.drawable.ic_map_result);
-        tabLayout.getTabAt(1).setIcon(R.drawable.ic_graph_result);
+        tabLayout.getTabAt(1).setIcon(R.drawable.ic_map_result);
+        tabLayout.getTabAt(0).setIcon(R.drawable.ic_graph_result);
     }
 
 

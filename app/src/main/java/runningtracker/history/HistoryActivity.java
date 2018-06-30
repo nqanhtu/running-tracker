@@ -10,6 +10,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -135,7 +136,6 @@ public class HistoryActivity extends AppCompatActivity implements OnMapReadyCall
                 if (locationObject.size() > 1) {
                     List<Marker> originMarkers = new ArrayList<>();
                     List<Marker> destinationMarkers = new ArrayList<>();
-                    Polygon polygon;
 
                     originMarkers.add(googleMap.addMarker(new MarkerOptions()
                             .icon(BitmapDescriptorFactory.fromResource(R.drawable.start_blue))
@@ -144,20 +144,20 @@ public class HistoryActivity extends AppCompatActivity implements OnMapReadyCall
                     CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(new LatLng(locationObject.get(0).getLatitudeValue(),
                             locationObject.get(0).getLongitudeValue()), 15);
                     googleMap.animateCamera(cameraUpdate);
-
-                    for (int i = 0; i < locationObject.size() - 1; i++) {
-
-                        polygon = googleMap.addPolygon(new PolygonOptions()
-                                .add(new LatLng(locationObject.get(i).getLatitudeValue(), locationObject.get(i).getLongitudeValue()),
-                                        new LatLng(locationObject.get(i + 1).getLatitudeValue(), locationObject.get(i + 1).getLongitudeValue()))
-                                .strokeColor(Color.BLUE)
-                                .fillColor(Color.BLACK));
+                    int sizeObject = locationObject.size();
+                    List<LatLng> polygon = new ArrayList<>();
+                    for (int i = 0; i < sizeObject - 48; i++) {
+                        polygon.add(new LatLng(locationObject.get(i).getLatitudeValue(), locationObject.get(i).getLongitudeValue()));
                     }
+                    googleMap.addPolygon(new PolygonOptions()
+                            .addAll(polygon)
+                            .strokeColor(Color.BLUE)
+                            .fillColor(Color.BLACK));
 
                     destinationMarkers.add(googleMap.addMarker(new MarkerOptions()
                             .icon(BitmapDescriptorFactory.fromResource(R.drawable.end_green))
                             .title("End Tracking")
-                            .position(new LatLng(locationObject.get(locationObject.size() - 1).getLatitudeValue(), locationObject.get(locationObject.size() - 1).getLongitudeValue()))));
+                            .position(new LatLng(locationObject.get(sizeObject - 1).getLatitudeValue(), locationObject.get(sizeObject - 1).getLongitudeValue()))));
                 }
             }
         });
