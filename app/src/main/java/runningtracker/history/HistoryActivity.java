@@ -80,7 +80,6 @@ public class HistoryActivity extends AppCompatActivity implements OnMapReadyCall
     * */
     private void createView(){
         Toolbar actionBar = findViewById(R.id.actionbarHistory);
-        actionBar.setTitle(R.string.HistoryTitle);
         /**Event back main dashboard*/
         actionBar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -88,7 +87,6 @@ public class HistoryActivity extends AppCompatActivity implements OnMapReadyCall
                 finish();
             }
         });
-        actionBar.setTitleTextColor(ContextCompat.getColor(this, R.color.browser_actions_title_color));
     }
 
     private Context getMainActivity(){

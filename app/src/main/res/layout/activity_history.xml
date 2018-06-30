@@ -21,19 +21,25 @@
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/actionbarHistory"
-            style="@style/Toolbar"
             android.support.v7.appcompat:navigationIcon="@drawable/ic_android_back_white_24dp"
-            app:layout_constraintLeft_toLeftOf="parent"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:theme="@style/MyToolbar">
 
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:gravity="center"
+                android:text="Lịch sử tập luyện"
+                android:textSize="18sp"/>
+        </android.support.v7.widget.Toolbar>
 
         <fragment
             android:id="@+id/mapHistory"
             android:name="com.google.android.gms.maps.MapFragment"
             android:layout_width="match_parent"
-            android:layout_height="288dp"
+            android:layout_height="269dp"
 
             android:enabled="false"
 

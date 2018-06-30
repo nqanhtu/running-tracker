@@ -18,9 +18,9 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="16dp"
-                android:gravity="center_vertical"
-                android:text="Kết quả tập luyện" />
+                android:gravity="center"
+                android:text="Kết quả tập luyện"
+                android:textSize="18sp"/>
         </android.support.v7.widget.Toolbar>
 
     <android.support.design.widget.TabLayout

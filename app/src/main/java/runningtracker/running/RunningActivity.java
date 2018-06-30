@@ -15,11 +15,8 @@ import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -28,13 +25,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import runningtracker.R;
 import runningtracker.common.GenerateID;
@@ -45,9 +39,7 @@ import runningtracker.data.model.User;
 import runningtracker.data.model.running.IdHistory;
 import runningtracker.data.model.running.ResultObject;
 import runningtracker.model.modelrunning.BodilyCharacteristicObject;
-import runningtracker.model.modelrunning.DatabaseLocation;
 import runningtracker.fitnessstatistic.Calculator;
-import runningtracker.running.model.ListSuggestCallback;
 import runningtracker.running.model.RunningContract;
 
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -55,7 +47,6 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -115,7 +106,6 @@ public class RunningActivity extends AppCompatActivity implements RunningContrac
     LocationListener locListener;
     String locationProvider;
 
-    //private String id;
     private IdHistory idHistory;
     private FirebaseFirestore firestore;
     private  Toolbar actionBar;
@@ -335,8 +325,6 @@ public class RunningActivity extends AppCompatActivity implements RunningContrac
     private void initializeUI() {
         //Toolbar
         actionBar = findViewById(R.id.actionbarTracking);
-        actionBar.setTitle(R.string.RunningTitle);
-        actionBar.setTitleTextColor(ContextCompat.getColor(this, R.color.browser_actions_title_color));
         actionBar.setNavigationIcon(R.drawable.ic_android_back_white_24dp);
         setSupportActionBar(actionBar);
 
