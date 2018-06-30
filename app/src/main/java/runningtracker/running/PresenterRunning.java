@@ -373,7 +373,7 @@ public class PresenterRunning {
                 .addOnSuccessListener((Activity) runningContract.getMainActivity(), new OnSuccessListener<LocationSettingsResponse>() {
                     @Override
                     public void onSuccess(LocationSettingsResponse locationSettingsResponse) {
-                        if (ActivityCompat.checkSelfPermission((Activity) runningContract.getMainActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission((Activity) runningContract.getMainActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                        if (ActivityCompat.checkSelfPermission(runningContract.getMainActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                             return;
                         }
                         mFusedLocationClient.requestLocationUpdates(mLocationRequest,

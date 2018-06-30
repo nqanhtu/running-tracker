@@ -14,6 +14,7 @@ import android.os.Handler;
 import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -67,6 +68,7 @@ import java.util.Map;
 
 public class RunningActivity extends AppCompatActivity implements RunningContract, OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks {
 
+    private static final int REQUEST_PERMISSIONS_REQUEST_CODE = 34;
     private static final String TAG = RunningActivity.class.getSimpleName();
     private GoogleMap mMap, mMapShareLocation;
     Date startCurrentTime, stopCurrentTime;
@@ -108,7 +110,7 @@ public class RunningActivity extends AppCompatActivity implements RunningContrac
 
     private IdHistory idHistory;
     private FirebaseFirestore firestore;
-    private  Toolbar actionBar;
+    private Toolbar actionBar;
 
     /**
      * create method set value calories
@@ -182,18 +184,18 @@ public class RunningActivity extends AppCompatActivity implements RunningContrac
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        if (presenterRunning.checkPermissions()) {
+//        if (!presenterRunning.checkPermissions()) {
+//            requestPermissions();
+//        }
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             mMap = googleMap;
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                return;
-            }
             mMap.setMyLocationEnabled(true);
             mMap.getUiSettings().setMyLocationButtonEnabled(false);
             Location L = myLocation.getMyLocation(this);
             if (L != null) {
                 presenterRunning.moveCamera(L);
             }
-        }
+        } else requestPermissions();
         mMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
             @Override
             public void onMapLongClick(LatLng latLng) {
@@ -202,6 +204,41 @@ public class RunningActivity extends AppCompatActivity implements RunningContrac
                         myLocation.getMyLocation(getMainActivity()).getLongitude());
             }
         });
+
+    }
+
+    private void requestPermissions() {
+        boolean shouldProvideRationale =
+                ActivityCompat.shouldShowRequestPermissionRationale(this,
+                        Manifest.permission.ACCESS_FINE_LOCATION);
+
+        // Provide an additional rationale to the user. This would happen if the user denied the
+        // request previously, but didn't check the "Don't ask again" checkbox.
+        if (shouldProvideRationale) {
+            Log.i(TAG, "Displaying permission rationale to provide additional context.");
+            Snackbar.make(
+                    findViewById(R.id.activity_runnning),
+                    R.string.permission_rationale,
+                    Snackbar.LENGTH_INDEFINITE)
+                    .setAction("OK", new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            // Request permission
+                            ActivityCompat.requestPermissions(RunningActivity.this,
+                                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                                    REQUEST_PERMISSIONS_REQUEST_CODE);
+                        }
+                    })
+                    .show();
+        } else {
+            Log.i(TAG, "Requesting permission");
+            // Request permission. It's possible this can be auto answered if device policy
+            // sets the permission in a given state or the user denied the permission
+            // previously and checked "Never ask again".
+            ActivityCompat.requestPermissions(RunningActivity.this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    REQUEST_PERMISSIONS_REQUEST_CODE);
+        }
     }
 
     @Override
@@ -253,8 +290,8 @@ public class RunningActivity extends AppCompatActivity implements RunningContrac
     }
 
     @Override
-    public void pauseTime(){
-        if(!isRun)
+    public void pauseTime() {
+        if (!isRun)
             return;
         isRun = false;
         lPauseTime += lSystemTime;
@@ -301,7 +338,6 @@ public class RunningActivity extends AppCompatActivity implements RunningContrac
     }
 
     /**
-     *
      * @param item
      * @return true or false
      */
@@ -360,6 +396,7 @@ public class RunningActivity extends AppCompatActivity implements RunningContrac
             }
         });
     }
+
 
     /**
      * send data to ResultActivity
@@ -549,6 +586,7 @@ public class RunningActivity extends AppCompatActivity implements RunningContrac
 
     /**
      * Sent notification to friends
+     *
      * @param latitudeValue
      * @param longitudeValue
      */
@@ -599,7 +637,7 @@ public class RunningActivity extends AppCompatActivity implements RunningContrac
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                         if (task.isSuccessful()) {
                             mCurrentUser = task.getResult().toObject(User.class);
-                            Log.d(TAG,task.getResult().getData().toString());
+                            Log.d(TAG, task.getResult().getData().toString());
                         }
                     }
                 });

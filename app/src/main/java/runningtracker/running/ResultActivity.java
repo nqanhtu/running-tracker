@@ -5,7 +5,6 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -13,8 +12,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ScrollView;
 import android.widget.TextView;
-import com.google.android.gms.maps.GoogleMap;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import runningtracker.R;
@@ -138,25 +137,21 @@ public class ResultActivity extends AppCompatActivity {
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
-            // Inflate the gridview_dashboard_item for this fragment
+            //Inflate the gridview_dashboard_item for this fragment
             ViewGroup inflatedLayout = (ViewGroup) inflater.inflate(R.layout.activity_result_tab_stats, container, false);
+            txtDuration     =  inflatedLayout.findViewById(R.id.textValueDuration);
+            txtDistance     =  inflatedLayout.findViewById(R.id.textValueDistance);
+            txtAvgPace      =  inflatedLayout.findViewById(R.id.textValueAveragePace);
+            txtMaxPace      =  inflatedLayout.findViewById(R.id.textValueMaxPace);
+            txtAvgSpeed     =  inflatedLayout.findViewById(R.id.textValueAverageSpeed);
+            txtMaxSpeed     =  inflatedLayout.findViewById(R.id.textValueMaxSpeed);
+            txtNetCalorie   =  inflatedLayout.findViewById(R.id.textValueNetCalorie);
+            txtGrossCalorie = inflatedLayout.findViewById(R.id.textValueGrossCalorie);
             tabFragmentLayouts.add(inflatedLayout);
-            getAllChildViews(inflatedLayout);
+
             assignValueToView();
 
             return inflatedLayout;
-        }
-
-        /**
-         * Get all first-level child Views of parent ViewGroup and put into childViews HashMap.
-         * @param parent The parent ViewGroup to get child Views from.
-         */
-        private void getAllChildViews(ViewGroup parent) {
-            childViews = new HashMap<>();
-            for(int i = 0; i < parent.getChildCount(); i++) {
-                View child = parent.getChildAt(i);
-                childViews.put(child.getId(), child);
-            }
         }
 
         static void setStatsValue(Intent intent) {
@@ -187,20 +182,8 @@ public class ResultActivity extends AppCompatActivity {
             }
         }
 
-        private static void createView(){
-            txtDuration     = ((TextView) childViews.get(R.id.textValueDuration));
-            txtDistance     = ((TextView) childViews.get(R.id.textValueDistance));
-            txtAvgPace      = ((TextView) childViews.get(R.id.textValueAveragePace));
-            txtMaxPace      = ((TextView) childViews.get(R.id.textValueMaxPace));
-            txtAvgSpeed     = ((TextView) childViews.get(R.id.textValueAverageSpeed));
-            txtMaxSpeed     = ((TextView) childViews.get(R.id.textValueMaxSpeed));
-            txtNetCalorie   = ((TextView) childViews.get(R.id.textValueNetCalorie));
-            txtGrossCalorie = ((TextView) childViews.get(R.id.textValueGrossCalorie));
-        }
-
         private static void assignValueToView() {
 
-            createView();
 
             txtDuration.setText(mDuration);
             txtDistance.setText(Float.toString(mDistance));
