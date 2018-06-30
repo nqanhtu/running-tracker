@@ -184,9 +184,6 @@ public class RunningActivity extends AppCompatActivity implements RunningContrac
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-//        if (!presenterRunning.checkPermissions()) {
-//            requestPermissions();
-//        }
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             mMap = googleMap;
             mMap.setMyLocationEnabled(true);
