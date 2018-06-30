@@ -107,7 +107,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="45dp"
 
-            android.support.v7.appcompat:srcCompat="@drawable/ic_run_fast_grey600_24dp"
+            android.support.v7.appcompat:srcCompat="@drawable/ic_running"
             app:layout_constraintBottom_toBottomOf="@+id/textValuePace"
             app:layout_constraintLeft_toLeftOf="@+id/textValuePace"
             app:layout_constraintRight_toRightOf="@+id/textValuePace" />
@@ -140,7 +140,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="45dp"
 
-            android.support.v7.appcompat:srcCompat="@drawable/ic_road_variant_grey600_24dp"
+            android.support.v7.appcompat:srcCompat="@drawable/ic_pace"
             app:layout_constraintBottom_toBottomOf="@+id/textValueDistance"
             app:layout_constraintLeft_toLeftOf="@+id/textValueDistance"
             app:layout_constraintRight_toRightOf="@+id/textValueDistance" />
@@ -173,7 +173,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="45dp"
 
-            android.support.v7.appcompat:srcCompat="@drawable/ic_fire_grey600_24dp"
+            android.support.v7.appcompat:srcCompat="@drawable/ic_calo_burned"
             app:layout_constraintBottom_toBottomOf="@+id/textValueCalorie"
             app:layout_constraintLeft_toLeftOf="@+id/textValueCalorie"
             app:layout_constraintRight_toRightOf="@+id/textValueCalorie" />
