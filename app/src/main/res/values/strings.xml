@@ -5,9 +5,9 @@
     <string name="action_settings">Settings</string>
     <string name="section_format">Hello World from section: %1$d</string>
     <string name="app_name">Running Assistant</string>
-    <string name="title_profile">Profile</string>
-    <string name="title_dashboard">Dashboard</string>
-    <string name="title_notifications">Notifications</string>
+    <string name="title_profile">Trang cá nhân</string>
+    <string name="title_dashboard">Bảng điểu khiển</string>
+    <string name="title_notifications">Thông báo</string>
     <!-- History -->
     <string name="HistoryTitle">Lịch sử chạy</string>
 
