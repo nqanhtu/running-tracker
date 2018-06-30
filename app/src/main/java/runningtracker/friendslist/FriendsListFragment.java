@@ -5,7 +5,6 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,14 +13,10 @@ import android.widget.TextView;
 
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QuerySnapshot;
 
-import java.util.List;
 import java.util.Objects;
 
 import butterknife.BindView;
@@ -38,7 +33,6 @@ public class FriendsListFragment extends Fragment {
     private static final String TAG = "Friends";
     FirebaseFirestore db;
     private FirebaseAuth mAuth;
-    private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
 
     private FirestoreRecyclerAdapter firestoreRecyclerAdapter;
@@ -80,7 +74,7 @@ public class FriendsListFragment extends Fragment {
             @Override
             protected void onBindViewHolder(@NonNull FriendsHolder holder, int position, @NonNull Friend friend) {
                 holder.displayNameTextView.setText(friend.getDisplayName());
-                holder.emailTextView.setText(friend.getEmail());
+                holder.usernameTextView.setText(friend.getUsername());
             }
 
 
@@ -103,12 +97,12 @@ public class FriendsListFragment extends Fragment {
     public class FriendsHolder extends RecyclerView.ViewHolder {
 
 
-        @BindView(R.id.displayNameTextView)
+        @BindView(R.id.display_name_text_view)
         TextView displayNameTextView;
-        @BindView(R.id.userImg)
+        @BindView(R.id.user_image_view)
         ImageView userImg;
-        @BindView(R.id.emailTextView)
-        TextView emailTextView;
+        @BindView(R.id.username_text_view)
+        TextView usernameTextView;
 
         public FriendsHolder(View itemView) {
             super(itemView);

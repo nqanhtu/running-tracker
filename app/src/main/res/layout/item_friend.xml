@@ -8,7 +8,6 @@
     android:orientation="vertical">
 
     <android.support.constraint.ConstraintLayout xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/item_friend"
         android:layout_width="match_parent"
         android:layout_height="72dp"
@@ -17,7 +16,7 @@
         android:focusable="true">
 
         <ImageView
-            android:id="@+id/userImg"
+            android:id="@+id/user_image_view"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_marginStart="16dp"
@@ -27,7 +26,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/displayNameTextView"
+            android:id="@+id/display_name_text_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
@@ -35,24 +34,24 @@
             android:fontFamily="@font/roboto"
             android:maxLines="1"
             android:text="User Name"
-            android:textSize="16dp"
-            app:layout_constraintStart_toEndOf="@+id/userImg"
+            android:textSize="16sp"
+            app:layout_constraintStart_toEndOf="@+id/user_image_view"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/emailTextView"
+            android:id="@+id/username_text_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
             android:layout_marginStart="16dp"
             android:fontFamily="@font/roboto"
             android:maxLines="1"
-            android:text="email"
+            android:text="username"
             android:textAlignment="textStart"
             android:textColor="@color/textColorSecondary"
-            android:textSize="14dp"
+            android:textSize="14sp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/userImg" />
+            app:layout_constraintStart_toEndOf="@+id/user_image_view" />
     </android.support.constraint.ConstraintLayout>
 
 </LinearLayout>

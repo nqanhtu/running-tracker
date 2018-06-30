@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="runningtracker.friendslist.FriendsListFragment">
+    tools:context="runningtracker.addfriend.AddFriendFragment">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -16,15 +16,15 @@
         <android.support.design.widget.TextInputLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:hint="Email">
+            android:hint="Tên tài khoản">
 
             <EditText
-                android:id="@+id/friend_email_edit_text"
+                android:id="@+id/username_text_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:ems="10"
-                android:inputType="textEmailAddress" />
+                android:inputType="text" />
         </android.support.design.widget.TextInputLayout>
 
         <Button

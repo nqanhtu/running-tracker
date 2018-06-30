@@ -150,8 +150,10 @@ public class ProfileFragment extends Fragment {
                                 Map<String, Object> user = task.getResult().getData();
                                 String username = "";
                                 String name = "";
-                                username = user.get("username").toString();
-                                name = user.get("displayName").toString();
+                                if (user.get("username") != null)
+                                    username = user.get("username").toString();
+                                if (user.get("displayName") != null)
+                                    name = user.get("displayName").toString();
                                 usernameTextView.setText(username);
                                 nameTextView.setText(name);
                             }
@@ -172,9 +174,12 @@ public class ProfileFragment extends Fragment {
                                 String heartRate = "";
                                 String email = "";
                                 if (user.get("email") != null) email = user.get("email").toString();
-                                if (user.get("height") != null)  height = user.get("height").toString();
-                                if (user.get("weight") != null)  weight = user.get("weight").toString();
-                                if (user.get("heartRate") != null) heartRate = user.get("heartRate").toString();
+                                if (user.get("height") != null)
+                                    height = user.get("height").toString();
+                                if (user.get("weight") != null)
+                                    weight = user.get("weight").toString();
+                                if (user.get("heartRate") != null)
+                                    heartRate = user.get("heartRate").toString();
 
 
                                 heightTextView.setText(height);

@@ -2,25 +2,25 @@ package runningtracker.data.model;
 
 public class Friend {
     private String displayName;
-    private String email;
+    private String username;
     private String uid;
     private boolean notify;
     private boolean blockNotify;
 
     public Friend(){}
 
-    public Friend(String displayName, String email, String uid, boolean notify, boolean blockNotify) {
+    public Friend(String displayName, String username, String uid, boolean notify, boolean blockNotify) {
         this.displayName = displayName;
-        this.email = email;
+        this.username = username;
         this.uid = uid;
         this.notify = notify;
         this.blockNotify = blockNotify;
     }
 
 
-    public Friend(String displayName, String email, String uid) {
+    public Friend(String displayName, String username, String uid) {
         this.displayName = displayName;
-        this.email = email;
+        this.username = username;
         this.uid = uid;
         this.notify = true;
         this.blockNotify = false;
@@ -30,8 +30,8 @@ public class Friend {
         return displayName;
     }
 
-    public String getEmail() {
-        return email;
+    public String getUsername() {
+        return username;
     }
 
     public String getUid() {

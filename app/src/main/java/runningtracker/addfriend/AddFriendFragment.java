@@ -5,7 +5,6 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,9 +15,15 @@ import android.widget.Toast;
 
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.List;
 import java.util.Objects;
@@ -30,48 +35,68 @@ import runningtracker.R;
 import runningtracker.common.InitializationFirebase;
 import runningtracker.data.model.Friend;
 import runningtracker.data.repository.UsersRepository;
-import runningtracker.friendslist.FriendsListFragment;
 
 
-public class AddFriendFragment extends Fragment implements AddFriendContract.View {
+public class AddFriendFragment extends Fragment {
     private static final String TAG = "AddFriends";
     @BindView(R.id.add_friends_recycler_view)
     RecyclerView mRecyclerView;
-    private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
-    private AddFriendPresenter mAddFriendPresenter;
-    private InitializationFirebase initializationFirebase;
     FirestoreRecyclerAdapter firestoreRecyclerAdapter;
-    @BindView(R.id.friend_email_edit_text)
-    EditText friendEmailEditText;
+    @BindView(R.id.username_text_view)
+    EditText usernameEditText;
     FirebaseFirestore db;
     FirebaseAuth mAuth;
+    FirebaseUser currentUser;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_add_friend, container, false);
         ButterKnife.bind(this, view);
-
-            mAddFriendPresenter = new AddFriendPresenter(UsersRepository.getInstance(db), this);
-            mAddFriendPresenter.start();
         init();
         showFriendsList();
-
         return view;
     }
 
+
     @OnClick(R.id.add_friend_button)
     public void addFriend() {
-        mAddFriendPresenter.addFriend(friendEmailEditText.getText().toString());
-        Toast.makeText(getContext(), "Đã gửi lời mời kết bạn", Toast.LENGTH_SHORT).show();
-        friendEmailEditText.setText("");
+        db.collection("users").whereEqualTo("username", usernameEditText.getText().toString())
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            List<Friend> users = task.getResult().toObjects(Friend.class);
+                            if (!users.isEmpty()) {
+                                final String friendUid = task.getResult().getDocuments().get(0).getId();
+                                Friend user = users.get(0);
+                                db.collection("users").document(currentUser.getUid())
+                                        .collection("friendRequestsSent").document(friendUid).set(user);
+                                db.collection("users").document(currentUser.getUid()).get()
+                                        .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                            @Override
+                                            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                                Friend user = documentSnapshot.toObject(Friend.class);
+                                                db.collection("users").document(friendUid)
+                                                        .collection("friendRequests").document(currentUser.getUid()).set(user);
+                                            }
+                                        });
+                                Toast.makeText(getContext(), "Đã gửi lời mời kết bạn", Toast.LENGTH_SHORT).show();
+                            } else
+                                Toast.makeText(getContext(), "Người dùng không tồn tại", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+        usernameEditText.setText("");
     }
-
 
     private void init() {
         db = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
+        currentUser = mAuth.getCurrentUser();
+
     }
 
     public void showFriendsList() {
@@ -87,7 +112,7 @@ public class AddFriendFragment extends Fragment implements AddFriendContract.Vie
             @Override
             protected void onBindViewHolder(@NonNull FriendsHolder holder, int position, @NonNull Friend friend) {
                 holder.displayNameTextView.setText(friend.getDisplayName());
-                holder.emailTextView.setText(friend.getEmail());
+                holder.usernameTextView.setText(friend.getUsername());
             }
 
 
@@ -109,13 +134,12 @@ public class AddFriendFragment extends Fragment implements AddFriendContract.Vie
 
     public class FriendsHolder extends RecyclerView.ViewHolder {
 
-
-        @BindView(R.id.displayNameTextView)
+        @BindView(R.id.display_name_text_view)
         TextView displayNameTextView;
-        @BindView(R.id.userImg)
+        @BindView(R.id.user_image_view)
         ImageView userImg;
-        @BindView(R.id.emailTextView)
-        TextView emailTextView;
+        @BindView(R.id.username_text_view)
+        TextView usernameTextView;
 
         public FriendsHolder(View itemView) {
             super(itemView);
