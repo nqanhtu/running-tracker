@@ -32,12 +32,12 @@
     <string name="settings">Settings</string>
 
     <string-array name="suggets_item">
-        <item>Có nhiều cây xanh</item>
-        <item>Ven sông</item>
-        <item>Công viên có nhiều cây xanh</item>
-        <item>Đường trống trải</item>
-        <item>Đường có nhiều người chạy</item>
-        <item>Địa điểm đang tổ chức cuộc thi chạy bộ</item>
+        <item>Cảnh đẹp</item>
+        <item>Gần bờ sông</item>
+        <item>Công viên</item>
+        <item>Cung đường đẹp</item>
+        <item>Nhiều cây xanh</item>
+        <item>Nhiều cửa hàng</item>
     </string-array>
 
     <string name="latitude_label">Latitude</string>

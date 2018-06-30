@@ -62,7 +62,6 @@ public class ResultActivity extends AppCompatActivity {
     private void initializeUI() {
         // Toolbar
         Toolbar toolbar = findViewById(R.id.toolbar);
-        toolbar.setTitle("Track Result");
         /**event back dashboard*/
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -75,7 +74,6 @@ public class ResultActivity extends AppCompatActivity {
                 }
             }
         });
-        toolbar.setTitleTextColor(ContextCompat.getColor(this, R.color.browser_actions_title_color));
 
         // ViewPager support swiping between tabs
         ViewPager viewPager =  findViewById(R.id.viewpager);
@@ -94,8 +92,8 @@ public class ResultActivity extends AppCompatActivity {
     }
 
     private void setupTabIcons(TabLayout tabLayout) {
-        tabLayout.getTabAt(0).setIcon(R.drawable.ic_equalizer_white_48dp);
-        tabLayout.getTabAt(1).setIcon(R.drawable.ic_google_maps_white_48dp);
+        tabLayout.getTabAt(0).setIcon(R.drawable.ic_map_result);
+        tabLayout.getTabAt(1).setIcon(R.drawable.ic_graph_result);
     }
 
 

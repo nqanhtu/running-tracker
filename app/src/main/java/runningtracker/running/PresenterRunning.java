@@ -129,7 +129,7 @@ public class PresenterRunning {
         this.resAPICommon = new ResAPICommon();
         objectCommon = new ObjectCommon();
         myLocation = new MyLocation();
-
+        viewFullFriends = new ViewFullFriendsActivity();
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         currentUser = mAuth.getCurrentUser();
         /**Create firebase*/

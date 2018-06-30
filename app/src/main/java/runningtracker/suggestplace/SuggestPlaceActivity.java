@@ -6,16 +6,14 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
-import android.location.Address;
-import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.widget.ArrayAdapter;
-import android.widget.Spinner;
+import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdate;
@@ -29,14 +27,9 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QuerySnapshot;
-import com.google.firebase.storage.FirebaseStorage;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -53,7 +46,9 @@ public class SuggestPlaceActivity extends AppCompatActivity implements OnMapRead
     private List<Marker> destinationMarkers = new ArrayList<>();
     private List<Polyline> polylinePaths = new ArrayList<>();
     private ProgressDialog progressDialog;
-    private Toolbar toolbarTitle;
+
+    @BindView(R.id.toolbar)
+    Toolbar toolbarTitle;
 
     private String[] listItems;
     int checkedItems = -1;
@@ -62,30 +57,23 @@ public class SuggestPlaceActivity extends AppCompatActivity implements OnMapRead
 
     private ArrayList<ItemSuggest> ListItemSuggests;
     private List<Location> listLocation;
-    private Geocoder geocoder;
-    private List<Address> addresses;
     private Location myLocation;
-    @BindView(R.id.places_spinner)
-    Spinner placesSpinner;
-    FirebaseFirestore db;
+    @BindView(R.id.places_text_view)
+    TextView placeTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_suggest_place);
-
         suggestPre = new DirectionFinderPresenter();
-
-
         ButterKnife.bind(this);
-
+        setUpToolbar();
         MapFragment mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
         listItems = getResources().getStringArray(R.array.suggets_item);
         myLocation = getMyLocation();
         getListItem();
-        getPlaces();
     }
 
 
@@ -180,16 +168,7 @@ public class SuggestPlaceActivity extends AppCompatActivity implements OnMapRead
         destinationMarkers = new ArrayList<>();
 
         for (Route route : routes) {
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(route.startLocation, 16));
-            geocoder = new Geocoder(this, Locale.getDefault());
-
-            try {
-                setSupportActionBar(toolbarTitle);
-                getSupportActionBar().setTitle(route.endAddress);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(route.startLocation, 15));
             originMarkers.add(mMap.addMarker(new MarkerOptions()
                     .icon(BitmapDescriptorFactory.fromResource(R.drawable.start_blue))
                     .title(route.startAddress)
@@ -219,7 +198,6 @@ public class SuggestPlaceActivity extends AppCompatActivity implements OnMapRead
      * @return: list location
      */
     public void getListItem() {
-
         listLocation = new ArrayList<>();
         ListItemSuggests = new ArrayList<>();
 
@@ -241,6 +219,8 @@ public class SuggestPlaceActivity extends AppCompatActivity implements OnMapRead
                 mMap.clear();
                 ItemSuggest itemSuggest = new ItemSuggest();
                 if (checkedItems >= 0) {
+                    Place place = new Place(listItems[checkedItems]);
+                    placeTextView.setText(place.getName());
                     itemSuggest.setPosition(checkedItems);
                     ListItemSuggests.add(itemSuggest);
                 }
@@ -293,21 +273,11 @@ public class SuggestPlaceActivity extends AppCompatActivity implements OnMapRead
         return bestLocation;
     }
 
-    public void setPlacesSpinner(List<Place> places) {
-        ArrayAdapter<Place> adapter = new ArrayAdapter<>(this, R.layout.simple_spinner_item, places);
-        // Specify the layout to use when the list of choices appears
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        // Apply the adapter to the spinner
-        placesSpinner.setAdapter(adapter);
-    }
-
-    public void getPlaces() {
-        db = FirebaseFirestore.getInstance();
-        db.collection("suggestlocations").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+    private void setUpToolbar() {
+        toolbarTitle.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
-            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                List<Place> places = queryDocumentSnapshots.toObjects(Place.class);
-                setPlacesSpinner(places);
+            public void onClick(View v) {
+                onBackPressed();
             }
         });
     }
