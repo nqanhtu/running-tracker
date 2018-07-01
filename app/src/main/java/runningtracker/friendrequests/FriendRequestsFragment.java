@@ -32,6 +32,7 @@ import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import de.hdodenhof.circleimageview.CircleImageView;
 import runningtracker.R;
 import runningtracker.common.InitializationFirebase;
 import runningtracker.data.model.Friend;
@@ -211,7 +212,7 @@ public class FriendRequestsFragment extends Fragment {
         @BindView(R.id.display_name_text_view)
         TextView displayNameTextView;
         @BindView(R.id.user_image_view)
-        ImageView userImg;
+        CircleImageView userImg;
         @BindView(R.id.username_text_view)
         TextView usernameTextView;
         Friend friend;

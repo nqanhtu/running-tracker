@@ -83,8 +83,6 @@ public class RegisterInformationFragment extends Fragment {
     FirebaseAuth mAuth;
     FirebaseStorage mStorage;
     StorageReference mStorageRef;
-    String email;
-    String password;
     Uri uri;
     private DatePickerDialog mDatePickerDialog;
     private final static String TAG = "register information";
@@ -151,10 +149,9 @@ public class RegisterInformationFragment extends Fragment {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                     Toast.makeText(getActivity(), "Tải ảnh lên thành công", Toast.LENGTH_SHORT).show();
+
                 }
             });
-
-
             Glide
                     .with(this)
                     .load(uri)
@@ -249,7 +246,7 @@ public class RegisterInformationFragment extends Fragment {
                                 Map<String, Object> userInfo = new HashMap<>();
                                 userInfo.put("username", usernameEditText.getText().toString());
                                 userInfo.put("displayName", nameEditText.getText().toString());
-                                db.collection("users").document(uid).set(userInfo)
+                                db.collection("users").document(uid).update(userInfo)
                                         .addOnCompleteListener(new OnCompleteListener<Void>() {
                                             @Override
                                             public void onComplete(@NonNull Task<Void> task) {
@@ -260,7 +257,7 @@ public class RegisterInformationFragment extends Fragment {
                                                     userInfo.put("height", heightEditText.getText().toString());
                                                     userInfo.put("birthday", birthdayEditText.getText().toString());
                                                     userInfo.put("sex", gioiTinhSpinner.getSelectedItem().toString());
-                                                    db.collection("usersData").document(mAuth.getCurrentUser().getUid()).set(userInfo)
+                                                    db.collection("usersData").document(mAuth.getCurrentUser().getUid()).update(userInfo)
                                                             .addOnCompleteListener(new OnCompleteListener<Void>() {
                                                                 @Override
                                                                 public void onComplete(@NonNull Task<Void> task) {

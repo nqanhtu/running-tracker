@@ -133,7 +133,6 @@ public class ProfileFragment extends Fragment {
         storageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
             @Override
             public void onSuccess(Uri uri) {
-                filepath = uri;
                 Log.d(TAG, uri.toString());
                 loadAvatar(uri);
             }
@@ -193,7 +192,6 @@ public class ProfileFragment extends Fragment {
     }
 
     private void loadAvatar(Uri uri) {
-
         Glide.with(Objects.requireNonNull(getContext()))
                 .load(uri)
                 .into(avatarImageView);
