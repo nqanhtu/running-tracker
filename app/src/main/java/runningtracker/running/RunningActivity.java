@@ -12,6 +12,8 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
@@ -30,6 +32,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import runningtracker.R;
 import runningtracker.common.GenerateID;
@@ -48,6 +51,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -65,11 +69,13 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import static android.icu.lang.UCharacter.GraphemeClusterBreak.V;
+
 
 public class RunningActivity extends AppCompatActivity implements RunningContract, OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks {
 
     private static final int REQUEST_PERMISSIONS_REQUEST_CODE = 34;
-    private static final String TAG = RunningActivity.class.getSimpleName();
+    private static final String TAG = "RunningActivity123";
     private GoogleMap mMap, mMapShareLocation;
     Date startCurrentTime, stopCurrentTime;
     float rGrossCalorie;
@@ -596,8 +602,7 @@ public class RunningActivity extends AppCompatActivity implements RunningContrac
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
-                            for (QueryDocumentSnapshot documentSnapshot : task.getResult()
-                                    ) {
+                            for (QueryDocumentSnapshot documentSnapshot : task.getResult()) {
                                 Friend friend = documentSnapshot.toObject(Friend.class);
                                 Map<String, Object> notificationMessage = new HashMap<>();
                                 notificationMessage.put("message", message);
@@ -605,16 +610,39 @@ public class RunningActivity extends AppCompatActivity implements RunningContrac
                                 notificationMessage.put("fromName", mCurrentUser.getDisplayName());
                                 notificationMessage.put("latitudeValue", latitudeValue);
                                 notificationMessage.put("longitudeValue", longitudeValue);
-                                firestore.collection("users/" + friend.getUid() + "/notifications").add(notificationMessage).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                                    @Override
-                                    public void onSuccess(DocumentReference documentReference) {
-                                        Log.d(TAG, "Ghi data thanh cong");
-                                    }
-                                });
+                                firestore.collection("users/" + friend.getUid() + "/notifications").add(notificationMessage)
+                                        .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                                            @Override
+                                            public void onSuccess(DocumentReference documentReference) {
+                                                Log.d(TAG, "Ghi data thanh cong");
+                                                sendToast("Đã gửi thông báo");
+                                            }
+                                        })
+                                        .addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception e) {
+                                                sendToast("Gửi thông báo không thành công");
+                                            }
+                                        });
                             }
                         }
                     }
                 });
+    }
+
+    private void sendToast(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+        Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+        if (vibrator.hasVibrator()) {
+
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                VibrationEffect effect = VibrationEffect.createOneShot(200, VibrationEffect.DEFAULT_AMPLITUDE);
+                vibrator.vibrate(effect);
+            } else {
+                vibrator.vibrate(200);
+            }
+
+        }
     }
 
     /**
@@ -628,7 +656,7 @@ public class RunningActivity extends AppCompatActivity implements RunningContrac
     }
 
     public void getCurrentUser() {
-        firestore.collection("users").document(mAuth.getUid()).get()
+        firestore.collection("users").document(mAuth.getCurrentUser().getUid()).get()
                 .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
