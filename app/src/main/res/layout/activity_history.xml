@@ -1,75 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:android.support.v7.appcompat="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".running.RunningActivity"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".running.RunningActivity">
 
-    <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:android.support.v7.appcompat="http://schemas.android.com/apk/res-auto"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:id="@+id/aboveSectionLayout"
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/actionbarHistory"
         android:layout_width="match_parent"
-        android:layout_height="333dp"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:paddingBottom="10dp">
+        android:layout_height="?attr/actionBarSize"
+        android:theme="@style/MyToolbar"
+        app:navigationIcon="?attr/homeAsUpIndicator">
 
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/actionbarHistory"
-            android.support.v7.appcompat:navigationIcon="@drawable/ic_android_back_white_24dp"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:theme="@style/MyToolbar">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:gravity="center"
+            android:text="Lịch sử tập luyện"
+            android:textSize="18sp" />
+    </android.support.v7.widget.Toolbar>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="16dp"
-                android:gravity="center"
-                android:text="Lịch sử tập luyện"
-                android:textSize="18sp"/>
-        </android.support.v7.widget.Toolbar>
-
-        <fragment
-            android:id="@+id/mapHistory"
-            android:name="com.google.android.gms.maps.MapFragment"
-            android:layout_width="match_parent"
-            android:layout_height="269dp"
-
-            android:enabled="false"
-
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/actionbarHistory" />
-
-
-    </android.support.constraint.ConstraintLayout>
-
-    <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:android.support.v7.appcompat="http://schemas.android.com/apk/res-auto"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:id="@+id/belowSectionLayout"
+    <fragment
+        android:id="@+id/mapHistory"
+        android:name="com.google.android.gms.maps.MapFragment"
         android:layout_width="match_parent"
-        android:layout_height="236dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1.5"
+        android:enabled="false" />
 
-        android:layout_alignParentBottom="true"
-        android:layout_below="@+id/aboveSectionLayout"
-        android:layout_marginTop="-1dp">
+    <ListView
+        android:id="@+id/lstDateTimeHistory"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1" />
 
-        <ListView
-            android:id="@+id/lstDateTimeHistory"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            tools:layout_editor_absoluteX="0dp"
-            tools:layout_editor_absoluteY="0dp"
-            tools:ignore="MissingConstraints" />
-    </android.support.constraint.ConstraintLayout>
-
-</RelativeLayout>
+</LinearLayout>
