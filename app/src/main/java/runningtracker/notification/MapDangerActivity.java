@@ -41,7 +41,6 @@ public class MapDangerActivity extends AppCompatActivity implements OnMapReadyCa
     private void init(){
         /**set value toolbar*/
         Toolbar toolbar =  findViewById(R.id.actionbarDanger);
-        toolbar.setTitle("Vị trí gặp sự cố");
         /**event back notification activity*/
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override

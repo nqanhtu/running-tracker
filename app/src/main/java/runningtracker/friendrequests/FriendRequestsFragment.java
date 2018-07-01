@@ -3,6 +3,7 @@ package runningtracker.friendrequests;
 import android.app.Dialog;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
@@ -18,6 +19,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -27,6 +29,8 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.Objects;
 
@@ -78,10 +82,25 @@ public class FriendRequestsFragment extends Fragment {
 
         firestoreRecyclerAdapter = new FirestoreRecyclerAdapter<Friend, FriendsHolder>(options) {
             @Override
-            protected void onBindViewHolder(@NonNull FriendsHolder holder, int position, @NonNull Friend friend) {
+            protected void onBindViewHolder(@NonNull final FriendsHolder holder, int position, @NonNull Friend friend) {
                 holder.displayNameTextView.setText(friend.getDisplayName());
                 holder.usernameTextView.setText(friend.getUsername());
                 holder.friend = friend;
+                StorageReference storageReference = FirebaseStorage.getInstance().getReference().child("Photos").child(friend.getUid());
+                storageReference.getDownloadUrl()
+                        .addOnSuccessListener(new OnSuccessListener<Uri>() {
+                            @Override
+                            public void onSuccess(Uri uri) {
+                                Log.d(TAG, uri.toString());
+                                loadAvatar(uri, holder.userImg);
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.d(TAG, "Load image fail");
+                            }
+                        });
             }
 
 
@@ -105,7 +124,6 @@ public class FriendRequestsFragment extends Fragment {
                         TextView dialogEmail = mDialog.findViewById(R.id.email_textview);
                         Button buttonAccept = mDialog.findViewById(R.id.accept_button);
                         Button buttonReject = mDialog.findViewById(R.id.reject_button);
-
 
                         final Friend friend = viewHolder.friend;
                         dialogName.setText(friend.getDisplayName());
@@ -233,5 +251,11 @@ public class FriendRequestsFragment extends Fragment {
     public void onStop() {
         super.onStop();
         firestoreRecyclerAdapter.stopListening();
+    }
+
+    private void loadAvatar(Uri uri, ImageView avatarImageView) {
+        Glide.with(Objects.requireNonNull(getContext()))
+                .load(uri)
+                .into(avatarImageView);
     }
 }

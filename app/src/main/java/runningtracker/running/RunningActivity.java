@@ -610,6 +610,7 @@ public class RunningActivity extends AppCompatActivity implements RunningContrac
                                 notificationMessage.put("fromName", mCurrentUser.getDisplayName());
                                 notificationMessage.put("latitudeValue", latitudeValue);
                                 notificationMessage.put("longitudeValue", longitudeValue);
+                                notificationMessage.put("type", 1);
                                 firestore.collection("users/" + friend.getUid() + "/notifications").add(notificationMessage)
                                         .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                                             @Override

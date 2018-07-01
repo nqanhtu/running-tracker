@@ -252,9 +252,9 @@ public class RegisterInformationFragment extends Fragment {
                                             public void onComplete(@NonNull Task<Void> task) {
                                                 if (task.isSuccessful()) {
                                                     Map<String, Object> userInfo = new HashMap<>();
-                                                    userInfo.put("heartRate", heartRateEditText.getText().toString());
-                                                    userInfo.put("weight", weightEditText.getText().toString());
-                                                    userInfo.put("height", heightEditText.getText().toString());
+                                                    userInfo.put("heartRate", heartRateEditText.getText());
+                                                    userInfo.put("weight", weightEditText.getText());
+                                                    userInfo.put("height", heightEditText.getText());
                                                     userInfo.put("birthday", birthdayEditText.getText().toString());
                                                     userInfo.put("sex", gioiTinhSpinner.getSelectedItem().toString());
                                                     db.collection("usersData").document(mAuth.getCurrentUser().getUid()).update(userInfo)

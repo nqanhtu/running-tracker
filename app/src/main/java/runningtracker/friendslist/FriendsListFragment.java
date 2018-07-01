@@ -76,7 +76,7 @@ public class FriendsListFragment extends Fragment {
             protected void onBindViewHolder(@NonNull final FriendsHolder holder, int position, @NonNull Friend friend) {
                 holder.displayNameTextView.setText(friend.getDisplayName());
                 holder.usernameTextView.setText(friend.getUsername());
-                StorageReference storageReference = mStorageRef.child("Photos").child(friend.getUid());
+                StorageReference storageReference = FirebaseStorage.getInstance().getReference().child("Photos").child(friend.getUid());
                 storageReference.getDownloadUrl()
                         .addOnSuccessListener(new OnSuccessListener<Uri>() {
                             @Override
@@ -91,7 +91,6 @@ public class FriendsListFragment extends Fragment {
                                 Log.d(TAG, "Load image fail");
                             }
                         });
-
             }
 
 
