@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:weightSum="2.5"
     tools:context=".running.RunningActivity">
 
 
@@ -28,14 +29,14 @@
         android:id="@+id/mapHistory"
         android:name="com.google.android.gms.maps.MapFragment"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="1.5"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:enabled="false" />
 
     <ListView
         android:id="@+id/lstDateTimeHistory"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="1" />
+        android:layout_height="0dp"
+        android:layout_weight="1.5" />
 
 </LinearLayout>
