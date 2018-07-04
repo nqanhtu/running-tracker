@@ -79,8 +79,7 @@ public class ProfileFragment extends Fragment {
             Log.d(TAG, "save instance fragment null");
 
         }
-        initFirebase();
-        loadUserInfo();
+
     }
 
     @Override
@@ -88,8 +87,8 @@ public class ProfileFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
         ButterKnife.bind(this, view);
-        mCurrentId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-
+        initFirebase();
+        loadUserInfo();
         db.collection("users").document(mCurrentId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -125,6 +124,7 @@ public class ProfileFragment extends Fragment {
         db = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
         mStorage = FirebaseStorage.getInstance();
+        mCurrentId = mAuth.getCurrentUser().getUid();
         mStorageRef = FirebaseStorage.getInstance().getReference();
     }
 
@@ -137,8 +137,8 @@ public class ProfileFragment extends Fragment {
                 loadAvatar(uri);
             }
         });
-
-
+//        String email = mAuth.getCurrentUser().getEmail();
+//        emailTextView.setText(email);
         db.collection("users").document(mAuth.getCurrentUser().getUid())
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {

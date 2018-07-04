@@ -12,6 +12,8 @@ import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -26,7 +28,6 @@ import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -39,6 +40,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -48,7 +50,7 @@ import butterknife.OnClick;
 import de.hdodenhof.circleimageview.CircleImageView;
 import runningtracker.NavigationHost;
 import runningtracker.R;
-import runningtracker.dashboard.DashboardFragment;
+import runningtracker.home.HomeActivity;
 import runningtracker.profile.ProfileFragment;
 
 import static android.app.Activity.RESULT_OK;
@@ -77,7 +79,8 @@ public class RegisterInformationFragment extends Fragment {
     TextInputEditText birthdayEditText;
     @BindView(R.id.gioi_tinh_spinner)
     Spinner gioiTinhSpinner;
-
+    Map<String, Object> userMap;
+    Map<String, Object> userDataMap;
 
     FirebaseFirestore db;
     FirebaseAuth mAuth;
@@ -86,6 +89,8 @@ public class RegisterInformationFragment extends Fragment {
     Uri uri;
     private DatePickerDialog mDatePickerDialog;
     private final static String TAG = "register information";
+
+    String oldUsername;
 
     @Nullable
     @Override
@@ -96,7 +101,7 @@ public class RegisterInformationFragment extends Fragment {
         setDateTimeField();
         setUpSpinner();
         loadUserInformation();
-        ((NavigationHost) getActivity()).enableBottomNav(false);
+        ((NavigationHost) Objects.requireNonNull(getActivity())).enableBottomNav(false);
         return view;
     }
 
@@ -115,7 +120,8 @@ public class RegisterInformationFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         initFirebase();
-
+        userMap = new HashMap<>();
+        userDataMap = new HashMap<>();
     }
 
     private void initFirebase() {
@@ -149,7 +155,6 @@ public class RegisterInformationFragment extends Fragment {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                     Toast.makeText(getActivity(), "Tải ảnh lên thành công", Toast.LENGTH_SHORT).show();
-
                 }
             });
             Glide
@@ -171,14 +176,18 @@ public class RegisterInformationFragment extends Fragment {
 
     @OnClick(R.id.register_button)
     public void registerUser() {
-        ((NavigationHost) getActivity()).hideSoftKeyboard();
-        showProgressDialog();
-        updateInformation();
+        if (validateForm()) {
+            showProgressDialog();
+            updateInformation();
+        } else hideProgressDialog();
 
     }
 
-    void loadUserInformation() {
+    private void loadUserInformation() {
+
+
         if (mAuth.getCurrentUser() != null) {
+
             StorageReference storageReference = mStorageRef.child("Photos").child(mAuth.getCurrentUser().getUid());
             storageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                 @Override
@@ -195,19 +204,16 @@ public class RegisterInformationFragment extends Fragment {
                         public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                             if (task.isSuccessful()) {
                                 if (task.getResult().getData() != null) {
-
-                                    Map<String, Object> user = task.getResult().getData();
-                                    if (user.get("username") != null)
-                                        usernameEditText.setText(user.get("username").toString());
-                                    if (user.get("displayName") != null)
-                                        nameEditText.setText(user.get("displayName").toString());
-
+                                    userMap = task.getResult().getData();
+                                    if (userMap.containsKey("username"))
+                                        usernameEditText.setText(userMap.get("username").toString());
+                                    else userMap.put("username","");
+                                    if (userMap.containsKey("displayName"))
+                                        nameEditText.setText(userMap.get("displayName").toString());
                                 }
-
                             }
                         }
                     });
-
 
             db.collection("usersData").document(mAuth.getCurrentUser().getUid()).get()
                     .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -215,68 +221,79 @@ public class RegisterInformationFragment extends Fragment {
                         public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                             if (task.isSuccessful()) {
                                 if (task.getResult().getData() != null) {
-                                    Map<String, Object> userData = task.getResult().getData();
-                                    heightEditText.setText(userData.get("height").toString());
-                                    weightEditText.setText(userData.get("weight").toString());
-                                    birthdayEditText.setText(userData.get("birthday").toString());
-                                    heartRateEditText.setText(userData.get("heartRate").toString());
+                                    userDataMap = task.getResult().getData();
+                                    if (userDataMap.containsKey("height"))
+                                        heightEditText.setText(userDataMap.get("height").toString());
+                                    if (userDataMap.containsKey("weight"))
+                                        weightEditText.setText(userDataMap.get("weight").toString());
+                                    if (userDataMap.containsKey("birthday"))
+                                        birthdayEditText.setText(userDataMap.get("birthday").toString());
+                                    if (userDataMap.containsKey("heartRate"))
+                                        heartRateEditText.setText(userDataMap.get("heartRate").toString());
                                 }
                             }
                         }
                     });
-
 
         }
 
     }
 
     private void updateInformation() {
-
         db.collection("users")
-                .whereEqualTo("username", usernameEditText.getText().toString())
+                .whereEqualTo("username", usernameEditText.getText().toString()).limit(1)
                 .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                     @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            if (task.getResult().getDocuments().size() > 0) {
-                                usernameLayout.setError("Tên tài khoản đã tồn tại");
-                            } else {
-                                String uid = mAuth.getCurrentUser().getUid();
-                                Map<String, Object> userInfo = new HashMap<>();
-                                userInfo.put("username", usernameEditText.getText().toString());
-                                userInfo.put("displayName", nameEditText.getText().toString());
-                                db.collection("users").document(uid).update(userInfo)
-                                        .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                            @Override
-                                            public void onComplete(@NonNull Task<Void> task) {
-                                                if (task.isSuccessful()) {
-                                                    Map<String, Object> userInfo = new HashMap<>();
-                                                    userInfo.put("heartRate", heartRateEditText.getText());
-                                                    userInfo.put("weight", weightEditText.getText());
-                                                    userInfo.put("height", heightEditText.getText());
-                                                    userInfo.put("birthday", birthdayEditText.getText().toString());
-                                                    userInfo.put("sex", gioiTinhSpinner.getSelectedItem().toString());
-                                                    db.collection("usersData").document(mAuth.getCurrentUser().getUid()).update(userInfo)
-                                                            .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                                                @Override
-                                                                public void onComplete(@NonNull Task<Void> task) {
-                                                                    if (task.isSuccessful()) {
-                                                                        hideProgressDialog();
-                                                                        ((NavigationHost) getActivity()).navigateTo(new ProfileFragment(), false);
-                                                                        ((NavigationHost) getActivity()).setSelectedItem();
-                                                                    }
-                                                                }
-                                                            });
-                                                }
-                                            }
-                                        });
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+
+                        List<DocumentSnapshot> doc = queryDocumentSnapshots.getDocuments();
+
+                        boolean flag = true;
+                        if (doc.size() > 0) {
+                            if (!doc.get(0).getData().get("username").toString().equals(userMap.get("username").toString())) {
+                                usernameEditText.setError("Đã tồn tại");
+                                flag = false;
+                                hideProgressDialog();
                             }
                         }
+
+                        if (flag) {
+                            userMap.put("username", usernameEditText.getText().toString());
+                            userMap.put("displayName", nameEditText.getText().toString());
+                            db.collection("users").document(Objects.requireNonNull(mAuth.getCurrentUser()).getUid()).set(userMap)
+                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+                                            if (task.isSuccessful()) {
+                                                userDataMap.put("heartRate", Double.valueOf(heartRateEditText.getText().toString()));
+                                                userDataMap.put("weight", Double.valueOf(weightEditText.getText().toString()));
+                                                userDataMap.put("height", Double.valueOf(heightEditText.getText().toString()));
+                                                userDataMap.put("birthday", birthdayEditText.getText().toString());
+                                                userDataMap.put("sex", gioiTinhSpinner.getSelectedItem().toString());
+                                                db.collection("usersData").document(mAuth.getCurrentUser().getUid()).set(userDataMap)
+                                                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                            @Override
+                                                            public void onComplete(@NonNull Task<Void> task) {
+                                                                if (task.isSuccessful()) {
+                                                                    hideProgressDialog();
+                                                                    Intent intent = new Intent(getActivity(), HomeActivity.class);
+                                                                    startActivity(intent);
+                                                                } else {
+                                                                    Log.d(TAG, task.getException().toString());
+                                                                }
+                                                            }
+                                                        });
+                                            } else {
+                                                Log.d(TAG, task.getException().toString());
+                                            }
+                                        }
+                                    });
+                        }
                     }
+
+
                 });
-
-
     }
 
     private void setDateTimeField() {
@@ -326,12 +343,51 @@ public class RegisterInformationFragment extends Fragment {
         }
     }
 
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        ((NavigationHost) getActivity()).enableBottomNav(true);
 
+    public boolean validateForm() {
+        final boolean[] valid = {true};
+        String username = usernameEditText.getText().toString();
+        String name = nameEditText.getText().toString();
+        String height = (heightEditText.getText().toString());
+        String weight = (weightEditText.getText().toString());
+        String heartRate = (heartRateEditText.getText().toString());
+        String birthday = birthdayEditText.getText().toString();
+
+
+        if (TextUtils.isEmpty(username)) {
+            usernameLayout.setError("Bắt buộc.");
+            valid[0] = false;
+        }
+
+
+        if (TextUtils.isEmpty(name)) {
+            nameLayout.setError("Bắt buộc.");
+            valid[0] = false;
+        }
+
+        if (TextUtils.isEmpty(height)) {
+            heightEditText.setError("Bắt buộc.");
+            valid[0] = false;
+        }
+        if (TextUtils.isEmpty(weight)) {
+            weightEditText.setError("Bắt buộc.");
+            valid[0] = false;
+        }
+        if (TextUtils.isEmpty(birthday)) {
+            birthdayEditText.setError("Bắt buộc.");
+            valid[0] = false;
+        }
+
+
+        return valid[0];
     }
+
+
+//    @Override
+//    public void onDestroyView() {
+//        super.onDestroyView();
+//        ((NavigationHost) getActivity()).enableBottomNav(true);
+//    }
 
     private void loadAvatar(Uri uri) {
         Glide.with(Objects.requireNonNull(getContext()))

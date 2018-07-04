@@ -50,7 +50,6 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
                         android:layout_marginTop="10dp"
-                        android:text="Wiliam Snoe"
                         android:textColor="@color/textColorPrimary"
                         android:textSize="21sp"
                         android:textStyle="bold" />
@@ -61,7 +60,6 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
                         android:layout_marginTop="10dp"
-                        android:text="Wiliam Snoe"
                         android:textColor="@color/textColorSecondary"
                         android:textSize="18sp"
                         android:textStyle="bold" />
@@ -97,7 +95,6 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
                         android:paddingLeft="20dp"
-                        android:text="Wiliam@gmail.com"
                         android:textStyle="bold" />
                 </LinearLayout>
 
@@ -122,7 +119,6 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
                         android:paddingLeft="20dp"
-                        android:text="170"
                         android:textStyle="bold" />
                     <TextView
                         android:layout_width="wrap_content"
@@ -154,7 +150,6 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
                         android:paddingLeft="20dp"
-                        android:text="86"
                         android:textStyle="bold" />
 
 
@@ -189,7 +184,6 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
                         android:paddingLeft="20dp"
-                        android:text="100"
                         android:textStyle="bold" />
                     <TextView
                         android:layout_width="wrap_content"
