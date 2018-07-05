@@ -19,6 +19,7 @@ import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.storage.FirebaseStorage;
@@ -74,23 +75,31 @@ public class FriendsListFragment extends Fragment {
         firestoreRecyclerAdapter = new FirestoreRecyclerAdapter<Friend, FriendsHolder>(options) {
             @Override
             protected void onBindViewHolder(@NonNull final FriendsHolder holder, int position, @NonNull Friend friend) {
-                holder.displayNameTextView.setText(friend.getDisplayName());
-                holder.usernameTextView.setText(friend.getUsername());
-                StorageReference storageReference = FirebaseStorage.getInstance().getReference().child("Photos").child(friend.getUid());
-                storageReference.getDownloadUrl()
-                        .addOnSuccessListener(new OnSuccessListener<Uri>() {
-                            @Override
-                            public void onSuccess(Uri uri) {
-                                Log.d(TAG, uri.toString());
-                                loadAvatar(uri, holder.userImg);
-                            }
-                        })
-                        .addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                Log.d(TAG, "Load image fail");
-                            }
-                        });
+
+
+                friend.getFriend().get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        Log.d(TAG, documentSnapshot.getData().toString());
+                        holder.displayNameTextView.setText(documentSnapshot.getData().get("displayName").toString());
+                        holder.usernameTextView.setText(documentSnapshot.getData().get("username").toString());
+                    }
+                });
+//                StorageReference storageReference = FirebaseStorage.getInstance().getReference().child("Photos").child(friend.getUid());
+//                storageReference.getDownloadUrl()
+//                        .addOnSuccessListener(new OnSuccessListener<Uri>() {
+//                            @Override
+//                            public void onSuccess(Uri uri) {
+//                                Log.d(TAG, uri.toString());
+//                                loadAvatar(uri, holder.userImg);
+//                            }
+//                        })
+//                        .addOnFailureListener(new OnFailureListener() {
+//                            @Override
+//                            public void onFailure(@NonNull Exception e) {
+//                                Log.d(TAG, "Load image fail");
+//                            }
+//                        });
             }
 
 

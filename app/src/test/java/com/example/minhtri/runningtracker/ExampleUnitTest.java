@@ -1,4 +1,4 @@
-package com.example.minhtri.running;
+package com.example.minhtri.runningtracker;
 
 import org.junit.Test;
 

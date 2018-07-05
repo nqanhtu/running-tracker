@@ -1,20 +1,24 @@
 package runningtracker.data.model;
 
+import com.google.firebase.firestore.DocumentReference;
+
 public class Friend {
     private String displayName;
     private String username;
     private String uid;
     private boolean notify;
     private boolean blockNotify;
+    private DocumentReference friend;
 
     public Friend(){}
 
-    public Friend(String displayName, String username, String uid, boolean notify, boolean blockNotify) {
+    public Friend(String displayName, String username, String uid, boolean notify, boolean blockNotify, DocumentReference friend) {
         this.displayName = displayName;
         this.username = username;
         this.uid = uid;
         this.notify = notify;
         this.blockNotify = blockNotify;
+        this.friend = friend;
     }
 
 
@@ -52,5 +56,13 @@ public class Friend {
 
     public void setBlockNotify(boolean blockNotify) {
         this.blockNotify = blockNotify;
+    }
+
+    public DocumentReference getFriend() {
+        return friend;
+    }
+
+    public void setFriend(DocumentReference friend) {
+        this.friend = friend;
     }
 }

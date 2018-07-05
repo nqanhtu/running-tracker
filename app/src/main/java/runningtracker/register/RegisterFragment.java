@@ -67,6 +67,7 @@ public class RegisterFragment extends Fragment {
         initFirebase();
         setUpToolbar();
         disableError();
+
         return view;
     }
 
@@ -172,7 +173,6 @@ public class RegisterFragment extends Fragment {
     }
 
     private void disableError() {
-
         emailEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
