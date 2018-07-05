@@ -145,13 +145,13 @@ public class HistoryActivity extends AppCompatActivity implements OnMapReadyCall
                     googleMap.animateCamera(cameraUpdate);
                     int sizeObject = locationObject.size();
                     List<LatLng> polygon = new ArrayList<>();
-                    for (int i = 0; i < sizeObject - 48; i++) {
+                    for (int i = 0; i < sizeObject; i++) {
                         polygon.add(new LatLng(locationObject.get(i).getLatitudeValue(), locationObject.get(i).getLongitudeValue()));
                     }
                     googleMap.addPolygon(new PolygonOptions()
                             .addAll(polygon)
                             .strokeColor(Color.BLUE)
-                            .fillColor(Color.BLACK));
+                            .fillColor(Color.WHITE));
 
                     destinationMarkers.add(googleMap.addMarker(new MarkerOptions()
                             .icon(BitmapDescriptorFactory.fromResource(R.drawable.end_green))

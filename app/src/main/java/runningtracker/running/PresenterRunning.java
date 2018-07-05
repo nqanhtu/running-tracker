@@ -79,7 +79,7 @@ import static runningtracker.running.RunningActivity.setupCalories;
 public class PresenterRunning {
     private static final int REQUEST_FINE_LOCATION = 0;
     private static final int REQUEST_CHECK_SETTINGS = 0x1;
-    private static final long UPDATE_INTERVAL_IN_MILLISECONDS = 3000;
+    private static final long UPDATE_INTERVAL_IN_MILLISECONDS = 6000;
     private static final long FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS =
             UPDATE_INTERVAL_IN_MILLISECONDS / 2;
     private static String TAG = "Error ";
@@ -102,6 +102,7 @@ public class PresenterRunning {
     private MediaPlayer ring;
     private FirebaseUser currentUser;
     private int countNotification = 0;
+    private static ArrayList<LatLng> listPoint= new ArrayList<>();
 
     /**Create method list marker*/
     private  ArrayList<Marker> listMarker;
@@ -248,6 +249,7 @@ public class PresenterRunning {
         final Map<String, Object> mapShareLocation = new HashMap<>();
         mapShareLocation.put("latitudeValue", location.getLatitude());
         mapShareLocation.put("longitudeValue", location.getLongitude());
+        listPoint.add(new LatLng(location.getLatitude(), location.getLongitude()));
         /**
          * Check share location value before update my location value or no
         * */
@@ -291,10 +293,6 @@ public class PresenterRunning {
 
             }
         });
-
-        LocationObject iLocation = new LocationObject();
-        iLocation.setLatitudeValue(location.getLatitude());
-        iLocation.setLongitudeValue(location.getLongitude());
         moveCamera(location);
         if (mLatitude != 0) {
             rPace = 0;
@@ -306,8 +304,7 @@ public class PresenterRunning {
             if (rDisaTance > 0) {
                 rPace = (runningContract.getUpdateTime() / 60000) / rDisaTance;
             }
-            //if(m_Bodily != null)
-            //rCalories = (float) Calculator.netCalorieBurned(m_Bodily.getWeightInKg(), m_Bodily.getVo2Max(), rDisaTance, 0, false);
+
             if(infoUser != null) {
                 rCalories = (float) Calculator.netCalorieBurned(infoUser.getWeight(),
                         42, rDisaTance, 0, false);
@@ -316,16 +313,19 @@ public class PresenterRunning {
                 maxPace = rPace;
             }
             runningContract.setupViewRunning(RoundAvoid(rDisaTance, 2), RoundAvoid(rPace, 2), RoundAvoid(rCalories, 1));
-            polylineBetweenTwoPoint(mLocation, location);
+            polyGonBetweenTwoPoint(listPoint);
+            //save data
+            LocationObject iLocation = new LocationObject();
+            iLocation.setLatitudeValue(mLocation.getLatitude());
+            iLocation.setLongitudeValue(mLocation.getLongitude());
+            saveLocationData(ID, firestore, iLocation);
         } else {
-            LatLng myLocation = null;
+            LatLng myLocation;
             myLocation = new LatLng(location.getLatitude(), location.getLongitude());
-            runningContract.getMap().addMarker(new MarkerOptions().position(myLocation).title("My Location"));
+            runningContract.getMap().addMarker(new MarkerOptions().position(myLocation).title("Start Tracking"));
         }
         mLatitude = location.getLatitude();
         mLongitude = location.getLongitude();
-
-        saveLocationData(ID, firestore, iLocation);
     }
 
     /**
@@ -341,14 +341,15 @@ public class PresenterRunning {
 
     /**
      *
-     * @param A
-     * @param B
+     * @param list
      */
-    public void polylineBetweenTwoPoint(Location A, Location B) {
-        polygon = runningContract.getMap().addPolygon(new PolygonOptions()
-                .add(new LatLng(A.getLatitude(), A.getLongitude()), new LatLng(B.getLatitude(), B.getLongitude()))
+    public void polyGonBetweenTwoPoint(ArrayList<LatLng> list) {
+        runningContract.getMap().clear();
+        runningContract.getMap().addMarker(new MarkerOptions().position(list.get(0)).title("Start Tracking"));
+        runningContract.getMap().addPolygon(new PolygonOptions()
+                .addAll(list)
                 .strokeColor(Color.BLUE)
-                .fillColor(Color.BLACK));
+                .fillColor(Color.WHITE));
     }
 
     public void buildLocationSettingsRequest() {
@@ -803,7 +804,6 @@ public class PresenterRunning {
                                         .document(idFriend)
                                         .collection("updatelocation")
                                         .document("1");
-
                                 docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                                     @Override
                                     public void onSuccess(DocumentSnapshot documentSnapshot) {

@@ -85,6 +85,30 @@
             app:layout_constraintRight_toRightOf="@+id/imgSuggest"
             app:layout_constraintTop_toBottomOf="@+id/imgSuggest"
             app:layout_constraintVertical_bias="0.0" />
+        <ImageButton
+            android:id="@+id/imgRealWalk"
+            android:layout_width="55dp"
+            android:layout_height="49dp"
+            android:layout_marginBottom="304dp"
+            android.support.v7.appcompat:srcCompat="@drawable/ic_road_suggest"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintHorizontal_bias="0.952"
+            app:layout_constraintLeft_toLeftOf="@+id/imgSuggestRoad"
+            app:layout_constraintRight_toRightOf="@+id/imgSuggestRoad"
+            app:layout_constraintTop_toBottomOf="@+id/imgSuggestRoad"
+            app:layout_constraintVertical_bias="0.0" />
+        <ImageButton
+            android:id="@+id/imgRealStop"
+            android:layout_width="55dp"
+            android:layout_height="49dp"
+            android:layout_marginBottom="304dp"
+            android.support.v7.appcompat:srcCompat="@drawable/ic_road_suggest"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintHorizontal_bias="0.952"
+            app:layout_constraintLeft_toLeftOf="@+id/imgRealWalk"
+            app:layout_constraintRight_toRightOf="@+id/imgRealWalk"
+            app:layout_constraintTop_toBottomOf="@+id/imgRealWalk"
+            app:layout_constraintVertical_bias="0.0" />
 
     </android.support.constraint.ConstraintLayout>
 

@@ -41,7 +41,7 @@ import runningtracker.model.suggets_place.Route;
 
 
 public class SuggestPlaceActivity extends AppCompatActivity implements OnMapReadyCallback, DirectionFinderListener {
-    private GoogleMap mMap;
+    private static GoogleMap mMap;
     private List<Marker> originMarkers = new ArrayList<>();
     private List<Marker> destinationMarkers = new ArrayList<>();
     private List<Polyline> polylinePaths = new ArrayList<>();
@@ -56,10 +56,11 @@ public class SuggestPlaceActivity extends AppCompatActivity implements OnMapRead
     private DirectionFinderPresenter suggestPre;
 
     private ArrayList<ItemSuggest> ListItemSuggests;
-    private List<Location> listLocation;
+    private static List<Location> listLocation;
     private Location myLocation;
     @BindView(R.id.places_text_view)
     TextView placeTextView;
+    private static Thread threadRealWalk;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,9 +103,33 @@ public class SuggestPlaceActivity extends AppCompatActivity implements OnMapRead
         getListItem();
     }
 
+    @OnClick(R.id.imgRealWalk)
+    public void startrealWalk() {
+        threadRealWalk = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Location locationRealWalk = new Location("");
+                while (myLocation != locationRealWalk) {
+                    sendRequest();
+                    try {
+                        Thread.sleep(2000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    myLocation = getMyLocation();
+                }
+            }
+        });
+        threadRealWalk.start();
+    }
+
+    @OnClick(R.id.imgRealStop)
+    public void stoprealWalk() {
+        threadRealWalk.stop();
+    }
     private void sendRequest() {
 
-        mMap.clear();
+        //mMap.clear();
         String origin = "";
         String destination = "";
         try {
