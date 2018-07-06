@@ -32,6 +32,7 @@ import java.util.regex.Pattern;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import runningtracker.FragmentNavigation;
 import runningtracker.NavigationHost;
 import runningtracker.R;
 import runningtracker.registerinfomation.RegisterInformationFragment;
@@ -99,7 +100,7 @@ public class RegisterFragment extends Fragment {
         return isValid;
     }
 
-    @OnClick(R.id.buttonRegister)
+//    @OnClick(R.id.buttonRegister)
     public void startSignUpActivity() {
         String email = emailEditText.getText().toString();
         String password = passwordEditText.getText().toString();
@@ -125,8 +126,9 @@ public class RegisterFragment extends Fragment {
         }
     }
 
-    private void startRegisterInformation() {
-        ((NavigationHost) getActivity()).navigateTo(new RegisterInformationFragment(), true);
+    @OnClick(R.id.buttonRegister)
+    public void startRegisterInformation() {
+        ((FragmentNavigation) getActivity()).navigateTo(new RegisterInformationFragment(), false);
     }
 
 
@@ -163,14 +165,6 @@ public class RegisterFragment extends Fragment {
 
     }
 
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        if (mAuth.getCurrentUser() != null) {
-            ((NavigationHost) getActivity()).startMainApp();
-        }
-    }
 
     private void disableError() {
         emailEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {

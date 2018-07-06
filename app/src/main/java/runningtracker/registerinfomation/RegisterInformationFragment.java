@@ -10,6 +10,7 @@ import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
@@ -55,7 +56,7 @@ import runningtracker.profile.ProfileFragment;
 
 import static android.app.Activity.RESULT_OK;
 
-public class RegisterInformationFragment extends Fragment {
+public class RegisterInformationFragment extends DialogFragment {
     @BindView(R.id.toolbar)
     Toolbar toolbar;
     private final int PICK_IMAGE_REQUEST = 71;
@@ -100,8 +101,8 @@ public class RegisterInformationFragment extends Fragment {
         setUpToolbar();
         setDateTimeField();
         setUpSpinner();
-        loadUserInformation();
-        ((NavigationHost) Objects.requireNonNull(getActivity())).enableBottomNav(false);
+//        loadUserInformation();
+//        ((NavigationHost) Objects.requireNonNull(getActivity())).enableBottomNav(false);
         return view;
     }
 
@@ -169,7 +170,10 @@ public class RegisterInformationFragment extends Fragment {
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Objects.requireNonNull(getActivity()).onBackPressed();
+                Intent intent = new Intent(getActivity(), HomeActivity.class);
+                getActivity().finish();
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
             }
         });
     }
@@ -207,7 +211,7 @@ public class RegisterInformationFragment extends Fragment {
                                     userMap = task.getResult().getData();
                                     if (userMap.containsKey("username"))
                                         usernameEditText.setText(userMap.get("username").toString());
-                                    else userMap.put("username","");
+                                    else userMap.put("username", "");
                                     if (userMap.containsKey("displayName"))
                                         nameEditText.setText(userMap.get("displayName").toString());
                                 }

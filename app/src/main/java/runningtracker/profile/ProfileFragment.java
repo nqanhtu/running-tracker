@@ -115,8 +115,7 @@ public class ProfileFragment extends Fragment {
 
     @OnClick(R.id.edit_info_button)
     public void editInfo() {
-        ((NavigationHost) getActivity()).navigateTo(new RegisterInformationFragment(), true);
-        ((NavigationHost) getActivity()).enableBottomNav(false);
+//        ((NavigationHost) getActivity()).navigateTo(new RegisterInformationFragment(), true);
         //showDialog();
     }
 
