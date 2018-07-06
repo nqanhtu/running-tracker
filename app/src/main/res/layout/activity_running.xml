@@ -252,6 +252,17 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent" />
+        <ImageButton
+            android:id="@+id/clockbutton"
+            style="@style/ActionCircularImageButton"
+            android:layout_marginBottom="40dp"
+            android:background="@drawable/start_circle_button"
+            android:longClickable = "@drawable/ic_clock"
+            android.support.v7.appcompat:srcCompat="@drawable/ic_clock"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            android:visibility="invisible"
+            app:layout_constraintRight_toRightOf="parent" />
 
         <ImageButton
             android:id="@+id/pauseButton"
@@ -261,8 +272,9 @@
             android:longClickable="true"
             android:onClick="onClickPauseButton"
             android:visibility="invisible"
-            android.support.v7.appcompat:srcCompat="@drawable/ic_pause_white_48dp"
+            android.support.v7.appcompat:layout_constraintHorizontal_bias="0.473"
 
+            android.support.v7.appcompat:srcCompat="@drawable/ic_pause_white_48dp"
             app:layout_constraintBottom_toBottomOf="@+id/startButton"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="@+id/startButton" />

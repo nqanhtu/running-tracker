@@ -55,9 +55,11 @@ import java.util.List;
 import java.util.Map;
 
 import runningtracker.R;
+import runningtracker.common.GenerateID;
 import runningtracker.common.InitializationFirebase;
 import runningtracker.common.MyLocation;
 import runningtracker.data.model.running.InfoUserObject;
+import runningtracker.data.model.running.LocationTObject;
 import runningtracker.data.model.running.ResultObject;
 import runningtracker.data.model.setting.ShareLocationObject;
 import runningtracker.model.ObjectCommon;
@@ -103,6 +105,7 @@ public class PresenterRunning {
     private FirebaseUser currentUser;
     private int countNotification = 0;
     private static ArrayList<LatLng> listPoint= new ArrayList<>();
+    private GenerateID generateID = new GenerateID();
 
     /**Create method list marker*/
     private  ArrayList<Marker> listMarker;
@@ -315,9 +318,10 @@ public class PresenterRunning {
             runningContract.setupViewRunning(RoundAvoid(rDisaTance, 2), RoundAvoid(rPace, 2), RoundAvoid(rCalories, 1));
             polyGonBetweenTwoPoint(listPoint);
             //save data
-            LocationObject iLocation = new LocationObject();
+            LocationTObject iLocation = new LocationTObject();
             iLocation.setLatitudeValue(mLocation.getLatitude());
             iLocation.setLongitudeValue(mLocation.getLongitude());
+            iLocation.setTimeUpdate(generateID.generateTimeID());
             saveLocationData(ID, firestore, iLocation);
         } else {
             LatLng myLocation;
@@ -452,13 +456,16 @@ public class PresenterRunning {
             if (rDisaTance > 0) {
                 rPace = (runningContract.getUpdateTime() / 60000) / rDisaTance;
             }
-            rCalories = (float) Calculator.netCalorieBurned(80, 42, rDisaTance, 0, false);
+            rCalories = (float) Calculator.netCalorieBurned(80, 42,
+                    rDisaTance, 0, false);
             if (rPace > maxPace) {
                 maxPace = rPace;
             }
-            runningContract.setupViewRunning(RoundAvoid(rDisaTance, 2), RoundAvoid(rPace, 2), RoundAvoid(rCalories, 1));
+            runningContract.setupViewRunning(RoundAvoid(rDisaTance, 2),
+                    RoundAvoid(rPace, 2), RoundAvoid(rCalories, 1));
 
-            LocationObject locationObject = new LocationObject(mLocation.getLatitude(), mLocation.getLongitude());
+            LocationTObject locationObject = new LocationTObject(mLocation.getLatitude(),
+                    mLocation.getLongitude(), generateID.generateTimeID());
             saveLocationData(ID, firestore, locationObject);
         }
         mLatitude = location.getLatitude();
@@ -511,7 +518,7 @@ public class PresenterRunning {
      * @param firestore
      * @param location
      */
-    private void saveLocationData(String ID, FirebaseFirestore firestore, LocationObject location) {
+    private void saveLocationData(String ID, FirebaseFirestore firestore, LocationTObject location) {
         firestore.collection("users").document(currentUser.getUid()).collection("histories").document(ID)
                 .collection("locations").document().set(location)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -659,7 +666,7 @@ public class PresenterRunning {
         firestore.collection("users").
                 document(currentUser.getUid())
                 .collection("histories")
-                .document(id).collection("locations")
+                .document(id).collection("locations").orderBy("timeUpdate")
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override

@@ -109,8 +109,8 @@ public class HistoryPresenter {
                         document(currentUser.getUid())
                         .collection("histories")
                         .document(historyID).collection("locations")
+                        .orderBy("timeUpdate")
                         .get()
-
                         .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                             @Override
                             public void onComplete(@NonNull Task<QuerySnapshot> task) {

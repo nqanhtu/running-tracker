@@ -35,6 +35,7 @@ import static runningtracker.running.ResultActivity.idDateHistory;
 import static runningtracker.running.ResultActivity.tabFragmentLayouts;
 
 public class TrackTabFragment extends Fragment implements OnMapReadyCallback {
+
     public TrackTabFragment() {
     }
 
