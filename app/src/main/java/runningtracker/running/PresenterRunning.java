@@ -34,7 +34,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polygon;
-import com.google.android.gms.maps.model.PolygonOptions;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -316,12 +316,12 @@ public class PresenterRunning {
                 maxPace = rPace;
             }
             runningContract.setupViewRunning(RoundAvoid(rDisaTance, 2), RoundAvoid(rPace, 2), RoundAvoid(rCalories, 1));
-            polyGonBetweenTwoPoint(listPoint);
+            polylineBetweenTwoPoint(listPoint);
             //save data
             LocationTObject iLocation = new LocationTObject();
             iLocation.setLatitudeValue(mLocation.getLatitude());
             iLocation.setLongitudeValue(mLocation.getLongitude());
-            iLocation.setTimeUpdate(generateID.generateTimeID());
+            iLocation.setTimeUpdate(Double.parseDouble(generateID.generateTimeID()));
             saveLocationData(ID, firestore, iLocation);
         } else {
             LatLng myLocation;
@@ -347,13 +347,13 @@ public class PresenterRunning {
      *
      * @param list
      */
-    public void polyGonBetweenTwoPoint(ArrayList<LatLng> list) {
+    public void polylineBetweenTwoPoint(ArrayList<LatLng> list) {
         runningContract.getMap().clear();
         runningContract.getMap().addMarker(new MarkerOptions().position(list.get(0)).title("Start Tracking"));
-        runningContract.getMap().addPolygon(new PolygonOptions()
+        runningContract.getMap().addPolyline(new PolylineOptions()
                 .addAll(list)
-                .strokeColor(Color.BLUE)
-                .fillColor(Color.WHITE));
+                .color(Color.BLUE)
+                .width(10));
     }
 
     public void buildLocationSettingsRequest() {
@@ -465,7 +465,7 @@ public class PresenterRunning {
                     RoundAvoid(rPace, 2), RoundAvoid(rCalories, 1));
 
             LocationTObject locationObject = new LocationTObject(mLocation.getLatitude(),
-                    mLocation.getLongitude(), generateID.generateTimeID());
+                    mLocation.getLongitude(), Double.parseDouble(generateID.generateTimeID()));
             saveLocationData(ID, firestore, locationObject);
         }
         mLatitude = location.getLatitude();
@@ -609,6 +609,7 @@ public class PresenterRunning {
                         document(currentUser.getUid())
                         .collection("histories")
                         .document(historyID).collection("locations")
+                        .orderBy("timeUpdate")
                         .get()
 
                         .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {

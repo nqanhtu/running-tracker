@@ -19,6 +19,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polygon;
 import com.google.android.gms.maps.model.PolygonOptions;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
@@ -105,14 +106,15 @@ public class TrackTabFragment extends Fragment implements OnMapReadyCallback {
                                 .title("Start Tracking")
                                 .position(new LatLng(locationObject.get(0).getLatitudeValue(), locationObject.get(0).getLongitudeValue()))));
                         int sizeObject = locationObject.size();
-                        List<LatLng> polygon = new ArrayList<>();
+                        List<LatLng> polyline = new ArrayList<>();
                         for (int i = 0; i < sizeObject; i++) {
-                            polygon.add(new LatLng(locationObject.get(i).getLatitudeValue(), locationObject.get(i).getLongitudeValue()));
+                            polyline.add(new LatLng(locationObject.get(i).getLatitudeValue(), locationObject.get(i).getLongitudeValue()));
                         }
-                        mMap.addPolygon(new PolygonOptions()
-                                .addAll(polygon)
-                                .strokeColor(Color.BLUE)
-                                .fillColor(Color.WHITE));
+                        mMap.addPolyline(new PolylineOptions()
+                                .addAll(polyline)
+                                .width(10)
+                                .color(Color.BLUE));
+
                         destinationMarkers.add(mMap.addMarker(new MarkerOptions()
                                 .icon(BitmapDescriptorFactory.fromResource(R.drawable.end_green))
                                 .title("End Tracking")
@@ -137,14 +139,14 @@ public class TrackTabFragment extends Fragment implements OnMapReadyCallback {
                             .position(new LatLng(locationObject.get(0).getLatitudeValue(), locationObject.get(0).getLongitudeValue()))));
 
                     int sizeObject = locationObject.size();
-                    List<LatLng> polygon = new ArrayList<>();
+                    List<LatLng> polyline = new ArrayList<>();
                     for (int i = 0; i < sizeObject; i++) {
-                        polygon.add(new LatLng(locationObject.get(i).getLatitudeValue(), locationObject.get(i).getLongitudeValue()));
+                        polyline.add(new LatLng(locationObject.get(i).getLatitudeValue(), locationObject.get(i).getLongitudeValue()));
                     }
-                    mMap.addPolygon(new PolygonOptions()
-                            .addAll(polygon)
-                            .strokeColor(Color.BLUE)
-                            .fillColor(Color.WHITE));
+                    mMap.addPolyline(new PolylineOptions()
+                            .addAll(polyline)
+                            .width(10)
+                            .color(Color.BLUE));
 
                     destinationMarkers.add(mMap.addMarker(new MarkerOptions()
                             .icon(BitmapDescriptorFactory.fromResource(R.drawable.end_green))

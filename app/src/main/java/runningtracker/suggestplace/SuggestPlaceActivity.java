@@ -103,30 +103,6 @@ public class SuggestPlaceActivity extends AppCompatActivity implements OnMapRead
         getListItem();
     }
 
-    @OnClick(R.id.imgRealWalk)
-    public void startrealWalk() {
-        threadRealWalk = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                Location locationRealWalk = new Location("");
-                while (myLocation != locationRealWalk) {
-                    sendRequest();
-                    try {
-                        Thread.sleep(2000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    myLocation = getMyLocation();
-                }
-            }
-        });
-        threadRealWalk.start();
-    }
-
-    @OnClick(R.id.imgRealStop)
-    public void stoprealWalk() {
-        threadRealWalk.stop();
-    }
     private void sendRequest() {
 
         //mMap.clear();

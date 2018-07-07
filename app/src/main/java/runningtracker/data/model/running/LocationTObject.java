@@ -4,12 +4,12 @@ public class LocationTObject {
 
     private double latitudeValue;
     private double longitudeValue;
-    private String timeUpdate;
+    private double timeUpdate;
 
     public LocationTObject() {
     }
 
-    public LocationTObject(double latitudeValue, double longitudeValue, String timeUpdate) {
+    public LocationTObject(double latitudeValue, double longitudeValue, double timeUpdate) {
         this.latitudeValue = latitudeValue;
         this.longitudeValue = longitudeValue;
         this.timeUpdate = timeUpdate;
@@ -31,11 +31,11 @@ public class LocationTObject {
         this.longitudeValue = longitudeValue;
     }
 
-    public String getTimeUpdate() {
+    public double getTimeUpdate() {
         return timeUpdate;
     }
 
-    public void setTimeUpdate(String timeUpdate) {
+    public void setTimeUpdate(double timeUpdate) {
         this.timeUpdate = timeUpdate;
     }
 }

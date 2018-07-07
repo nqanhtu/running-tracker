@@ -87,6 +87,7 @@ public class RunningActivity extends AppCompatActivity implements RunningContrac
     private ImageView statusConnect;
     private User mCurrentUser;
     private FirebaseAuth mAuth;
+    private ImageButton pauseButton, stopButton, clockbutton, resumeButton;
 
     public Runnable runnable = new Runnable() {
         @Override
@@ -158,10 +159,6 @@ public class RunningActivity extends AppCompatActivity implements RunningContrac
         presenterRunning.createLocationCallback(checkConnect, idHistory.id, firestore);
         presenterRunning.createLocationRequest();
         presenterRunning.buildLocationSettingsRequest();
-
-        /**
-         * offline onCreate
-         * */
         locationManager = (LocationManager) this.getSystemService(LOCATION_SERVICE);
         locationProvider = LocationManager.GPS_PROVIDER;
         locListener = new LocationListener() {
@@ -185,6 +182,27 @@ public class RunningActivity extends AppCompatActivity implements RunningContrac
 
             }
         };
+
+        // init button event
+        initButtonAction();
+        clockbutton.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                clockbutton.setVisibility(View.INVISIBLE);
+                pauseButton.setEnabled(true);
+                stopButton.setEnabled(true);
+                pauseButton.setAlpha((float) 1);
+                stopButton.setAlpha((float) 1);
+                return false;
+            }
+        });
+    }
+
+    private void initButtonAction() {
+        pauseButton = findViewById(R.id.pauseButton);
+        stopButton = findViewById(R.id.stopButton);
+        clockbutton = findViewById(R.id.clockbutton);
+        resumeButton = findViewById(R.id.resumeButton);
 
     }
 
@@ -437,18 +455,19 @@ public class RunningActivity extends AppCompatActivity implements RunningContrac
     public void onClickStartButton(View startButton) {
 
         //Perform animation
-        ImageButton pauseButton = findViewById(R.id.pauseButton);
-        ImageButton stopButton = findViewById(R.id.stopButton);
-
         Animation pauseButtonAnimation = AnimationUtils.loadAnimation(RunningActivity.this, R.anim.pause_button_separation);
         Animation stopButtonAnimation = AnimationUtils.loadAnimation(RunningActivity.this, R.anim.stop_button_separation);
         startButton.setEnabled(false);
-        pauseButton.setEnabled(true);
-        stopButton.setEnabled(true);
+        pauseButton.setEnabled(false);
+        stopButton.setEnabled(false);
+        clockbutton.setEnabled(true);
         startButton.setVisibility(View.INVISIBLE);
         pauseButton.setVisibility(View.VISIBLE);
         stopButton.setVisibility(View.VISIBLE);
+        clockbutton.setVisibility(View.VISIBLE);
         stopButton.startAnimation(stopButtonAnimation);
+        pauseButton.setAlpha((float) 0.4);
+        stopButton.setAlpha((float) 0.4);
 
         startTime();
         if (checkConnect) {
@@ -467,14 +486,12 @@ public class RunningActivity extends AppCompatActivity implements RunningContrac
 
     public void onClickPauseButton(View pauseButton) {
         //Perform animation
-        ImageButton resumeButton = findViewById(R.id.resumeButton);
-        ImageButton stopButton = findViewById(R.id.stopButton);
         Animation resumeButtonAnimation = AnimationUtils.loadAnimation(RunningActivity.this, R.anim.resume_button_fade_in);
         Animation pauseButtonAnimation = AnimationUtils.loadAnimation(RunningActivity.this, R.anim.pause_button_unification);
         Animation stopButtonAnimation = AnimationUtils.loadAnimation(RunningActivity.this, R.anim.stop_button_unification);
         resumeButton.setEnabled(true);
-        pauseButton.setEnabled(false);
-        stopButton.setEnabled(false);
+        pauseButton.setEnabled(true);
+        stopButton.setEnabled(true);
         resumeButton.setVisibility(View.VISIBLE);
         pauseButton.setVisibility(View.INVISIBLE);
         stopButton.setVisibility(View.INVISIBLE);
@@ -492,18 +509,20 @@ public class RunningActivity extends AppCompatActivity implements RunningContrac
 
     public void onClickResumeButton(View resumeButton) {
         //Perform animation
-        ImageButton pauseButton = findViewById(R.id.pauseButton);
-        ImageButton stopButton = findViewById(R.id.stopButton);
         Animation pauseButtonAnimation = AnimationUtils.loadAnimation(RunningActivity.this, R.anim.pause_button_separation);
         Animation stopButtonAnimation = AnimationUtils.loadAnimation(RunningActivity.this, R.anim.stop_button_separation);
         resumeButton.setEnabled(false);
-        pauseButton.setEnabled(true);
-        stopButton.setEnabled(true);
+        pauseButton.setEnabled(false);
+        stopButton.setEnabled(false);
+        clockbutton.setEnabled(true);
         resumeButton.setVisibility(View.INVISIBLE);
         pauseButton.setVisibility(View.VISIBLE);
         stopButton.setVisibility(View.VISIBLE);
+        clockbutton.setVisibility(View.VISIBLE);
         pauseButton.startAnimation(pauseButtonAnimation);
         stopButton.startAnimation(stopButtonAnimation);
+        pauseButton.setAlpha((float) 0.4);
+        stopButton.setAlpha((float) 0.4);
 
         startTime();
         if (checkConnect) {

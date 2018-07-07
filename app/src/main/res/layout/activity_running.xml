@@ -257,7 +257,6 @@
             style="@style/ActionCircularImageButton"
             android:layout_marginBottom="40dp"
             android:background="@drawable/start_circle_button"
-            android:longClickable = "@drawable/ic_clock"
             android.support.v7.appcompat:srcCompat="@drawable/ic_clock"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
@@ -286,8 +285,9 @@
             android:enabled="false"
             android:onClick="onClickResumeButton"
             android:visibility="invisible"
-            android.support.v7.appcompat:srcCompat="@drawable/ic_replay_white_48dp"
+            android.support.v7.appcompat:layout_constraintHorizontal_bias="0.0"
 
+            android.support.v7.appcompat:srcCompat="@drawable/ic_replay_white_48dp"
             app:layout_constraintBottom_toBottomOf="@+id/startButton"
             app:layout_constraintLeft_toLeftOf="@+id/startButton"
             app:layout_constraintRight_toRightOf="@+id/startButton" />
@@ -299,8 +299,9 @@
             android:enabled="false"
             android:onClick="onClickStopButton"
             android:visibility="invisible"
-            android.support.v7.appcompat:srcCompat="@drawable/ic_stop_white_48dp"
 
+            android.support.v7.appcompat:layout_constraintHorizontal_bias="0.526"
+            android.support.v7.appcompat:srcCompat="@drawable/ic_stop_white_48dp"
             app:layout_constraintBottom_toBottomOf="@+id/startButton"
             app:layout_constraintLeft_toLeftOf="@+id/startButton"
             app:layout_constraintRight_toRightOf="parent" />
