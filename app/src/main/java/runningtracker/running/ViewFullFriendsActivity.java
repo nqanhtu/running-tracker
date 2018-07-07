@@ -31,6 +31,7 @@ import runningtracker.R;
 import runningtracker.common.InitializationFirebase;
 import runningtracker.running.model.ListSuggestCallback;
 
+
 public class ViewFullFriendsActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     /**
@@ -81,11 +82,11 @@ public class ViewFullFriendsActivity extends AppCompatActivity implements OnMapR
         final ArrayList<String> listSuggest = new ArrayList<>();
         preRunning.getListLocationFriends(firestore, new ListSuggestCallback() {
             @Override
-            public void getListNameFriends(ArrayList<Marker> listMarker) {
-                if (listMarker != null) {
-                    if (listMarker.size() > 0) {
-                        for (int i = 0; i < listMarker.size(); i++) {
-                            listSuggest.add(listMarker.get(i).getTitle());
+            public void getListNameFriends(ArrayList<Marker> litMarker) {
+                if (preRunning.getListMarker() != null) {
+                    if (preRunning.getListMarker().size() > 0) {
+                        for (int i = 0; i < preRunning.getListMarker().size(); i++) {
+                            listSuggest.add(preRunning.getListMarker().get(i).getTitle());
                         }
                     }
                 }

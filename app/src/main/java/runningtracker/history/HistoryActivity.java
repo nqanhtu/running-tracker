@@ -25,6 +25,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolygonOptions;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.text.SimpleDateFormat;
@@ -144,14 +145,14 @@ public class HistoryActivity extends AppCompatActivity implements OnMapReadyCall
                             locationObject.get(0).getLongitudeValue()), 15);
                     googleMap.animateCamera(cameraUpdate);
                     int sizeObject = locationObject.size();
-                    List<LatLng> polygon = new ArrayList<>();
+                    List<LatLng> polyline = new ArrayList<>();
                     for (int i = 0; i < sizeObject; i++) {
-                        polygon.add(new LatLng(locationObject.get(i).getLatitudeValue(), locationObject.get(i).getLongitudeValue()));
+                        polyline.add(new LatLng(locationObject.get(i).getLatitudeValue(), locationObject.get(i).getLongitudeValue()));
                     }
-                    googleMap.addPolygon(new PolygonOptions()
-                            .addAll(polygon)
-                            .strokeColor(Color.BLUE)
-                            .fillColor(Color.WHITE));
+                    googleMap.addPolyline(new PolylineOptions()
+                            .addAll(polyline)
+                            .color(Color.BLUE)
+                            .width(10));
 
                     destinationMarkers.add(googleMap.addMarker(new MarkerOptions()
                             .icon(BitmapDescriptorFactory.fromResource(R.drawable.end_green))

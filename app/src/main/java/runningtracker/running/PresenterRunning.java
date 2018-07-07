@@ -106,9 +106,10 @@ public class PresenterRunning {
     private int countNotification = 0;
     private static ArrayList<LatLng> listPoint= new ArrayList<>();
     private GenerateID generateID = new GenerateID();
+    private int temp;
 
     /**Create method list marker*/
-    private  ArrayList<Marker> listMarker;
+    public  ArrayList<Marker> listMarker;
 
 
 
@@ -167,7 +168,9 @@ public class PresenterRunning {
             }
         });
     }
-
+    public ArrayList<Marker> getListMarker (){
+        return listMarker;
+    }
 
     public float DistanceLocation(Location locationA, Location locationB) {
         float distance;
@@ -760,11 +763,21 @@ public class PresenterRunning {
 
         //Set view full map friends
         if (viewFullFriends.getActivityViewFull() != null) {
-            listMarker.add(viewFullFriends.getActivityViewFull().addMarker(new MarkerOptions().position(new LatLng(locationObject.getLatitudeValue(), locationObject.getLongitudeValue()))
-                    .title(nameFriends)));
+            int k = 0;
+            for (Marker marker : listMarker) {
+                if(marker.getTitle().equalsIgnoreCase(nameFriends))
+                    k++;
+            }
+            if (k < 1) {
+                listMarker.add(viewFullFriends.getActivityViewFull().addMarker(new MarkerOptions().position(new LatLng(locationObject.getLatitudeValue(), locationObject.getLongitudeValue()))
+                        .title(nameFriends)));
+            }
             listSuggestCallback.getListNameFriends(listMarker);
-            CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom((new LatLng(locationObject.getLatitudeValue(), locationObject.getLongitudeValue())), 15);
-            viewFullFriends.getActivityViewFull().animateCamera(cameraUpdate);
+            if (temp == 0) {
+                CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom((new LatLng(locationObject.getLatitudeValue(), locationObject.getLongitudeValue())), 15);
+                viewFullFriends.getActivityViewFull().animateCamera(cameraUpdate);
+                temp ++;
+            }
         }
     }
 

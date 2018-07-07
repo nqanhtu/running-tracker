@@ -182,7 +182,6 @@ public class RunningActivity extends AppCompatActivity implements RunningContrac
 
             }
         };
-
         // init button event
         initButtonAction();
         clockbutton.setOnLongClickListener(new View.OnLongClickListener() {
