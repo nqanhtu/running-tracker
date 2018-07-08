@@ -31,6 +31,7 @@ import java.util.Map;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import runningtracker.FragmentNavigation;
 import runningtracker.NavigationHost;
 import runningtracker.R;
 import runningtracker.dashboard.DashboardFragment;
@@ -52,18 +53,17 @@ public class LoginFragment extends Fragment {
         ButterKnife.bind(this, view);
         mAuth = FirebaseAuth.getInstance();
         mFirestore = FirebaseFirestore.getInstance();
-        ((NavigationHost) getActivity()).enableBottomNav(false);
+//        ((NavigationHost) getActivity()).enableBottomNav(false);
         return view;
     }
 
     @OnClick(R.id.buttonRegister)
     public void startSignUpActivity() {
-        ((NavigationHost) getActivity()).navigateTo(new RegisterFragment(), true);
+        ((FragmentNavigation) getActivity()).navigateTo(new RegisterFragment(), true);
     }
 
     @OnClick(R.id.buttonLogin)
     public void startDash() {
-        ((NavigationHost) getActivity()).hideSoftKeyboard();
         String email = mEmail.getText().toString();
         String password = mPassword.getText().toString();
 

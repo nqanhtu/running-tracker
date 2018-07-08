@@ -21,6 +21,7 @@ import runningtracker.Adapter.ViewPagerAdapter;
 import runningtracker.NavigationHost;
 import runningtracker.R;
 import runningtracker.dashboard.DashboardFragment;
+import runningtracker.login.LoginActivity;
 import runningtracker.login.LoginFragment;
 import runningtracker.notification.NotificationsFragment;
 import runningtracker.profile.ProfileFragment;
@@ -44,28 +45,20 @@ public class HomeActivity extends AppCompatActivity implements DashboardFragment
         setContentView(R.layout.activity_home);
         ButterKnife.bind(this);
         auth = FirebaseAuth.getInstance();
-
-
         if (savedInstanceState == null) {
             if (auth.getCurrentUser() == null) {
-                enableBottomNav(false);
-                navigateTo(new LoginFragment(), false);
+                Intent intent = new Intent(this, LoginActivity.class);
+                finish();
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
             } else {
-                enableBottomNav(true);
                 setupViewPager(viewPager);
                 viewPager.setCurrentItem(0);
-                startMainApp();
+                mainApp();
             }
         }
     }
 
-    @Override
-    public void hideSoftKeyboard() {
-        if (getCurrentFocus() != null) {
-            InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
-            inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
-        }
-    }
 
     @Override
     public void onStartRunning() {
@@ -89,27 +82,7 @@ public class HomeActivity extends AppCompatActivity implements DashboardFragment
         if (addToBackstack) {
             transaction.addToBackStack(null);
         }
-
         transaction.commit();
-    }
-
-    @Override
-    public void enableBottomNav(boolean flag) {
-        if (flag) {
-            bottomNavigation.setVisibility(View.VISIBLE);
-        } else {
-            bottomNavigation.setVisibility(View.GONE);
-        }
-    }
-
-    @Override
-    public void startMainApp() {
-        enableBottomNav(true);
-        mainApp();
-    }
-
-    public void setSelectedItem() {
-        bottomNavigation.setSelectedItemId(R.id.navigation_profile);
     }
 
     private void mainApp() {
@@ -118,26 +91,18 @@ public class HomeActivity extends AppCompatActivity implements DashboardFragment
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.navigation_dashboard:
-
                         viewPager.setCurrentItem(0);
-//                        DashboardFragment dashboardFragment = new DashboardFragment();
-//                        getSupportFragmentManager().beginTransaction().replace(R.id.container, dashboardFragment).commit();
                         return true;
                     case R.id.navigation_profile:
                         viewPager.setCurrentItem(1);
-//                        ProfileFragment profileFragment = new ProfileFragment();
-//                        getSupportFragmentManager().beginTransaction().replace(R.id.container, profileFragment).commit();
                         return true;
                     case R.id.navigation_notifications:
                         viewPager.setCurrentItem(2);
-//                        NotificationsFragment notificationsFragment = new NotificationsFragment();
-//                        getSupportFragmentManager().beginTransaction().replace(R.id.container, notificationsFragment).commit();
                         return true;
                 }
                 return false;
             }
         });
-        //bottomNavigation.getChildAt(2);
     }
 
     private void setupViewPager(ViewPager viewPager) {
@@ -150,5 +115,4 @@ public class HomeActivity extends AppCompatActivity implements DashboardFragment
         adapter.addFragment(notificationsFragment, "");
         viewPager.setAdapter(adapter);
     }
-
 }

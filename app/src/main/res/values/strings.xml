@@ -83,4 +83,5 @@
         <item>Nam</item>
         <item>Nữ</item>
     </string-array>
+    <string name="title_activity_test">TestActivity</string>
 </resources>
