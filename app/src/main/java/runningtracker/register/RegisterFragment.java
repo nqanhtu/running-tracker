@@ -1,6 +1,7 @@
 package runningtracker.register;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -8,15 +9,13 @@ import android.support.annotation.VisibleForTesting;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.Toolbar;
-import android.text.Editable;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -32,10 +31,8 @@ import java.util.regex.Pattern;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import runningtracker.FragmentNavigation;
-import runningtracker.NavigationHost;
 import runningtracker.R;
-import runningtracker.registerinfomation.RegisterInformationFragment;
+import runningtracker.registerinfomation.RegisterInfomationActivity;
 
 public class RegisterFragment extends Fragment {
     @BindView(R.id.email_edit_text)
@@ -100,7 +97,7 @@ public class RegisterFragment extends Fragment {
         return isValid;
     }
 
-//    @OnClick(R.id.buttonRegister)
+    @OnClick(R.id.buttonRegister)
     public void startSignUpActivity() {
         String email = emailEditText.getText().toString();
         String password = passwordEditText.getText().toString();
@@ -113,24 +110,29 @@ public class RegisterFragment extends Fragment {
                     .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
+                            hideProgressDialog();
                             if (task.isSuccessful()) {
                                 // Sign in success, update UI with the signed-in user's information
                                 Log.d(TAG, "createUserWithEmail:success");
                                 final FirebaseUser firebaseUser = mAuth.getCurrentUser();
                                 assert firebaseUser != null;
                                 startRegisterInformation();
-                                hideProgressDialog();
+                            } else {
+                                Log.w(TAG, "createUserWithEmail:failure", task.getException());
+                                Toast.makeText(getActivity(), "Đăng ký không thành công, hãy thử email khác",
+                                        Toast.LENGTH_SHORT).show();
                             }
                         }
                     });
         }
     }
 
-    @OnClick(R.id.buttonRegister)
     public void startRegisterInformation() {
-        ((FragmentNavigation) getActivity()).navigateTo(new RegisterInformationFragment(), false);
+        Intent intent = new Intent(getActivity(), RegisterInfomationActivity.class);
+        getActivity().finish();
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
     }
-
 
     public boolean validateForm() {
         boolean valid = true;

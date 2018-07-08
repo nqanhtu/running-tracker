@@ -4,22 +4,18 @@ import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.text.Editable;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
 import android.widget.Spinner;
@@ -49,14 +45,11 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import de.hdodenhof.circleimageview.CircleImageView;
-import runningtracker.NavigationHost;
 import runningtracker.R;
 import runningtracker.home.HomeActivity;
-import runningtracker.profile.ProfileFragment;
 
-import static android.app.Activity.RESULT_OK;
 
-public class RegisterInformationFragment extends DialogFragment {
+public class RegisterInfomationActivity extends AppCompatActivity {
     @BindView(R.id.toolbar)
     Toolbar toolbar;
     private final int PICK_IMAGE_REQUEST = 71;
@@ -91,24 +84,23 @@ public class RegisterInformationFragment extends DialogFragment {
     private DatePickerDialog mDatePickerDialog;
     private final static String TAG = "register information";
 
-    String oldUsername;
-
-    @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_register_information, container, false);
-        ButterKnife.bind(this, view);
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_register_infomation);
+        ButterKnife.bind(this);
         setUpToolbar();
         setDateTimeField();
         setUpSpinner();
-//        loadUserInformation();
-//        ((NavigationHost) Objects.requireNonNull(getActivity())).enableBottomNav(false);
-        return view;
+        initFirebase();
+        userMap = new HashMap<>();
+        userMap.put("username","");
+        userDataMap = new HashMap<>();
     }
 
     private void setUpSpinner() {
         // Create an ArrayAdapter using the string array and a default spinner layout
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getContext(),
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
                 R.array.gioi_tinh, android.R.layout.simple_spinner_item);
 // Specify the layout to use when the list of choices appears
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -117,13 +109,6 @@ public class RegisterInformationFragment extends DialogFragment {
         gioiTinhSpinner.setSelection(0);
     }
 
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        initFirebase();
-        userMap = new HashMap<>();
-        userDataMap = new HashMap<>();
-    }
 
     private void initFirebase() {
         db = FirebaseFirestore.getInstance();
@@ -155,14 +140,9 @@ public class RegisterInformationFragment extends DialogFragment {
             filePath.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    Toast.makeText(getActivity(), "Tải ảnh lên thành công", Toast.LENGTH_SHORT).show();
                 }
             });
-            Glide
-                    .with(this)
-                    .load(uri)
-                    .into(profileImageView);
-
+            loadAvatar(uri);
         }
     }
 
@@ -170,11 +150,7 @@ public class RegisterInformationFragment extends DialogFragment {
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                Intent intent = new Intent(getActivity(), HomeActivity.class);
-//                getActivity().finish();
-//                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-//                startActivity(intent);
-                dismiss();
+                startHomeActivity();
             }
         });
     }
@@ -251,18 +227,16 @@ public class RegisterInformationFragment extends DialogFragment {
                 .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                     @Override
                     public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-
                         List<DocumentSnapshot> doc = queryDocumentSnapshots.getDocuments();
-
                         boolean flag = true;
                         if (doc.size() > 0) {
                             if (!doc.get(0).getData().get("username").toString().equals(userMap.get("username").toString())) {
                                 usernameEditText.setError("Đã tồn tại");
                                 flag = false;
                                 hideProgressDialog();
+                                return;
                             }
                         }
-
                         if (flag) {
                             userMap.put("username", usernameEditText.getText().toString());
                             userMap.put("displayName", nameEditText.getText().toString());
@@ -282,8 +256,7 @@ public class RegisterInformationFragment extends DialogFragment {
                                                             public void onComplete(@NonNull Task<Void> task) {
                                                                 if (task.isSuccessful()) {
                                                                     hideProgressDialog();
-                                                                    Intent intent = new Intent(getActivity(), HomeActivity.class);
-                                                                    startActivity(intent);
+                                                                    startHomeActivity();
                                                                 } else {
                                                                     Log.d(TAG, task.getException().toString());
                                                                 }
@@ -296,8 +269,6 @@ public class RegisterInformationFragment extends DialogFragment {
                                     });
                         }
                     }
-
-
                 });
     }
 
@@ -311,7 +282,7 @@ public class RegisterInformationFragment extends DialogFragment {
             }
         });
         Calendar newCalendar = Calendar.getInstance();
-        mDatePickerDialog = new DatePickerDialog(getContext(), new DatePickerDialog.OnDateSetListener() {
+        mDatePickerDialog = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
 
             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
                 Calendar newDate = Calendar.getInstance();
@@ -334,7 +305,7 @@ public class RegisterInformationFragment extends DialogFragment {
 
     public void showProgressDialog() {
         if (mProgressDialog == null) {
-            mProgressDialog = new ProgressDialog(getActivity());
+            mProgressDialog = new ProgressDialog(this);
             mProgressDialog.setMessage(getString(R.string.loading));
             mProgressDialog.setIndeterminate(true);
         }
@@ -387,15 +358,15 @@ public class RegisterInformationFragment extends DialogFragment {
         return valid[0];
     }
 
-
-//    @Override
-//    public void onDestroyView() {
-//        super.onDestroyView();
-//        ((NavigationHost) getActivity()).enableBottomNav(true);
-//    }
+    public void startHomeActivity() {
+        Intent intent = new Intent(this, HomeActivity.class);
+        finish();
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+    }
 
     private void loadAvatar(Uri uri) {
-        Glide.with(Objects.requireNonNull(getContext()))
+        Glide.with(this)
                 .load(uri)
                 .into(profileImageView);
     }

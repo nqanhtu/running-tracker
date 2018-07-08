@@ -94,7 +94,12 @@
             android:name=".notificationfriends.NotificationFriendsActivity"
             android:configChanges="keyboardHidden|orientation"
             android:screenOrientation="portrait" />
-        <activity android:name=".login.LoginActivity"></activity>
+        <activity android:name=".login.LoginActivity" />
+        <activity
+            android:name=".test.TestActivity"
+            android:label="@string/title_activity_test"
+            android:theme="@style/AppTheme" />
+        <activity android:name=".registerinfomation.RegisterInfomationActivity"></activity>
     </application>
 
 </manifest>

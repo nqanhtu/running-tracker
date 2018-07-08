@@ -64,7 +64,6 @@ public class LoginFragment extends Fragment {
 
     @OnClick(R.id.buttonLogin)
     public void startDash() {
-        ((NavigationHost) getActivity()).hideSoftKeyboard();
         String email = mEmail.getText().toString();
         String password = mPassword.getText().toString();
 

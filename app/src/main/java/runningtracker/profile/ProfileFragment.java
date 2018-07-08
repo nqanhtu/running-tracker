@@ -36,6 +36,7 @@ import runningtracker.R;
 import runningtracker.data.model.User;
 import runningtracker.data.repository.UsersRepository;
 import runningtracker.home.HomeActivity;
+import runningtracker.registerinfomation.RegisterInfomationActivity;
 import runningtracker.registerinfomation.RegisterInformationFragment;
 
 
@@ -72,14 +73,10 @@ public class ProfileFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (savedInstanceState != null) {
             Log.d(TAG, "save instance fragment");
-
         }
-
         if (savedInstanceState == null) {
             Log.d(TAG, "save instance fragment null");
-
         }
-
     }
 
     @Override
@@ -115,8 +112,7 @@ public class ProfileFragment extends Fragment {
 
     @OnClick(R.id.edit_info_button)
     public void editInfo() {
-//        ((NavigationHost) getActivity()).navigateTo(new RegisterInformationFragment(), true);
-        //showDialog();
+        startRegisterInformation();
     }
 
     private void initFirebase() {
@@ -179,7 +175,6 @@ public class ProfileFragment extends Fragment {
                                 if (user.get("heartRate") != null)
                                     heartRate = user.get("heartRate").toString();
 
-
                                 heightTextView.setText(height);
                                 weightTextView.setText(weight);
                                 heartRateTextView.setText(heartRate);
@@ -194,6 +189,12 @@ public class ProfileFragment extends Fragment {
         Glide.with(Objects.requireNonNull(getContext()))
                 .load(uri)
                 .into(avatarImageView);
+    }
+
+
+    public void startRegisterInformation() {
+        Intent intent = new Intent(getActivity(), RegisterInfomationActivity.class);
+        startActivity(intent);
     }
 
     @Override
