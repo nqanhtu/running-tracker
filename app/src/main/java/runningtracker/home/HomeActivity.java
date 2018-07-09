@@ -45,17 +45,15 @@ public class HomeActivity extends AppCompatActivity implements DashboardFragment
         setContentView(R.layout.activity_home);
         ButterKnife.bind(this);
         auth = FirebaseAuth.getInstance();
-        if (savedInstanceState == null) {
-            if (auth.getCurrentUser() == null) {
-                Intent intent = new Intent(this, LoginActivity.class);
-                finish();
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                startActivity(intent);
-            } else {
-                setupViewPager(viewPager);
-                viewPager.setCurrentItem(0);
-                mainApp();
-            }
+        if (auth.getCurrentUser() == null) {
+            Intent intent = new Intent(this, LoginActivity.class);
+            finish();
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+        } else {
+            setupViewPager(viewPager);
+            viewPager.setCurrentItem(0);
+            mainApp();
         }
     }
 

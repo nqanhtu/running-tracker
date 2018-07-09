@@ -32,6 +32,8 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 import butterknife.BindView;
@@ -83,10 +85,19 @@ public class FriendRequestsFragment extends Fragment {
         firestoreRecyclerAdapter = new FirestoreRecyclerAdapter<Friend, FriendsHolder>(options) {
             @Override
             protected void onBindViewHolder(@NonNull final FriendsHolder holder, int position, @NonNull Friend friend) {
-                holder.displayNameTextView.setText(friend.getDisplayName());
-                holder.usernameTextView.setText(friend.getUsername());
+                if (friend.getFriend() != null) {
+                    friend.getFriend().get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                        @Override
+                        public void onSuccess(DocumentSnapshot documentSnapshot) {
+                            Log.d(TAG, documentSnapshot.getData().toString());
+                            holder.displayNameTextView.setText(documentSnapshot.getData().get("displayName").toString());
+                            holder.usernameTextView.setText(documentSnapshot.getData().get("username").toString());
+                        }
+                    });
+                }
+
                 holder.friend = friend;
-                StorageReference storageReference = FirebaseStorage.getInstance().getReference().child("Photos").child(friend.getUid());
+                StorageReference storageReference = FirebaseStorage.getInstance().getReference().child("Photos").child(friend.getFriend().getId());
                 storageReference.getDownloadUrl()
                         .addOnSuccessListener(new OnSuccessListener<Uri>() {
                             @Override
@@ -115,27 +126,25 @@ public class FriendRequestsFragment extends Fragment {
                 mDialog = new Dialog(getContext());
                 mDialog.setContentView(R.layout.dialog);
                 Objects.requireNonNull(mDialog.getWindow()).setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-
                 viewHolder.item.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-
                         TextView dialogName = mDialog.findViewById(R.id.name_textview);
                         TextView dialogEmail = mDialog.findViewById(R.id.email_textview);
                         Button buttonAccept = mDialog.findViewById(R.id.accept_button);
                         Button buttonReject = mDialog.findViewById(R.id.reject_button);
-
                         final Friend friend = viewHolder.friend;
                         dialogName.setText(friend.getDisplayName());
                         dialogEmail.setText(friend.getUsername());
-
 
                         mDialog.show();
                         buttonAccept.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
+                                Map<String, Object> friendMap = new HashMap<>();
+                                friendMap.put("friend", friend.getFriend());
                                 db.collection("users").document(currentUser.getUid())
-                                        .collection("friends").document(friend.getUid()).set(friend)
+                                        .collection("friends").document(friend.getFriend().getId()).set(friendMap)
                                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                                             @Override
                                             public void onSuccess(Void aVoid) {
@@ -148,14 +157,16 @@ public class FriendRequestsFragment extends Fragment {
                                         .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                                             @Override
                                             public void onSuccess(DocumentSnapshot documentSnapshot) {
-                                                Friend user = documentSnapshot.toObject(Friend.class);
-                                                assert user != null;
-                                                db.collection("users").document(friend.getUid())
-                                                        .collection("friends").document(currentUser.getUid()).set(user);
+                                                Map<String, Object> userFriendMap = new HashMap<>();
+                                                userFriendMap.put("friend", documentSnapshot.getReference());
+                                                db.collection("users").document(friend.getFriend().getId())
+                                                        .collection("friends").document(currentUser.getUid()).set(userFriendMap);
                                             }
                                         });
+
+                                //////////////////////////
                                 db.collection("users").document(currentUser.getUid())
-                                        .collection("friendRequests").document(friend.getUid()).delete()
+                                        .collection("friendRequests").document(friend.getFriend().getId()).delete()
                                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                                             @Override
                                             public void onSuccess(Void aVoid) {
@@ -169,7 +180,7 @@ public class FriendRequestsFragment extends Fragment {
                                             }
                                         });
 
-                                db.collection("users").document(friend.getUid())
+                                db.collection("users").document(friend.getFriend().getId())
                                         .collection("friendRequestsSent").document(currentUser.getUid()).delete()
                                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                                             @Override
@@ -191,7 +202,7 @@ public class FriendRequestsFragment extends Fragment {
                             @Override
                             public void onClick(View v) {
                                 db.collection("users").document(currentUser.getUid())
-                                        .collection("friendRequests").document(friend.getUid()).delete()
+                                        .collection("friendRequests").document(friend.getFriend().getId()).delete()
                                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                                             @Override
                                             public void onSuccess(Void aVoid) {

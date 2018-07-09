@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -22,8 +23,10 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
@@ -31,8 +34,11 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ExecutionException;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -52,9 +58,11 @@ public class AddFriendFragment extends Fragment {
     FirestoreRecyclerAdapter firestoreRecyclerAdapter;
     @BindView(R.id.username_text_view)
     EditText usernameEditText;
+    @BindView(R.id.add_friend_button)
+    Button addFriendButton;
     FirebaseFirestore db;
     FirebaseAuth mAuth;
-    FirebaseUser currentUser;
+    Map<String, Object> currentUser;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -67,43 +75,67 @@ public class AddFriendFragment extends Fragment {
     }
 
 
-    @OnClick(R.id.add_friend_button)
-    public void addFriend() {
+    public void addFriend(final Map<String, Object> newFriend) {
+
+        if (usernameEditText.getText().toString().equals(currentUser.get("username"))) {
+            Toast.makeText(getContext(), "Không thể kết bạn với chính bạn", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         db.collection("users").whereEqualTo("username", usernameEditText.getText().toString())
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            List<Friend> users = task.getResult().toObjects(Friend.class);
-                            if (!users.isEmpty()) {
-                                final String friendUid = task.getResult().getDocuments().get(0).getId();
-                                Friend user = users.get(0);
-                                db.collection("users").document(currentUser.getUid())
-                                        .collection("friendRequestsSent").document(friendUid).set(user);
-                                db.collection("users").document(currentUser.getUid()).get()
-                                        .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                                            @Override
-                                            public void onSuccess(DocumentSnapshot documentSnapshot) {
-                                                Friend user = documentSnapshot.toObject(Friend.class);
-                                                db.collection("users").document(friendUid)
-                                                        .collection("friendRequests").document(currentUser.getUid()).set(user);
-                                            }
-                                        });
-                                Toast.makeText(getContext(), "Đã gửi lời mời kết bạn", Toast.LENGTH_SHORT).show();
-                            } else
-                                Toast.makeText(getContext(), "Người dùng không tồn tại", Toast.LENGTH_SHORT).show();
-                        }
+                        if (task.isSuccessful() && task.getResult().size() > 0) {
+                            DocumentReference friendRef = task.getResult().getDocuments().get(0).getReference();
+
+                            Log.d(TAG, friendRef.getId());
+
+//                                    List < Friend > users = task.getResult().toObjects(Friend.class);
+//                            if (!users.isEmpty()) {
+//                                final String friendUid = task.getResult().getDocuments().get(0).getId();
+//                                Friend user = users.get(0);
+
+                            Map<String, Object> friend = new HashMap<>();
+                            friend.put("friend", friendRef);
+
+                            db.collection("users").document(mAuth.getCurrentUser().getUid())
+                                    .collection("friendRequestsSent").document(friendRef.getId()).set(friend);
+
+                            db.collection("users").document(friendRef.getId())
+                                    .collection("friendRequests").document(mAuth.getCurrentUser().getUid()).set(newFriend);
+
+                            Toast.makeText(getContext(), "Đã gửi lời mời kết bạn", Toast.LENGTH_SHORT).show();
+                        } else
+                            Toast.makeText(getContext(), "Người dùng không tồn tại", Toast.LENGTH_SHORT).show();
                     }
+
                 });
-        usernameEditText.setText("");
+        //   usernameEditText.setText("");
     }
 
     private void init() {
         db = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
-        currentUser = mAuth.getCurrentUser();
 
+        db.collection("users").document(mAuth.getCurrentUser().getUid()).get()
+                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if (task.isSuccessful()) {
+                            currentUser = task.getResult().getData();
+                            final HashMap<String, Object> newFriend = new HashMap<>();
+                            newFriend.put("friend", task.getResult().getReference());
+                            addFriendButton.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    addFriend(newFriend);
+                                }
+                            });
+                        }
+                    }
+                });
     }
 
     public void showFriendsList() {
@@ -118,9 +150,18 @@ public class AddFriendFragment extends Fragment {
         firestoreRecyclerAdapter = new FirestoreRecyclerAdapter<Friend, FriendsHolder>(options) {
             @Override
             protected void onBindViewHolder(@NonNull final FriendsHolder holder, int position, @NonNull Friend friend) {
-                holder.displayNameTextView.setText(friend.getDisplayName());
-                holder.usernameTextView.setText(friend.getUsername());
-                StorageReference storageReference = FirebaseStorage.getInstance().getReference().child("Photos").child(friend.getUid());
+
+                if (friend.getFriend() != null) {
+                    friend.getFriend().get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                        @Override
+                        public void onSuccess(DocumentSnapshot documentSnapshot) {
+                            Log.d(TAG, documentSnapshot.getData().toString());
+                            holder.displayNameTextView.setText(documentSnapshot.getData().get("displayName").toString());
+                            holder.usernameTextView.setText(documentSnapshot.getData().get("username").toString());
+                        }
+                    });
+                }
+                StorageReference storageReference = FirebaseStorage.getInstance().getReference().child("Photos").child(friend.getFriend().getId());
                 storageReference.getDownloadUrl()
                         .addOnSuccessListener(new OnSuccessListener<Uri>() {
                             @Override
@@ -167,6 +208,7 @@ public class AddFriendFragment extends Fragment {
             super(itemView);
             ButterKnife.bind(this, itemView);
         }
+
     }
 
     @Override
@@ -180,6 +222,7 @@ public class AddFriendFragment extends Fragment {
         super.onStop();
         firestoreRecyclerAdapter.stopListening();
     }
+
     private void loadAvatar(Uri uri, ImageView avatarImageView) {
         Glide.with(Objects.requireNonNull(getContext()))
                 .load(uri)

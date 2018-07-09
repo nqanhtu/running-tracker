@@ -57,8 +57,8 @@ public class SettingDashBoardActivity extends PreferenceActivity {
                 }
 
                 Boolean statusShare = (Boolean)o;
-                ShareLocationObject shareLocationObject = new ShareLocationObject();
-                shareLocationObject.setShareLocation(statusShare);
+                Boolean shareLocationObject;
+                shareLocationObject = statusShare;
                 presenter.updateValueShareLocation(firestore, shareLocationObject);
 
                 return false;

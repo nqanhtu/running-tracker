@@ -76,15 +76,16 @@ public class FriendsListFragment extends Fragment {
             @Override
             protected void onBindViewHolder(@NonNull final FriendsHolder holder, int position, @NonNull Friend friend) {
 
-
-                friend.getFriend().get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                    @Override
-                    public void onSuccess(DocumentSnapshot documentSnapshot) {
-                        Log.d(TAG, documentSnapshot.getData().toString());
-                        holder.displayNameTextView.setText(documentSnapshot.getData().get("displayName").toString());
-                        holder.usernameTextView.setText(documentSnapshot.getData().get("username").toString());
-                    }
-                });
+                if (friend.getFriend() != null) {
+                    friend.getFriend().get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                        @Override
+                        public void onSuccess(DocumentSnapshot documentSnapshot) {
+                            Log.d(TAG, documentSnapshot.getData().toString());
+                            holder.displayNameTextView.setText(documentSnapshot.getData().get("displayName").toString());
+                            holder.usernameTextView.setText(documentSnapshot.getData().get("username").toString());
+                        }
+                    });
+                }
 //                StorageReference storageReference = FirebaseStorage.getInstance().getReference().child("Photos").child(friend.getUid());
 //                storageReference.getDownloadUrl()
 //                        .addOnSuccessListener(new OnSuccessListener<Uri>() {

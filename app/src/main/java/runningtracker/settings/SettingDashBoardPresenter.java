@@ -22,30 +22,33 @@ public class SettingDashBoardPresenter {
         currentUser = mAuth.getCurrentUser();
 
     }
+
     /**
      * Update value document sharelocation of user
-    * */
-    public  void updateValueShareLocation(FirebaseFirestore firestore, ShareLocationObject value){
-
-
-        DocumentReference shareLocation = firestore.collection("users")
+     */
+    public void updateValueShareLocation(FirebaseFirestore firestore, boolean isShareLocation) {
+        firestore.collection("users")
                 .document(currentUser.getUid())
-                .collection("sharelocation")
-                .document("1");
+                .update("sharelocation", isShareLocation).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+            }
+        });
 
-        shareLocation
-                .update("isShareLocation", value.getShareLocation())
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Log.d("Status: ", "DocumentSnapshot successfully updated!");
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w("Status: ", "Error updating document", e);
-                    }
-                });
+
+//        shareLocation
+//                .("isShareLocation", ShareLocationObject)
+//                .addOnSuccessListener(new OnSuccessListener<Void>() {
+//                    @Override
+//                    public void onSuccess(Void aVoid) {
+//                        Log.d("Status: ", "DocumentSnapshot successfully updated!");
+//                    }
+//                })
+//                .addOnFailureListener(new OnFailureListener() {
+//                    @Override
+//                    public void onFailure(@NonNull Exception e) {
+//                        Log.w("Status: ", "Error updating document", e);
+//                    }
+//                });
     }
 }
