@@ -35,6 +35,7 @@ import runningtracker.FragmentNavigation;
 import runningtracker.NavigationHost;
 import runningtracker.R;
 import runningtracker.dashboard.DashboardFragment;
+import runningtracker.home.HomeActivity;
 import runningtracker.register.RegisterFragment;
 
 public class LoginFragment extends Fragment {
@@ -95,11 +96,10 @@ public class LoginFragment extends Fragment {
 
                                 }
                             });
-                            Intent intent = getActivity().getIntent();
+                            Intent intent = new Intent(getActivity(), HomeActivity.class);
                             getActivity().finish();
+                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                             startActivity(intent);
-//                            ((NavigationHost) getActivity()).navigateTo(new DashboardFragment(), false);
-//                            ((NavigationHost) getActivity()).enableBottomNav(true);
 
                         } else {
                             // If sign in fails, display a message to the user.
@@ -111,13 +111,9 @@ public class LoginFragment extends Fragment {
                         // [END_EXCLUDE]
                     }
                 });
-        // [END sign_in_with_email]
-        ///loginContract.buttonClicked();
+
     }
 
-    private void updateUI(FirebaseUser user) {
-        hideProgressDialog();
-    }
 
     private boolean validateForm() {
         boolean valid = true;
