@@ -35,7 +35,7 @@
                     android:id="@+id/location_text_view"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Quảng Tiến, Trảng Bom, Đồng Nai"
+                    android:text="Hồ Chí Minh"
                     android:textSize="24sp" />
             </LinearLayout>
 
