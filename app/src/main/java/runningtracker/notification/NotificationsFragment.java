@@ -122,7 +122,6 @@ public class NotificationsFragment extends Fragment {
         mLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setAdapter(firestoreRecyclerAdapter);
-
     }
 
     public class NotificationHolder extends RecyclerView.ViewHolder {

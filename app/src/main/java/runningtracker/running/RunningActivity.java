@@ -138,7 +138,6 @@ public class RunningActivity extends AppCompatActivity implements RunningContrac
         ButterKnife.bind(this);
         presenterRunning = new PresenterRunning(this);
         myLocation = new MyLocation();
-
         initializeUI();
         init();
 
@@ -148,11 +147,11 @@ public class RunningActivity extends AppCompatActivity implements RunningContrac
         presenterRunning.initialization();
         txtTimer = findViewById(R.id.textValueDuration);
         statusConnect = findViewById(R.id.iconStatus);
-
         checkConnect = presenterRunning.isConnected(this);
 
         InitializationFirebase initializationFirebase = new InitializationFirebase();
         firestore = initializationFirebase.createFirebase();
+
 
         GenerateID generateID = new GenerateID();
         idHistory = new IdHistory();
@@ -162,7 +161,6 @@ public class RunningActivity extends AppCompatActivity implements RunningContrac
          * Save file day help select and chosen data
          * */
         presenterRunning.saveHistory(idHistory.id, firestore);
-
         presenterRunning.createLocationCallback(checkConnect, idHistory.id, firestore);
         presenterRunning.createLocationRequest();
         presenterRunning.buildLocationSettingsRequest();
@@ -202,6 +200,8 @@ public class RunningActivity extends AppCompatActivity implements RunningContrac
                 return false;
             }
         });
+
+
     }
 
     private void initButtonAction() {
@@ -363,27 +363,6 @@ public class RunningActivity extends AppCompatActivity implements RunningContrac
         getMenuInflater().inflate(R.menu.navigation_menu, menu);
         return true;
     }
-
-//    /**
-//     * @param item
-//     * @return true or false
-//     */
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//        actionBar.setNavigationOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                finish();
-//            }
-//        });
-//        switch (item.getItemId()) {
-//            case R.id.setting:
-//                createDialogCalories();
-//                return true;
-//            default:
-//                return super.onOptionsItemSelected(item);
-//        }
-//    }
 
     @OnClick(R.id.calo_setting_button)
     public void settingCalo() {
@@ -647,7 +626,7 @@ public class RunningActivity extends AppCompatActivity implements RunningContrac
                                 Friend friend = documentSnapshot.toObject(Friend.class);
                                 Map<String, Object> notificationMessage = new HashMap<>();
                                 notificationMessage.put("message", message);
-                                notificationMessage.put("from", mCurrentUser.getUid());
+                                notificationMessage.put("from", mAuth.getCurrentUser().getUid());
                                 notificationMessage.put("fromName", mCurrentUser.getDisplayName());
                                 notificationMessage.put("latitudeValue", latitudeValue);
                                 notificationMessage.put("longitudeValue", longitudeValue);
