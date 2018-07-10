@@ -85,7 +85,7 @@ public class LoginFragment extends Fragment {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "signInWithEmail:success");
                             String current_id = mAuth.getCurrentUser().getUid();
-                            String refreshedToken = FirebaseInstanceId.getInstance().getId();
+                            String refreshedToken = FirebaseInstanceId.getInstance().getToken();
                             Log.d("MyFirebaseInstance", "Refreshed token: " + refreshedToken);
                             Map<String, Object> tokenMap = new HashMap<>();
                             tokenMap.put("token_id", refreshedToken);
