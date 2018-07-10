@@ -103,8 +103,11 @@ public class TrackTabFragment extends Fragment implements OnMapReadyCallback {
 
                         originMarkers.add(mMap.addMarker(new MarkerOptions()
                                 .icon(BitmapDescriptorFactory.fromResource(R.drawable.start_blue))
-                                .title("Start Tracking")
+                                .title("Bắt đầu")
                                 .position(new LatLng(locationObject.get(0).getLatitudeValue(), locationObject.get(0).getLongitudeValue()))));
+                        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(new LatLng(locationObject.get(0).getLatitudeValue(),
+                                locationObject.get(0).getLongitudeValue()), 15);
+                        mMap.animateCamera(cameraUpdate);
                         int sizeObject = locationObject.size();
                         List<LatLng> polyline = new ArrayList<>();
                         for (int i = 0; i < sizeObject; i++) {
@@ -117,7 +120,7 @@ public class TrackTabFragment extends Fragment implements OnMapReadyCallback {
 
                         destinationMarkers.add(mMap.addMarker(new MarkerOptions()
                                 .icon(BitmapDescriptorFactory.fromResource(R.drawable.end_green))
-                                .title("End Tracking")
+                                .title("Kết thúc")
                                 .position(new LatLng(locationObject.get(locationObject.size() - 1).getLatitudeValue(), locationObject.get(locationObject.size() - 1).getLongitudeValue()))));
                     }
                 }
@@ -135,9 +138,11 @@ public class TrackTabFragment extends Fragment implements OnMapReadyCallback {
 
                     originMarkers.add(mMap.addMarker(new MarkerOptions()
                             .icon(BitmapDescriptorFactory.fromResource(R.drawable.start_blue))
-                            .title("Start Tracking")
+                            .title("Bắt đầu")
                             .position(new LatLng(locationObject.get(0).getLatitudeValue(), locationObject.get(0).getLongitudeValue()))));
-
+                    CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(new LatLng(locationObject.get(0).getLatitudeValue(),
+                            locationObject.get(0).getLongitudeValue()), 15);
+                    mMap.animateCamera(cameraUpdate);
                     int sizeObject = locationObject.size();
                     List<LatLng> polyline = new ArrayList<>();
                     for (int i = 0; i < sizeObject; i++) {
@@ -150,7 +155,7 @@ public class TrackTabFragment extends Fragment implements OnMapReadyCallback {
 
                     destinationMarkers.add(mMap.addMarker(new MarkerOptions()
                             .icon(BitmapDescriptorFactory.fromResource(R.drawable.end_green))
-                            .title("End Tracking")
+                            .title("Kết thúc")
                             .position(new LatLng(locationObject.get(locationObject.size() - 1).getLatitudeValue(), locationObject.get(locationObject.size() - 1).getLongitudeValue()))));
                 }
             });

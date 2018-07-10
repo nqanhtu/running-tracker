@@ -9,6 +9,7 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
@@ -78,7 +79,7 @@ import static android.icu.lang.UCharacter.GraphemeClusterBreak.V;
 public class RunningActivity extends AppCompatActivity implements RunningContract, OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks {
 
     private static final int REQUEST_PERMISSIONS_REQUEST_CODE = 34;
-    private static final String TAG = "RunningActivity123";
+    private static final String TAG = "RunningActivity";
     private GoogleMap mMap, mMapShareLocation;
     Date startCurrentTime, stopCurrentTime;
     float rGrossCalorie;
@@ -91,6 +92,7 @@ public class RunningActivity extends AppCompatActivity implements RunningContrac
     private User mCurrentUser;
     private FirebaseAuth mAuth;
     private ImageButton pauseButton, stopButton, clockbutton, resumeButton;
+    private MediaPlayer ringStart, ringNotification, ringErrNotifi;
 
     public Runnable runnable = new Runnable() {
         @Override
@@ -484,6 +486,8 @@ public class RunningActivity extends AppCompatActivity implements RunningContrac
         stopButton.startAnimation(stopButtonAnimation);
         pauseButton.setAlpha((float) 0.4);
         stopButton.setAlpha((float) 0.4);
+        ringStart = MediaPlayer.create(this, R.raw.report_start);
+        ringStart.start();
 
         startTime();
         if (checkConnect) {
@@ -568,7 +572,7 @@ public class RunningActivity extends AppCompatActivity implements RunningContrac
     private void createDialogCalories() {
 
         final AlertDialog.Builder mBuilder = new AlertDialog.Builder(this);
-        final String[] arrayAdater = {"1000", "2000"};
+        final String[] arrayAdater = {"200", "500", "800", "1000"};
 
         mBuilder.setTitle("Thiết Lập Calories");
         LayoutInflater inflater = this.getLayoutInflater();
@@ -631,6 +635,8 @@ public class RunningActivity extends AppCompatActivity implements RunningContrac
     public void sendNotification(final double latitudeValue, final double longitudeValue) {
 
         final String message = "Đang gặp sự cố!!";
+        ringNotification = MediaPlayer.create(this, R.raw.report_notification);
+        ringErrNotifi =  MediaPlayer.create(this, R.raw.report_errnoti);
 
         firestore.collection("users").document(mAuth.getCurrentUser().getUid()).collection("friends").get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -652,12 +658,14 @@ public class RunningActivity extends AppCompatActivity implements RunningContrac
                                             public void onSuccess(DocumentReference documentReference) {
                                                 Log.d(TAG, "Ghi data thanh cong");
                                                 sendToast("Đã gửi thông báo");
+                                                ringNotification.start();
                                             }
                                         })
                                         .addOnFailureListener(new OnFailureListener() {
                                             @Override
                                             public void onFailure(@NonNull Exception e) {
                                                 sendToast("Gửi thông báo không thành công");
+                                                ringErrNotifi.start();
                                             }
                                         });
                             }

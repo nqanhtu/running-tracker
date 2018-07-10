@@ -49,9 +49,14 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import runningtracker.R;
@@ -101,7 +106,7 @@ public class PresenterRunning {
     private Location mLocation;
     double mLatitude, mLongitude;
     float rCalories, rPace, maxPace;
-    private MediaPlayer ring;
+    private MediaPlayer ring, ringPlan;
     private FirebaseUser currentUser;
     private int countNotification = 0;
     private static ArrayList<LatLng> listPoint = new ArrayList<>();
@@ -199,6 +204,7 @@ public class PresenterRunning {
         mSettingsClient = LocationServices.getSettingsClient(runningContract.getMainActivity());
         objectCommon.setMaxCalores(2);
         ring = MediaPlayer.create(runningContract.getMainActivity(), R.raw.report_maxcalorie);
+        ringPlan = MediaPlayer.create(runningContract.getMainActivity(), R.raw.report_plan);
     }
 
     public void createLocationCallback(Boolean onCheckConnect, final String ID, final FirebaseFirestore firestore) {
@@ -211,7 +217,11 @@ public class PresenterRunning {
                     @Override
                     public void onLocationResult(LocationResult locationResult) {
                         super.onLocationResult(locationResult);
-                        if (setupCalories > 0) {
+                        if(setupCalories > 0) {
+                            if (rCalories / setupCalories >= 0.8 && countNotification < 1) {
+                                ringPlan.start();
+                                countNotification += 1;
+                            }
                             if (setupCalories < rCalories && countNotification < 3) {
                                 ring.start();
                                 countNotification += 1;
@@ -293,30 +303,6 @@ public class PresenterRunning {
                     }
                 });
 
-//        docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-//            @Override
-//            public void onSuccess(DocumentSnapshot documentSnapshot) {
-//                ShareLocationObject shareLocationObject = documentSnapshot.toObject(ShareLocationObject.class);
-//                if (shareLocationObject.getShareLocation()) {
-//                    firestore.collection("users")
-//                            .document(currentUser.getUid())
-//                            .update("updatelocation", mapShareLocation)
-//                            .addOnSuccessListener(new OnSuccessListener<Void>() {
-//                                @Override
-//                                public void onSuccess(Void aVoid) {
-//                                    Log.d("Status: ", "DocumentSnapshot successfully updated!");
-//                                }
-//                            }).addOnFailureListener(new OnFailureListener() {
-//                        @Override
-//                        public void onFailure(@NonNull Exception e) {
-//                            Log.w("Status: ", "Error updating document", e);
-//                        }
-//                    });
-//
-//                }
-//            }
-//        });
-
         //get list location update of friends and set marker
         getListLocationFriends(firestore, new ListSuggestCallback() {
             @Override
@@ -337,6 +323,24 @@ public class PresenterRunning {
             }
 
             if (infoUser != null) {
+                if (infoUser.getHeartRate() != 0) {
+                   /* SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy",  Locale.US);
+                    Date date = null;
+                    try {
+                        date = sdf.parse(infoUser.getBirthday());
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                    long dateTime = date.getTime();
+                    GenerateID generateID = new GenerateID();
+                    long temp = Long.valueOf(generateID.generateTimeID());
+                    long oldUser = temp - dateTime;
+                    Calendar calendar = Calendar.getInstance();
+                    calendar.setTimeInMillis(oldUser);
+                    int mYear = calendar.get(Calendar.YEAR);*/
+                    rCalories = (float) Calculator.netCalorieBurned(infoUser.getWeight(),
+                            Calculator.vO2max(30, (int) infoUser.getHeartRate()), rDisaTance, 0, false);
+                }
                 rCalories = (float) Calculator.netCalorieBurned(infoUser.getWeight(),
                         42, rDisaTance, 0, false);
             }
@@ -354,7 +358,7 @@ public class PresenterRunning {
         } else {
             LatLng myLocation;
             myLocation = new LatLng(location.getLatitude(), location.getLongitude());
-            runningContract.getMap().addMarker(new MarkerOptions().position(myLocation).title("Start Tracking"));
+            runningContract.getMap().addMarker(new MarkerOptions().position(myLocation).title("Bắt đầu"));
         }
         mLatitude = location.getLatitude();
         mLongitude = location.getLongitude();
@@ -377,7 +381,7 @@ public class PresenterRunning {
      */
     public void polylineBetweenTwoPoint(ArrayList<LatLng> list) {
         runningContract.getMap().clear();
-        runningContract.getMap().addMarker(new MarkerOptions().position(list.get(0)).title("Start Tracking"));
+        runningContract.getMap().addMarker(new MarkerOptions().position(list.get(0)).title("Bắt đầu"));
         runningContract.getMap().addPolyline(new PolylineOptions()
                 .addAll(list)
                 .color(Color.BLUE)
@@ -484,8 +488,28 @@ public class PresenterRunning {
             if (rDisaTance > 0) {
                 rPace = (runningContract.getUpdateTime() / 60000) / rDisaTance;
             }
-            rCalories = (float) Calculator.netCalorieBurned(80, 42,
-                    rDisaTance, 0, false);
+            if (infoUser != null) {
+                if (infoUser.getHeartRate() != 0) {
+                   /* SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+                    Date date = null;
+                    try {
+                        date = sdf.parse(infoUser.getBirthday());
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                    long dateTime = date.getTime();
+                    GenerateID generateID = new GenerateID();
+                    long temp = Long.valueOf(generateID.generateTimeID());
+                    long oldUser = temp - dateTime;
+                    Calendar calendar = Calendar.getInstance();
+                    calendar.setTimeInMillis(oldUser);
+                    int mYear = calendar.get(Calendar.YEAR);*/
+                    rCalories = (float) Calculator.netCalorieBurned(infoUser.getWeight(),
+                            Calculator.vO2max(30, (int) infoUser.getHeartRate()), rDisaTance, 0, false);
+                }
+                rCalories = (float) Calculator.netCalorieBurned(infoUser.getWeight(),
+                        42, rDisaTance, 0, false);
+            }
             if (rPace > maxPace) {
                 maxPace = rPace;
             }

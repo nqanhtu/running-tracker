@@ -7,10 +7,8 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -24,7 +22,6 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.PolygonOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -139,7 +136,7 @@ public class HistoryActivity extends AppCompatActivity implements OnMapReadyCall
 
                     originMarkers.add(googleMap.addMarker(new MarkerOptions()
                             .icon(BitmapDescriptorFactory.fromResource(R.drawable.start_blue))
-                            .title("Start Tracking")
+                            .title("Bắt đầu")
                             .position(new LatLng(locationObject.get(0).getLatitudeValue(), locationObject.get(0).getLongitudeValue()))));
                     CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(new LatLng(locationObject.get(0).getLatitudeValue(),
                             locationObject.get(0).getLongitudeValue()), 15);
@@ -156,7 +153,7 @@ public class HistoryActivity extends AppCompatActivity implements OnMapReadyCall
 
                     destinationMarkers.add(googleMap.addMarker(new MarkerOptions()
                             .icon(BitmapDescriptorFactory.fromResource(R.drawable.end_green))
-                            .title("End Tracking")
+                            .title("Kết thúc")
                             .position(new LatLng(locationObject.get(sizeObject - 1).getLatitudeValue(), locationObject.get(sizeObject - 1).getLongitudeValue()))));
                 }
             }

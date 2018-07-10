@@ -201,7 +201,7 @@ public class DirectionFinderPresenter {
                 listLocation[0] = getResultPlace(suggestLocationList, itemSuggestList);
                 for(int i = 0; i < listLocation[0].size(); i++){
                     LatLng location = new LatLng(listLocation[0].get(i).getLatitude(), listLocation[0].get(i).getLongitude());
-                    mMap.addMarker(new MarkerOptions().position(location).title("Suggest Location"));
+                    mMap.addMarker(new MarkerOptions().position(location).title("Địa điểm gợi ý"));
                 }
                 suggestCallback.getListLocation( listLocation[0]);
             }
