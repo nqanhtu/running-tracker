@@ -302,7 +302,7 @@ public class DashboardFragment extends Fragment implements DashBoardContract.Vie
             String city = addresses.get(0).getLocality();
             String state = addresses.get(0).getAdminArea();
             String subCity = addresses.get(0).getSubAdminArea();
-            locationText.setText(city + ", " + subCity + ", " + state);
+            locationText.setText(state);
 
         } catch (IOException e) {
             e.printStackTrace();
