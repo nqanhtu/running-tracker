@@ -450,7 +450,7 @@ public class RunningActivity extends AppCompatActivity implements RunningContrac
     }
 
     public void onClickStartButton(View startButton) {
-
+        sendNotification("Đang chạy bộ");
         //Perform animation
         Animation pauseButtonAnimation = AnimationUtils.loadAnimation(RunningActivity.this, R.anim.pause_button_separation);
         Animation stopButtonAnimation = AnimationUtils.loadAnimation(RunningActivity.this, R.anim.stop_button_separation);
@@ -605,17 +605,52 @@ public class RunningActivity extends AppCompatActivity implements RunningContrac
         mDialog.show();
     }
 
-    /**
-     * Sent notification to friends
-     *
-     * @param latitudeValue
-     * @param longitudeValue
-     */
+
+    public void sendNotification(final String message) {
+
+        ringNotification = MediaPlayer.create(this, R.raw.report_notification);
+        ringErrNotifi = MediaPlayer.create(this, R.raw.report_errnoti);
+
+        firestore.collection("users").document(mAuth.getCurrentUser().getUid()).collection("friends").get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot documentSnapshot : task.getResult()) {
+                                Friend friend = documentSnapshot.toObject(Friend.class);
+                                Map<String, Object> notificationMessage = new HashMap<>();
+                                notificationMessage.put("message", message);
+                                notificationMessage.put("from", mAuth.getCurrentUser().getUid());
+                                notificationMessage.put("fromName", mCurrentUser.getDisplayName());
+                                notificationMessage.put("type", 2);
+                                firestore.collection("users/" + friend.getFriend().getId() + "/notifications").add(notificationMessage)
+                                        .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                                            @Override
+                                            public void onSuccess(DocumentReference documentReference) {
+                                                Log.d(TAG, "Ghi data thanh cong");
+                                                sendToast("Đã gửi thông báo");
+                                                ringNotification.start();
+                                            }
+                                        })
+                                        .addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception e) {
+                                                sendToast("Gửi thông báo không thành công");
+                                                ringErrNotifi.start();
+                                            }
+                                        });
+                            }
+                        }
+                    }
+                });
+    }
+
+
     public void sendNotification(final double latitudeValue, final double longitudeValue) {
 
         final String message = "Đang gặp sự cố!!";
         ringNotification = MediaPlayer.create(this, R.raw.report_notification);
-        ringErrNotifi =  MediaPlayer.create(this, R.raw.report_errnoti);
+        ringErrNotifi = MediaPlayer.create(this, R.raw.report_errnoti);
 
         firestore.collection("users").document(mAuth.getCurrentUser().getUid()).collection("friends").get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -652,6 +687,7 @@ public class RunningActivity extends AppCompatActivity implements RunningContrac
                     }
                 });
     }
+
 
     private void sendToast(String message) {
         Toast.makeText(this, message, Toast.LENGTH_LONG).show();
