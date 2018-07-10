@@ -30,6 +30,7 @@ import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.android.gms.location.SettingsClient;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -808,14 +809,20 @@ public class PresenterRunning {
 
         //Set view full map friends
         if (viewFullFriends.getActivityViewFull() != null) {
+            viewFullFriends.getActivityViewFull().clear();
             int k = 0;
             for (Marker marker : listMarker) {
                 if (marker.getTitle().equalsIgnoreCase(nameFriends))
                     k++;
             }
             if (k < 1) {
-                listMarker.add(viewFullFriends.getActivityViewFull().addMarker(new MarkerOptions().position(new LatLng(locationObject.getLatitudeValue(), locationObject.getLongitudeValue()))
-                        .title(nameFriends)));
+/*                listMarker.add(viewFullFriends.getActivityViewFull().addMarker(new MarkerOptions().position(new LatLng(locationObject.getLatitudeValue(), locationObject.getLongitudeValue()))
+                        .title(nameFriends)));*/
+                listMarker.add(viewFullFriends.getActivityViewFull().addMarker(new MarkerOptions()
+                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.runner))
+                        .title("Bắt đầu")
+                        .position(new LatLng(locationObject.getLatitudeValue(), locationObject.getLongitudeValue())).title(nameFriends)
+                ));
             }
             listSuggestCallback.getListNameFriends(listMarker);
             if (temp == 0) {

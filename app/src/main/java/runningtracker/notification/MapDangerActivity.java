@@ -10,6 +10,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
@@ -28,9 +29,12 @@ public class MapDangerActivity extends AppCompatActivity implements OnMapReadyCa
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        googleMap.addMarker(new MarkerOptions().position(new LatLng(latitudeValue, longitudeValue))
-                .title("Vị trí gặp sự cố"));
-
+/*        googleMap.addMarker(new MarkerOptions().position(new LatLng(latitudeValue, longitudeValue))
+                .title("Vị trí gặp sự cố"));*/
+        googleMap.addMarker(new MarkerOptions()
+                .icon(BitmapDescriptorFactory.fromResource(R.drawable.warning))
+                .title("Vị trí gặp sự cố")
+                .position(new LatLng(latitudeValue, longitudeValue)));
         CameraUpdate cameraUpdateIcon = CameraUpdateFactory.newLatLngZoom((new LatLng(latitudeValue,longitudeValue)), 16);
         googleMap.animateCamera(cameraUpdateIcon);
     }
