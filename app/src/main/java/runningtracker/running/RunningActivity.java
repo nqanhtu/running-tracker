@@ -34,6 +34,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import runningtracker.R;
 import runningtracker.common.GenerateID;
 import runningtracker.common.InitializationFirebase;
@@ -119,6 +122,7 @@ public class RunningActivity extends AppCompatActivity implements RunningContrac
     private FirebaseFirestore firestore;
     private Toolbar actionBar;
 
+
     /**
      * create method set value calories
      */
@@ -129,6 +133,7 @@ public class RunningActivity extends AppCompatActivity implements RunningContrac
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_running);
+        ButterKnife.bind(this);
         presenterRunning = new PresenterRunning(this);
         myLocation = new MyLocation();
 
@@ -357,32 +362,44 @@ public class RunningActivity extends AppCompatActivity implements RunningContrac
         return true;
     }
 
-    /**
-     * @param item
-     * @return true or false
-     */
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        actionBar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                finish();
-            }
-        });
-        switch (item.getItemId()) {
-            case R.id.setting:
-                createDialogCalories();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
+//    /**
+//     * @param item
+//     * @return true or false
+//     */
+//    @Override
+//    public boolean onOptionsItemSelected(MenuItem item) {
+//        actionBar.setNavigationOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                finish();
+//            }
+//        });
+//        switch (item.getItemId()) {
+//            case R.id.setting:
+//                createDialogCalories();
+//                return true;
+//            default:
+//                return super.onOptionsItemSelected(item);
+//        }
+//    }
+
+    @OnClick(R.id.calo_setting_button)
+    public void settingCalo() {
+        createDialogCalories();
     }
+
 
     private void initializeUI() {
         //Toolbar
         actionBar = findViewById(R.id.actionbarTracking);
-        actionBar.setNavigationIcon(R.drawable.ic_android_back_white_24dp);
-        setSupportActionBar(actionBar);
+
+        actionBar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+                onBackPressed();
+            }
+        });
 
         //Create map tracking
         MapFragment mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.map);
@@ -615,7 +632,7 @@ public class RunningActivity extends AppCompatActivity implements RunningContrac
 
         final String message = "Đang gặp sự cố!!";
 
-        firestore.collection("users").document(mCurrentUser.getUid()).collection("friends").get()
+        firestore.collection("users").document(mAuth.getCurrentUser().getUid()).collection("friends").get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -629,7 +646,7 @@ public class RunningActivity extends AppCompatActivity implements RunningContrac
                                 notificationMessage.put("latitudeValue", latitudeValue);
                                 notificationMessage.put("longitudeValue", longitudeValue);
                                 notificationMessage.put("type", 1);
-                                firestore.collection("users/" + friend.getUid() + "/notifications").add(notificationMessage)
+                                firestore.collection("users/" + friend.getFriend().getId() + "/notifications").add(notificationMessage)
                                         .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                                             @Override
                                             public void onSuccess(DocumentReference documentReference) {

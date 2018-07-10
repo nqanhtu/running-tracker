@@ -86,21 +86,21 @@ public class FriendsListFragment extends Fragment {
                         }
                     });
                 }
-//                StorageReference storageReference = FirebaseStorage.getInstance().getReference().child("Photos").child(friend.getUid());
-//                storageReference.getDownloadUrl()
-//                        .addOnSuccessListener(new OnSuccessListener<Uri>() {
-//                            @Override
-//                            public void onSuccess(Uri uri) {
-//                                Log.d(TAG, uri.toString());
-//                                loadAvatar(uri, holder.userImg);
-//                            }
-//                        })
-//                        .addOnFailureListener(new OnFailureListener() {
-//                            @Override
-//                            public void onFailure(@NonNull Exception e) {
-//                                Log.d(TAG, "Load image fail");
-//                            }
-//                        });
+                StorageReference storageReference = FirebaseStorage.getInstance().getReference().child("Photos").child(friend.getFriend().getId());
+                storageReference.getDownloadUrl()
+                        .addOnSuccessListener(new OnSuccessListener<Uri>() {
+                            @Override
+                            public void onSuccess(Uri uri) {
+                                Log.d(TAG, uri.toString());
+                                loadAvatar(uri, holder.userImg);
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.d(TAG, "Load image fail");
+                            }
+                        });
             }
 
 

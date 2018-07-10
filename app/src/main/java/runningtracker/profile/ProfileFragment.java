@@ -132,8 +132,8 @@ public class ProfileFragment extends Fragment {
                 loadAvatar(uri);
             }
         });
-//        String email = mAuth.getCurrentUser().getEmail();
-//        emailTextView.setText(email);
+        String email = mAuth.getCurrentUser().getEmail();
+        emailTextView.setText(email);
         db.collection("users").document(mAuth.getCurrentUser().getUid())
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -166,19 +166,15 @@ public class ProfileFragment extends Fragment {
                                 String height = "";
                                 String weight = "";
                                 String heartRate = "";
-                                String email = "";
-                                if (user.get("email") != null) email = user.get("email").toString();
                                 if (user.get("height") != null)
                                     height = user.get("height").toString();
                                 if (user.get("weight") != null)
                                     weight = user.get("weight").toString();
                                 if (user.get("heartRate") != null)
                                     heartRate = user.get("heartRate").toString();
-
                                 heightTextView.setText(height);
                                 weightTextView.setText(weight);
                                 heartRateTextView.setText(heartRate);
-                                emailTextView.setText(email);
                             }
                         }
                     }

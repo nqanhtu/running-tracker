@@ -85,11 +85,10 @@ public class LoginFragment extends Fragment {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "signInWithEmail:success");
                             String current_id = mAuth.getCurrentUser().getUid();
-                            String refreshedToken = FirebaseInstanceId.getInstance().getToken();
+                            String refreshedToken = FirebaseInstanceId.getInstance().getId();
                             Log.d("MyFirebaseInstance", "Refreshed token: " + refreshedToken);
                             Map<String, Object> tokenMap = new HashMap<>();
                             tokenMap.put("token_id", refreshedToken);
-
                             mFirestore.collection("users").document(current_id).update(tokenMap).addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void aVoid) {

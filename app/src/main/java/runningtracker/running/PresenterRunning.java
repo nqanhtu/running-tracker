@@ -723,32 +723,24 @@ public class PresenterRunning {
      */
     public void getIdFriends(FirebaseFirestore firestore, final IdFriendsCallback idFriendsCallback) {
         final List<Map<String, Object>> friends = new ArrayList<>();
-        firestore.collection("usersData")
+        firestore.collection("users")
                 .document(currentUser.getUid())
                 .collection("friends")
-                .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()) {
-                    for (QueryDocumentSnapshot document : task.getResult()) {
-                        Log.d(TAG, document.getId() + " => " + document.getData());
-
-                        /**
-                         * get information id friends
-                         * */
-                        try {
-                            friends.add(document.getData());
-
-                        } catch (Exception e) {
-                            e.printStackTrace();
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                Log.d(TAG, document.getId() + " => " + document.getData());
+                                friends.add(document.getData());
+                            }
+                            idFriendsCallback.onSuccess(friends);
+                        } else {
+                            Log.d(TAG, "Error getting documents: ", task.getException());
                         }
                     }
-                    idFriendsCallback.onSuccess(friends);
-                } else {
-                    Log.d(TAG, "Error getting documents: ", task.getException());
-                }
-            }
-        });
+                });
     }
 
     /**
@@ -836,48 +828,71 @@ public class PresenterRunning {
      * @param firestore
      */
     public void getListLocationFriends(final FirebaseFirestore firestore, final ListSuggestCallback listSuggestCallback) {
-
         listMarker = new ArrayList<>();
-
         getIdFriends(firestore, new IdFriendsCallback() {
             @Override
             public void onSuccess(List<Map<String, Object>> idFriends) {
                 for (int i = 0; i < idFriends.size(); i++) {
                     //Get id of friend
                     Map<String, Object> lastIdFriend = idFriends.get(i);
-                    final String idFriend = lastIdFriend.get("uid").toString();
-                    final String nameFriends = lastIdFriend.get("displayName").toString();
-                    checkShareLocation(idFriend, firestore, new CheckShareCallback() {
-                        @Override
-                        public void successShare(Boolean status) {
-                            //if is true get location update of friend
-                            if (status) {
-                                firestore.collection("users")
-                                        .document(idFriend).get()
-                                        .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                                            @Override
-                                            public void onSuccess(DocumentSnapshot documentSnapshot) {
-                                                if (documentSnapshot.getData().get("updatelocation") != null) {
-                                                    Map<String, Object> locationMap = (Map<String, Object>) documentSnapshot.getData().get("updatelocation");
-                                                    double latitude = Double.valueOf(locationMap.get("latitude").toString());
-                                                    double longitude = Double.valueOf(locationMap.get("longitude").toString());
-                                                    LocationObject locationObject = new LocationObject(latitude, longitude);
-                                                    setMarker(locationObject, nameFriends, listSuggestCallback);
-                                                }
-                                            }
-                                        });
 
-//                                docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-//                                    @Override
-//                                    public void onSuccess(DocumentSnapshot documentSnapshot) {
-//                                        LocationObject locationObject = documentSnapshot.toObject(LocationObject.class);
-//                                        if (locationObject.getLatitudeValue() != 0.0)
-//                                            setMarker(locationObject, nameFriends, listSuggestCallback);
-                                //            }
-                                //      });
+                    DocumentReference friendRef = (DocumentReference) lastIdFriend.get("friend");
+                    final String idFriend = friendRef.getId();
+
+//                    final String idFriend = lastIdFriend.get("uid").toString();
+//                    final String nameFriends = lastIdFriend.get("displayName").toString();
+
+                    friendRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                        @Override
+                        public void onSuccess(DocumentSnapshot documentSnapshot) {
+                            String idFriend = documentSnapshot.getId();
+
+                            Map<String, Object> friend = documentSnapshot.getData();
+
+                            if (friend.get("sharelocation") != null) {
+                                if ((boolean) friend.get("sharelocation")) {
+                                    if (friend.get("updatelocation") != null) {
+                                        Map<String, Object> updateLocation = (Map<String, Object>) friend.get("updatelocation");
+                                        Double latitude = Double.valueOf(updateLocation.get("latitudeValue").toString());
+                                        Double longitude = Double.valueOf(updateLocation.get("longitudeValue").toString());
+                                        LocationObject locationObject = new LocationObject(latitude, longitude);
+
+                                        String nameFriends = friend.get("displayName").toString();
+                                        setMarker(locationObject, nameFriends, listSuggestCallback);
+
+
+                                    }
+
+                                }
                             }
                         }
                     });
+
+
+//                    checkShareLocation(idFriend, firestore, new CheckShareCallback() {
+//                        @Override
+//                        public void successShare(Boolean status) {
+//                            //if is true get location update of friend
+//                            if (status) {
+//                                firestore.collection("users")
+//                                        .document(idFriend).get()
+//                                        .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+//                                            @Override
+//                                            public void onSuccess(DocumentSnapshot documentSnapshot) {
+//                                                if (documentSnapshot.getData().get("updatelocation") != null) {
+//                                                    Map<String, Object> locationMap = (Map<String, Object>) documentSnapshot.getData().get("updatelocation");
+//                                                    double latitude = Double.valueOf(locationMap.get("latitude").toString());
+//                                                    double longitude = Double.valueOf(locationMap.get("longitude").toString());
+//                                                    Log.d(TAG,locationMap.get("latitude").toString()+","+locationMap.get("longitude").toString());
+//                                                    LocationObject locationObject = new LocationObject(latitude, longitude);
+//                                                    String nameFriends = documentSnapshot.get("displayName").toString();
+//                                                    setMarker(locationObject, nameFriends, listSuggestCallback);
+//                                                }
+//                                            }
+//                                        });
+//                            }
+//                        }
+//                    });
                 }
             }
         });

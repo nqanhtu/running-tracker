@@ -92,10 +92,6 @@ public class AddFriendFragment extends Fragment {
 
                             Log.d(TAG, friendRef.getId());
 
-//                                    List < Friend > users = task.getResult().toObjects(Friend.class);
-//                            if (!users.isEmpty()) {
-//                                final String friendUid = task.getResult().getDocuments().get(0).getId();
-//                                Friend user = users.get(0);
 
                             Map<String, Object> friend = new HashMap<>();
                             friend.put("friend", friendRef);
