@@ -6,7 +6,7 @@
     android:background="@color/white"
     android:orientation="vertical">
 
-    <android.support.constraint.ConstraintLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/item_notification"
         android:layout_width="match_parent"
         android:layout_height="72dp"
@@ -52,5 +52,5 @@
             app:layout_constraintStart_toEndOf="@+id/userImg" />
 
 
-    </android.support.constraint.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </LinearLayout>

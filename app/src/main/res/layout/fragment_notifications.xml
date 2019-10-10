@@ -2,11 +2,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="runningtracker.notification.NotificationsFragment">
+    tools:context="runningtracker.com.runningtracker.notification.NotificationsFragment">
 
     <!-- TODO: Update blank fragment layout -->
 
-    <android.support.v7.widget.RecyclerView
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/notiRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />

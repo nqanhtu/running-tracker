@@ -6,10 +6,10 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:weightSum="2.5"
-    tools:context=".running.RunningActivity">
+    tools:context="com.runningtracker.running.RunningActivity">
 
 
-    <android.support.v7.widget.Toolbar
+    <androidx.appcompat.widget.Toolbar
         android:id="@+id/actionbarHistory"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
@@ -23,7 +23,7 @@
             android:gravity="center"
             android:text="Lịch sử tập luyện"
             android:textSize="18sp" />
-    </android.support.v7.widget.Toolbar>
+    </androidx.appcompat.widget.Toolbar>
 
     <fragment
         android:id="@+id/mapHistory"

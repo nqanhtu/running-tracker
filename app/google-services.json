@@ -1,96 +1,45 @@
 {
   "project_info": {
-    "project_number": "424746790214",
-    "firebase_url": "https://running-assistant-1133.firebaseio.com",
-    "project_id": "running-assistant-1133",
-    "storage_bucket": "running-assistant-1133.appspot.com"
+    "project_number": "231218555887",
+    "firebase_url": "https://running-tracker-e51ba.firebaseio.com",
+    "project_id": "running-tracker-e51ba",
+    "storage_bucket": "running-tracker-e51ba.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:424746790214:android:3fa5facd514b78b5",
-        "android_client_info": {
-          "package_name": "com.example.minhtri.running"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "424746790214-d1dp7osrl1pg8kgnr428dr291ohs99ah.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.example.minhtri.running",
-            "certificate_hash": "de4c24326957fe4fc193e65f9726b5af2afd2015"
-          }
-        },
-        {
-          "client_id": "424746790214-i5hutulkpoltgitkjmggp8o0ra3g95es.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyCmet41PL7q_V_z-9IL-CQm8XNH8Eg0moQ"
-        }
-      ],
-      "services": {
-        "analytics_service": {
-          "status": 1
-        },
-        "appinvite_service": {
-          "status": 2,
-          "other_platform_oauth_client": [
-            {
-              "client_id": "424746790214-i5hutulkpoltgitkjmggp8o0ra3g95es.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
-        },
-        "ads_service": {
-          "status": 2
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:424746790214:android:9abf720276ca96cc",
+        "mobilesdk_app_id": "1:231218555887:android:86d85a213165792195e41a",
         "android_client_info": {
           "package_name": "com.runningtracker"
         }
       },
       "oauth_client": [
         {
-          "client_id": "424746790214-kpmukm013bvqrngo2o3ta5kqj09ots3f.apps.googleusercontent.com",
+          "client_id": "231218555887-h5mm9djf6ovu4dbkfvqikf70mc5sdoe2.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.runningtracker",
-            "certificate_hash": "83773e71947e2606caca0ff9b5a785bc13ca820c"
+            "certificate_hash": "3e04f42cfc6d5c2d311cad669935e495cb0fa8cf"
           }
         },
         {
-          "client_id": "424746790214-i5hutulkpoltgitkjmggp8o0ra3g95es.apps.googleusercontent.com",
+          "client_id": "231218555887-9m8a3kn8rj40rmop9a0notneds2if4lr.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyCmet41PL7q_V_z-9IL-CQm8XNH8Eg0moQ"
+          "current_key": "AIzaSyBfdOhjYSYhf2tuiZMpdBh3km1-_kF7Nws"
         }
       ],
       "services": {
-        "analytics_service": {
-          "status": 1
-        },
         "appinvite_service": {
-          "status": 2,
           "other_platform_oauth_client": [
             {
-              "client_id": "424746790214-i5hutulkpoltgitkjmggp8o0ra3g95es.apps.googleusercontent.com",
+              "client_id": "231218555887-9m8a3kn8rj40rmop9a0notneds2if4lr.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
-        },
-        "ads_service": {
-          "status": 2
         }
       }
     }

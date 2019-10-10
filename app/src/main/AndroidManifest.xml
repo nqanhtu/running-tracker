@@ -25,31 +25,31 @@
             android:resource="@array/preloaded_fonts" />
 
         <activity
-            android:name=".running.ResultActivity"
+            android:name="com.runningtracker.running.ResultActivity"
             android:configChanges="keyboardHidden|orientation"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".running.RunningActivity"
+            android:name="com.runningtracker.running.RunningActivity"
             android:configChanges="keyboardHidden|orientation"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".running.ViewFullFriendsActivity"
+            android:name="com.runningtracker.running.ViewFullFriendsActivity"
             android:configChanges="keyboardHidden|orientation"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".history.HistoryActivity"
+            android:name="com.runningtracker.history.HistoryActivity"
             android:configChanges="keyboardHidden|orientation"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".suggestplace.SuggestPlaceActivity"
+            android:name="com.runningtracker.suggestplace.SuggestPlaceActivity"
             android:configChanges="keyboardHidden|orientation"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".notification.MapDangerActivity"
+            android:name="com.runningtracker.notification.MapDangerActivity"
             android:configChanges="keyboardHidden|orientation"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".home.HomeActivity"
+            android:name="com.runningtracker.home.HomeActivity"
             android:configChanges="keyboardHidden|orientation"
             android:screenOrientation="portrait">
             <intent-filter>
@@ -60,46 +60,46 @@
         </activity>
 
         <service
-            android:name=".locationaddress.FetchAddressIntentService"
+            android:name="com.runningtracker.locationaddress.FetchAddressIntentService"
             android:exported="false" />
 
         <activity
-            android:name=".friends.FriendsActivity"
+            android:name="com.runningtracker.friends.FriendsActivity"
             android:configChanges="keyboardHidden|orientation"
             android:label="@string/title_activity_friends"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme" />
         <!-- Setting -->
         <activity
-            android:name=".settings.SettingsActivity"
+            android:name="com.runningtracker.settings.SettingsActivity"
             android:configChanges="keyboardHidden|orientation"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".settings.SettingDashBoardActivity"
+            android:name="com.runningtracker.settings.SettingDashBoardActivity"
             android:configChanges="keyboardHidden|orientation"
             android:screenOrientation="portrait" />
 
-        <service android:name=".MyFirebaseMessagingService">
+        <service android:name="com.runningtracker.MyFirebaseMessagingService">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
-        <service android:name=".MyFirebaseInstanceIDService">
+        <service android:name="com.runningtracker.MyFirebaseInstanceIDService">
             <intent-filter>
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
             </intent-filter>
         </service>
 
         <activity
-            android:name=".notificationfriends.NotificationFriendsActivity"
+            android:name="com.runningtracker.notificationfriends.NotificationFriendsActivity"
             android:configChanges="keyboardHidden|orientation"
             android:screenOrientation="portrait" />
-        <activity android:name=".login.LoginActivity" />
+        <activity android:name="com.runningtracker.login.LoginActivity" />
         <activity
-            android:name=".test.TestActivity"
+            android:name="com.runningtracker.test.TestActivity"
             android:label="@string/title_activity_test"
             android:theme="@style/AppTheme" />
-        <activity android:name=".registerinfomation.RegisterInfomationActivity"></activity>
+        <activity android:name="com.runningtracker.registerinfomation.RegisterInfomationActivity"></activity>
     </application>
 
 </manifest>
