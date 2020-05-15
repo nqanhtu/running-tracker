@@ -1,0 +1,84 @@
+{
+"abc":{
+    "verticals": [
+        {
+            "value": "digital_agencies",
+            "name": "Digital Agencies"
+        },
+        {
+            "value": "e_commerce",
+            "name": "E-commerce"
+        },
+        {
+            "value": "luxury_and_fashion",
+            "name": "Luxury & Fashion"
+        },
+        {
+            "value": "media_i",
+            "name": "Media"
+        },
+        {
+            "value": "real_estate",
+            "name": "Real Estate & Hospitalities"
+        },
+        {
+            "value": "saas_i",
+            "name": "SaaS / App"
+        },
+        {
+            "value": "sports_and_travel",
+            "name": "Sports & Travel"
+        },
+        {
+            "value": "tech_partners",
+            "name": "Tech Partners"
+        },
+        {
+            "value": "automotive_i",
+            "name": "Automotive"
+        },
+        {
+            "value": "cpg_and_food",
+            "name": "CPG & Food"
+        },
+        {
+            "value": "culture_and_entertainment",
+            "name": "Culture & Entertainment"
+        },
+        {
+            "value": "finance_and_banking",
+            "name": "Finance & Banking"
+        },
+        {
+            "value": "recruitment_and_hr",
+            "name": "Recruitment & HR"
+        },
+        {
+            "value": "other",
+            "name": "Other"
+        }
+    ],
+    "why_here": [
+        {
+            "value": "unhappy",
+            "name": "Unhappy with my current Image CDN (too expensive, not reliable, too slow)"
+        },
+        {
+            "value": "dev_new_app",
+            "name": "Developing new application and I need image optimisation"
+        },
+        {
+            "value": "img_are_slow",
+            "name": "My images are slow and I want to accelerate them"
+        },
+        {
+            "value": "wasting_time",
+            "name": "I am wasting too much time with resizing images manually"
+        },
+        {
+            "value": "move_to_cloud",
+            "name": "I want to move by media server to the Cloud"
+        }
+    ]
+}
+}
